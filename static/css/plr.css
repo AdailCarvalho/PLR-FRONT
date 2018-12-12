@@ -1,0 +1,33 @@
+/*!
+ * PLR Style
+ */
+
+.plr-h4 {
+    background-color: darkgoldenrod;
+}
+
+.plr-h5 {
+    background-color: tan;
+}
+
+.plr-bold {
+    font-weight: bold;
+}
+
+.plr-result-font {
+    font-size: 20px;
+    display: inline-block; 
+    color: green;
+}
+
+.plr-nav {
+    background-color: aliceblue;
+}
+
+.plr-footer {
+   width: 100%;
+   background-color: aliceblue;
+   font-weight: bold;
+   color: black;
+   text-align: center;
+}
