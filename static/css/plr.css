@@ -3,11 +3,11 @@
  */
 
 .plr-h4 {
-    background-color: darkgoldenrod;
+    background-color:    #99ff99;
 }
 
 .plr-h5 {
-    background-color: tan;
+    background-color:  #b3d1ff;
 }
 
 .plr-bold {
@@ -18,6 +18,19 @@
     font-size: 20px;
     display: inline-block; 
     color: green;
+}
+
+.plr-result-circle
+    {
+    margin-left: 12px;
+    width:90px;
+    height:90px;
+    border-radius:45px;
+    font-size:20px;
+    color: white;
+    line-height:90px;
+    text-align:center;
+    background: #b3d1ff;
 }
 
 .plr-nav {

@@ -16,10 +16,10 @@
 				  PLR
 				</a>
 			  </nav>
-	<div class="container-fluid">
+	<div class="container-fluid" style="margin-top : 10px;">
 		<div class="row">
 			<div class="col-md-12 align-middle">
-				<h4 class="h4-responsive customH4Adm text-center plr-h4">Identificação</h4>
+				<h4 class="h4-responsive customH4Adm text-left plr-h4">Identificação</h4>
 			</div>
 		</div>
 		<br />
@@ -70,12 +70,12 @@
 		<br />
 		<div class="row">
 			<div class="col-md-12 align-middle">
-				<h4 class="h4-responsive customH4Adm text-center plr-h4">Meta Geral da Companhia [GATILHO] e Pesos Para Cálculo de Bônus</h4>
+				<h4 class="h4-responsive customH4Adm text-left plr-h4">Meta Geral</h4>
 			</div>
 		</div>
 		<div class="row">
 				<div class="col-md-12 align-middle">
-					<h5 class="h5-responsive customH5Adm text-center plr-h5">META GERAL [GATILHO] = EBITDA ANUAL:</h5>
+					<h5 class="h5-responsive customH5Adm text-left plr-h5">EBITDA ANUAL:</h5>
 				</div>
 		</div>
 		<div class="row">
@@ -86,10 +86,10 @@
 				<input type="number" id="valMetaGeral" class="form-control" />
 			</div>
 			<div class="col-md-3">
-				<label class="plr-bold" for="bonus" title="Bonus">
+				<label class="plr-bold" for="bonusEbitda" title="Bonus">
 					% DO BÔNUS:
 				</label>
-				<input type="number" id="bonus" class="form-control" />
+				<input type="number" id="bonusEbitda" class="form-control" onchange="metasController.calculaBonus(this.id)" />
 			</div>
 			<div class="col-md-6">
 				<label class="plr-bold" for="detalheBonus" title="bonusDetalhes">
@@ -100,13 +100,14 @@
 		</div>
 		<div class="row">
 				<div class="col-md-12 align-middle" style="margin-top: 10px;">
-					<h5 class="h5-responsive customH5Adm text-center plr-h5">METAS INDIVIDUAIS:</h5>
+					<h5 class="h5-responsive customH5Adm text-left plr-h5">METAS INDIVIDUAIS:</h5>
 				</div>
 		</div>
 		<div class="row">
 			<div class="col-md-3">
 				<label class="plr-bold" for="valMetaIndiv" title="Metas Individuais">% DO BÔNUS: </label>
-				<input class="form-control input-sm" type="number" min="0" id="valMetaIndiv">
+				<input class="form-control input-sm" type="number" min="0" id="valMetaIndiv" 
+					onchange="metasController.calculaBonus(this.id)">
 			</div>
 			<div class="col-md-9">
 					<label class="plr-bold" for="detalheMetaIndiv" title="Detalhes">DETALHES: </label>
@@ -115,7 +116,7 @@
 		</div>
 		<div class="row">
 				<div class="col-md-12 align-middle" style="margin-top: 10px;">
-					<h5 class="h5-responsive customH5Adm text-center plr-h5">MARGEM DE CONTRIBUIÇÃO DOS DERIVADOS:</h5>
+					<h5 class="h5-responsive customH5Adm text-left plr-h5">MARGEM DE CONTRIBUIÇÃO:</h5>
 				</div>
 		</div>
 		<div class="row">
@@ -125,7 +126,7 @@
 				</div>
 				<div class="col-md-3">
 						<label class="plr-bold" for="bonusMargem" title="Bonus">% DO BÔNUS: </label>
-						<input type="number" id="bonusMargem" class="form-control" />
+						<input type="number" id="bonusMargem" class="form-control" onchange="metasController.calculaBonus(this.id)" />
 					</div>
 				<div class="col-md-6">
 						<label class="plr-bold" for="detalheMargem" title="Detalhes">DETALHES: </label>
@@ -134,7 +135,7 @@
 			</div>	
 			<div class="row">
 					<div class="col-md-12 align-middle" style="margin-top: 10px;">
-						<h5 class="h5-responsive customH5Adm text-center plr-h5">PERFORMANCE DO AVALIADO RELATIVO AO ANO:</h5>
+						<h5 class="h5-responsive customH5Adm text-left plr-h5">PERFORMANCE DO AVALIADO:</h5>
 					</div>
 			</div>
 			<div class="row">
@@ -144,7 +145,8 @@
 					</div>
 					<div class="col-md-3">
 							<label class="plr-bold" for="bonusPerformance" title="Bonus">% DO BÔNUS: </label>
-							<input type="number" id="bonusPerformance" class="form-control" />
+							<input type="number" id="bonusPerformance" class="form-control" 
+								onchange="metasController.calculaBonus(this.id)"/>
 						</div>
 					<div class="col-md-6">
 							<label class="plr-bold" for="detalhePerformance" title="Detalhes">DETALHES: </label>
@@ -154,27 +156,44 @@
 			<br />
 			<div class="row">
 					<div class="col-md-12 align-middle">
-						<h4 class="h4-responsive customH4Adm text-center plr-h4">Metas Quantitativas</h4>
+						<h4 class="h4-responsive customH4Adm text-left plr-h4">Metas Quantitativas</h4>
 					</div>
 			</div>
 			<div class="row">
 					<div id="jsGridMetaQuantitativa" class="col-md-10"></div>
 					<div class="col-md-2">
-							<label class="plr-bold plr-result-font" for="resultMetaQuantitativa" title="Resultado" id="labelResultQuanti"></label>
+							<label class="plr-result-circle" for="resultMetaQuantitativa" title="Resultado" id="labelResultQuanti"></label>
 					</div>
 			</div>
 			<br />
 			<div class="row">
 					<div class="col-md-12 align-middle">
-						<h4 class="h4-responsive customH4Adm text-center plr-h4">Metas de Projetos</h4>
+						<h4 class="h4-responsive customH4Adm text-left plr-h4">Metas de Projetos</h4>
 					</div>
 			</div>
 			<div class="row">
 					<div id="jsGridMetaProjeto" class="col-md-10"></div>
 					<div class="col-md-2">
-							<label class="plr-bold plr-result-font" for="resultMetaProjeto" title="Resultado" id="labelResultProjeto"></label>
+							<label class="plr-result-circle" for="resultMetaProjeto" title="Resultado" id="labelResultProjeto"></label>
 					</div>
 			</div>
+			<br />
+			<div class="row">
+				<div class="col-md-12 align-middle">
+					<h4 class="h4-responsive customH4Adm text-left plr-h4">Resultados</h4>
+				</div>
+			</div>
+			<div class="row">
+				<div id="jsGridResultados" class="col-md-6"></div>
+			</div>
+			<br />
+			<div class="row">
+					<div class="col-md-3">
+						<button type="button" class="btn btn-success" onclick="metasController.salvar()">Salvar</button>
+						<button type="button" class="btn btn-primary">Importar</button>
+					</div>
+			</div>
+			
 
 	</div>
 	
