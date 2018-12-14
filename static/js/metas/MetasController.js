@@ -67,7 +67,7 @@ class MetasController {
 	_loadGridMetasQuantitativas(metasQuantitativas) {
 		let self = this;
 		self._gridMetaQuantitativa.jsGrid({
-			width: "80%",
+			width: "100%",
 			height: "auto",
 	 
 			inserting: true,
@@ -126,7 +126,7 @@ class MetasController {
 	_loadGridMetasProjeto(metasProjeto) {
 		let self = this;
 		self._gridMetaProjeto.jsGrid({
-			width: "80%",
+			width: "100%",
 			height: "auto",
 	 
 			inserting: true,
@@ -184,7 +184,7 @@ class MetasController {
 	_loadGridMetasResultado(resultadoMetas) {
 		let self = this;
 		self._gridMetaResultado.jsGrid({
-			width: "50%",
+			width: "100%",
 			height: "auto",
 	 
 			inserting: false,

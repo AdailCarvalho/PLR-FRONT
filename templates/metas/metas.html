@@ -4,7 +4,7 @@
        <meta charset="utf-8">
        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
    
-       <link rel="stylesheet" href="../../static/css/bootstrap.min.css" >
+	   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
 	   <link rel="stylesheet" href="../../static/css/plr.css">
 	   <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.css" />
 	  <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css" />
@@ -12,187 +12,260 @@
 <body>
 	<nav class="navbar navbar-light plr-nav">
 		<a class="navbar-brand" href="#">
-			<img src="../../static/images/betania_logo.png" width="50" height="50" class="d-inline-block align-top" alt="">
-				  PLR
-				</a>
-			  </nav>
-	<div class="container-fluid" style="margin-top : 10px;">
-		<div class="row">
-			<div class="col-md-12 align-middle">
-				<h4 class="h4-responsive customH4Adm text-left plr-h4">Identificação</h4>
-			</div>
-		</div>
-		<br />
-		<div class="row">
-			<div class="col-md-3">
-				<label class="plr-bold" for="matricula" title="Matricula">
-					Matrícula:
-				</label>
-				<input type="number" min="0" id="matricula" class="form-control text-uppercase" />
-			</div>
-			<div class="col-md-3">
-				<label class="plr-bold" for="nome" title="Nome">
-					Nome:
-				</label>
-				<input type="text" id="nome" maxlength="30" class="form-control text-uppercase" />
-			</div>
-			<div class="col-md-3">
-				<label class="plr-bold" for="cargo" title="cargo">
-					Cargo:
-				</label>
-				<select id="cargo" class="form-control" onchange="metasController.getDiretoria(this.value)">
-								<option value=""></option>
-								<option value="admin">Administrador</option>
-								<option value="clean">Aux. de Serviços Gerais</option>
-								<option value="cons">Consultor</option>
-								<option value="eng">Engenheiro</option>
-								<option value="operador">Op. de Máquinas</option>
-								<option value="rh">Recrutadora</option>
-								<option value="others">Outros</option>
-				</select>
-			</div>
-			<div class="col-md-3">
-				<label class="plr-bold" for="diretoria" title="diretoria">
-					Diretoria:
-				</label>
-				<select id="diretoria" class="form-control" disabled="disabled">
-								<option value=""></option>
-								<option value="admin">Administração</option>
-								<option value="clean">Limpeza</option>
-								<option value="cons">Vendas</option>
-								<option value="eng">Engenharia</option>
-								<option value="operador">Engenharia</option>
-								<option value="rh">RH</option>
-								<option value="others">Outros</option>
-				</select>
-			</div>
-		</div>
-		<br />
-		<div class="row">
-			<div class="col-md-12 align-middle">
-				<h4 class="h4-responsive customH4Adm text-left plr-h4">Meta Geral</h4>
-			</div>
-		</div>
-		<div class="row">
-				<div class="col-md-12 align-middle">
-					<h5 class="h5-responsive customH5Adm text-left plr-h5">EBITDA ANUAL:</h5>
-				</div>
-		</div>
-		<div class="row">
-			<div class="col-md-3">
-				<label class="plr-bold" for="valMetaGeral" title="Meta Geral">
-					VALOR:
-				</label>
-				<input type="number" id="valMetaGeral" class="form-control" />
-			</div>
-			<div class="col-md-3">
-				<label class="plr-bold" for="bonusEbitda" title="Bonus">
-					% DO BÔNUS:
-				</label>
-				<input type="number" id="bonusEbitda" class="form-control" onchange="metasController.calculaBonus(this.id)" />
-			</div>
-			<div class="col-md-6">
-				<label class="plr-bold" for="detalheBonus" title="bonusDetalhes">
-					DETALHES:
-				</label>
-				<input type="text" id="detalheBonus" maxlength="50" class="form-control text-uppercase" />
-			</div>
-		</div>
-		<div class="row">
-				<div class="col-md-12 align-middle" style="margin-top: 10px;">
-					<h5 class="h5-responsive customH5Adm text-left plr-h5">METAS INDIVIDUAIS:</h5>
-				</div>
-		</div>
-		<div class="row">
-			<div class="col-md-3">
-				<label class="plr-bold" for="valMetaIndiv" title="Metas Individuais">% DO BÔNUS: </label>
-				<input class="form-control input-sm" type="number" min="0" id="valMetaIndiv" 
-					onchange="metasController.calculaBonus(this.id)">
-			</div>
-			<div class="col-md-9">
-					<label class="plr-bold" for="detalheMetaIndiv" title="Detalhes">DETALHES: </label>
-					<input class="form-control input-sm" type="text" maxlength="64" id="detalheMetaIndiv">
-			</div>
-		</div>
-		<div class="row">
-				<div class="col-md-12 align-middle" style="margin-top: 10px;">
-					<h5 class="h5-responsive customH5Adm text-left plr-h5">MARGEM DE CONTRIBUIÇÃO:</h5>
-				</div>
-		</div>
-		<div class="row">
-				<div class="col-md-3">
-					<label class="plr-bold" for="valMargemDeriv" title="Margem de Contribuição dos Derivados">VALOR: </label>
-					<input class="form-control input-sm" type="number" min="0" id="valMargemDeriv">
-				</div>
-				<div class="col-md-3">
-						<label class="plr-bold" for="bonusMargem" title="Bonus">% DO BÔNUS: </label>
-						<input type="number" id="bonusMargem" class="form-control" onchange="metasController.calculaBonus(this.id)" />
-					</div>
-				<div class="col-md-6">
-						<label class="plr-bold" for="detalheMargem" title="Detalhes">DETALHES: </label>
-						<input class="form-control input-sm" type="text" maxlength="64" id="detalheMargem">
-				</div>
-			</div>	
-			<div class="row">
-					<div class="col-md-12 align-middle" style="margin-top: 10px;">
-						<h5 class="h5-responsive customH5Adm text-left plr-h5">PERFORMANCE DO AVALIADO:</h5>
-					</div>
-			</div>
-			<div class="row">
-					<div class="col-md-3">
-						<label class="plr-bold" for="valPerformance" title="Performance do Avaliado Relativo ao Ano">VALOR: </label>
-						<input class="form-control input-sm" type="number" min="0" id="valPerformance">
-					</div>
-					<div class="col-md-3">
-							<label class="plr-bold" for="bonusPerformance" title="Bonus">% DO BÔNUS: </label>
-							<input type="number" id="bonusPerformance" class="form-control" 
-								onchange="metasController.calculaBonus(this.id)"/>
+			<img src="../../static/images/betania_logo.png" width="30" height="30" class="align-top" alt="">
+		</a>
+	</nav>		  
+	<div class="container">
+		<div class="col-md-12">
+			<section class="panel panel-info">
+					<header class="panel-heading">Identificação
+					</header>
+						<div class="panel-body">
+							<form class="form-inline" role="form">
+								<div class="form-group">
+									<label class="plr-bold" for="matricula" title="Matricula">Matrícula: </label>
+									<input type="number" min="0" id="matricula" class="form-control text-uppercase" />							  
+								</div>
+								<div class="form-group" style="margin-left : 8px;">
+									<label class="plr-bold" for="nome" title="Nome">
+											Nome:
+									</label>
+									<input type="text" id="nome" maxlength="30" class="form-control text-uppercase" />
+								</div>
+								<div class="form-group" style="margin-left : 8px;">
+										<label class="plr-bold" for="cargo" title="cargo">
+												Cargo:
+										</label>
+											<select id="cargo" class="form-control" onchange="metasController.getDiretoria(this.value)">
+												<option value=""></option>
+												<option value="admin">Administrador</option>
+												<option value="clean">Aux. de Serviços Gerais</option>
+												<option value="cons">Consultor</option>
+												<option value="eng">Engenheiro</option>
+												<option value="operador">Op. de Máquinas</option>
+												<option value="rh">Recrutadora</option>
+												<option value="others">Outros</option>
+											</select>
+								</div>
+								<div class="form-group" style="margin-left : 8px;">
+										<label class="plr-bold" for="diretoria" title="diretoria">
+												Diretoria:
+											</label>
+											<select id="diretoria" class="form-control" disabled="disabled">
+															<option value=""></option>
+															<option value="admin">Administração</option>
+															<option value="clean">Limpeza</option>
+															<option value="cons">Vendas</option>
+															<option value="eng">Engenharia</option>
+															<option value="operador">Engenharia</option>
+															<option value="rh">RH</option>
+															<option value="others">Outros</option>
+											</select>
+								</div>
+							</form>
 						</div>
-					<div class="col-md-6">
-							<label class="plr-bold" for="detalhePerformance" title="Detalhes">DETALHES: </label>
-							<input class="form-control input-sm" type="text" maxlength="64" id="detalhePerformance">
-					</div>
-			</div>
-			<br />
-			<div class="row">
-					<div class="col-md-12 align-middle">
-						<h4 class="h4-responsive customH4Adm text-left plr-h4">Metas Quantitativas</h4>
-					</div>
-			</div>
-			<div class="row">
-					<div id="jsGridMetaQuantitativa" class="col-md-10"></div>
-					<div class="col-md-2">
-							<label class="plr-result-circle" for="resultMetaQuantitativa" title="Resultado" id="labelResultQuanti"></label>
-					</div>
-			</div>
-			<br />
-			<div class="row">
-					<div class="col-md-12 align-middle">
-						<h4 class="h4-responsive customH4Adm text-left plr-h4">Metas de Projetos</h4>
-					</div>
-			</div>
-			<div class="row">
-					<div id="jsGridMetaProjeto" class="col-md-10"></div>
-					<div class="col-md-2">
-							<label class="plr-result-circle" for="resultMetaProjeto" title="Resultado" id="labelResultProjeto"></label>
-					</div>
-			</div>
-			<br />
-			<div class="row">
-				<div class="col-md-12 align-middle">
-					<h4 class="h4-responsive customH4Adm text-left plr-h4">Resultados</h4>
-				</div>
-			</div>
-			<div class="row">
-				<div id="jsGridResultados" class="col-md-6"></div>
-			</div>
-			<br />
-			<div class="row">
-					<div class="col-md-3">
-						<button type="button" class="btn btn-success" onclick="metasController.salvar()">Salvar</button>
-						<button type="button" class="btn btn-primary">Importar</button>
-					</div>
-			</div>
+				</section>
+		</div>
+		
+		<!-- Metas Gerais -->	
+		<div class="col-md-12">
+				<section class="panel panel-info">
+						<header class="panel-heading">Meta Geral</header>
+							<div class="panel-body">
+								<form class="form-inline" role="form">
+									<div class="col-md-12 align-middle">
+										<h5 class="h5-responsive plr-h5 text-left">EBITDA Anual</h5>
+										<hr />
+									</div>											
+									<div class="form-group">
+										<label class="plr-bold" for="valMetaGeral" title="Meta Geral">
+											Valor:
+										</label>
+										<div class="input-group">
+												<span class="input-group-addon" id="money-addon">R$</span>
+												<input type="number" 
+														id="valMetaGeral" 
+														class="form-control" 
+														placeholder="Valor Meta" 
+														aria-describedby="money-addon"/>		
+										</div>
+									</div>
+									<div class="form-group" style="margin-left : 8px;">
+											<label class="plr-bold" for="bonusEbitda" title="Bonus">
+												Bônus:
+											</label>
+											<div class="input-group">
+													<input type="number" id="bonusEbitda" 
+															class="form-control" placeholder="Valor do Bônus"
+															aria-describedby="percent-addon" 
+															onchange="metasController.calculaBonus(this.id)" />
+													<span class="input-group-addon" id="percent-addon">%</span>
+											</div>
+									</div>
+									<div class="form-group" style="margin-left : 8px;">
+											<label class="plr-bold" for="detalheBonus" title="Observações">
+													Observações:
+											</label>
+											<input type="text" id="detalheBonus" placeholder="Observações do EBITDA" maxlength="200" class="form-control text-uppercase" />
+									</div>
+								</form>
+								<br />
+								<form class="form-inline" role="form">
+										<div class="col-md-12 align-middle">
+												<h5 class="h5-responsive plr-h5 text-left">Metas Individuais</h5>
+												<hr />
+										</div>
+										<div class="form-group" style="margin-left : 8px;">
+												<label class="plr-bold" for="valMetaIndiv" title="Bonus">
+													Bônus:
+												</label>
+												<div class="input-group">
+														<input type="number" id="valMetaIndiv" 
+																class="form-control" placeholder="Valor do Bônus"
+																aria-describedby="percent-addon" 
+																onchange="metasController.calculaBonus(this.id)" />
+														<span class="input-group-addon" id="percent-addon">%</span>
+												</div>
+										</div>
+										<div class="form-group" style="margin-left : 8px;">
+												<label class="plr-bold" for="detalheMetaIndiv" title="Observações">
+														Observações:
+												</label>
+												<input type="text" id="detalheMetaIndiv" placeholder="Observações das Metas Indiviuais" maxlength="200" class="form-control text-uppercase" />
+										</div>
+									</form>
+									<br />
+									<form class="form-inline" role="form">
+											<div class="col-md-12 align-middle">
+												<h5 class="h5-responsive plr-h5 text-left">Margem de Contribuição</h5>
+												<hr />
+											</div>											
+											<div class="form-group">
+												<label class="plr-bold" for="valMargemDeriv" title="Margem de Contribuição">
+													Valor:
+												</label>
+												<div class="input-group">
+														<span class="input-group-addon" id="money-addon">R$</span>
+														<input type="number" 
+																id="valMargemDeriv" 
+																class="form-control" 
+																placeholder="Valor Margem" 
+																aria-describedby="money-addon"/>		
+												</div>
+											</div>
+											<div class="form-group" style="margin-left : 8px;">
+													<label class="plr-bold" for="bonusMargem" title="Bonus">
+														Bônus:
+													</label>
+													<div class="input-group">
+															<input type="number" id="bonusMargem" 
+																	class="form-control" placeholder="Valor do Bônus"
+																	aria-describedby="percent-addon" 
+																	onchange="metasController.calculaBonus(this.id)" />
+															<span class="input-group-addon" id="percent-addon">%</span>
+													</div>
+											</div>
+											<div class="form-group" style="margin-left : 8px;">
+													<label class="plr-bold" for="detalheMargem" title="Observações">
+															Observações:
+													</label>
+													<input type="text" id="detalheMargem" placeholder="Observações da Contribuição" maxlength="200" class="form-control text-uppercase" />
+											</div>
+										</form>
+										<br />
+										<form class="form-inline" role="form">
+												<div class="col-md-12 align-middle">
+													<h5 class="h5-responsive plr-h5 text-left">PERFORMANCE DO AVALIADO</h5>
+													<hr />
+												</div>											
+												<div class="form-group">
+													<label class="plr-bold" for="valPerformance" title="Valor da Performance">
+														Valor:
+													</label>
+													<div class="input-group">
+															<span class="input-group-addon" id="money-addon">R$</span>
+															<input type="number" 
+																	id="valPerformance" 
+																	class="form-control" 
+																	placeholder="Valor da Performance" 
+																	aria-describedby="money-addon"/>		
+													</div>
+												</div>
+												<div class="form-group" style="margin-left : 8px;">
+														<label class="plr-bold" for="bonusPerformance" title="Bonus">
+															Bônus:
+														</label>
+														<div class="input-group">
+																<input type="number" id="bonusPerformance" 
+																		class="form-control" placeholder="Valor do Bônus"
+																		aria-describedby="percent-addon" 
+																		onchange="metasController.calculaBonus(this.id)" />
+																<span class="input-group-addon" id="percent-addon">%</span>
+														</div>
+												</div>
+												<div class="form-group" style="margin-left : 8px;">
+														<label class="plr-bold" for="detalhePerformance" title="Observações">
+																Observações:
+														</label>
+														<input type="text" id="detalhePerformance" placeholder="Observações  da Performance" maxlength="200" class="form-control text-uppercase" />
+												</div>
+											</form>
+							</div>
+				</section>
+		</div>
+
+		<!-- Metas Quantitativas-->
+		<div class="col-md-12">
+				<section class="panel panel-info">
+						<header class="panel-heading">Metas Quantitativas</header>
+						<div class="panel-body">
+							<form class="form-inline" role="form">
+									<div id="jsGridMetaQuantitativa"></div>
+									<!--
+									<div class="col-md-2">
+											<label class="plr-result-circle" for="resultMetaQuantitativa" title="Resultado" id="labelResultQuanti"></label>
+									</div> -->
+													
+							</form>
+						</div>
+				</section>
+		</div>
+
+		<!-- Metas de Projetos -->
+		<div class="col-md-12">
+				<section class="panel panel-info">
+						<header class="panel-heading">Metas de Projetos</header>
+						<div class="panel-body">
+							<form class="form-inline" role="form">
+									<div id="jsGridMetaProjeto"></div>
+									<!--
+									<div class="col-md-2">
+										<label class="plr-result-circle" for="resultMetaProjeto" title="Resultado" id="labelResultProjeto"></label>
+									</div> -->				
+							</form>
+						</div>
+				</section>
+		</div>
+
+		<!-- Resultados -->
+		<div class="col-md-12">
+				<section class="panel panel-info">
+						<header class="panel-heading">Resultados</header>
+						<div class="panel-body">
+							<form class="form-inline" role="form">
+									<div id="jsGridResultados" class="col-md-6"></div>
+							</form>
+						</div>
+					</section>
+		</div>
+		<div class="row">
+			
+		</div>
+		<div class="col-md-12">
+			<button type="button" class="btn btn-success" onclick="metasController.salvar()">Salvar</button>
+			<button type="button" class="btn btn-primary">Exportar</button>
+			<button type="button" class="btn btn-danger">Cancelar</button>
+		</div>
 			
 
 	</div>
@@ -200,6 +273,7 @@
 	<script src="../../static/js/jquery-3.3.1.js"></script>
 	<script type="text/javascript" src="../../static/js/metas/MetasController.js"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
+	<script type="text/javascript" src="../../static/js/bootstrap.min.js"></script>
 	<script type="text/javascript">
 		var metasController = new MetasController();
 	</script>
