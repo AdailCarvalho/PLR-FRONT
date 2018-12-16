@@ -5,6 +5,8 @@ class MetasController {
 	}
 	
 	_initFields() {
+		this._matricula = $('#matricula');
+		this._nome = $('#nome');
 		this._cargo = $('#cargo');
 		this._diretoria = $('#diretoria');
 
@@ -12,17 +14,27 @@ class MetasController {
 		this._gridMetaProjeto = $("#jsGridMetaProjeto");
 		this._gridMetaResultado = $("#jsGridResultados");
 
-		this._labelResultQuanti = $('#labelResultQuanti');
-		this._labelResultProjeto = $('#labelResultProjeto');
-
-		this._sumPesoMetaQuantitativa = 0;
-		this._sumPesoMetaProjeto = 0;
-
 		this._sumBonusTotal = 0;
 		this._sumBonusIndividual = 0;
 		this._sumBonusEbitda = 0;
 		this._sumBonusContri = 0;
 		this._sumBonusPerformance = 0;
+
+		this._sumPesoMetaQuantitativa = 0;
+		this._sumPesoMetaProjeto = 0;
+
+		this._mockColaboradores = 
+			[{matricula : "0001", nome : "Adail Carvalho", cargo :"Desenvolvedor", diretoria : "TI" },
+			 {matricula : "0002", nome : "Bruna Santos", cargo :"Recrutadora", diretoria : "RH" },
+			 {matricula : "0003", nome : "Catia da Silva", cargo :"Recrutadora", diretoria : "RH" },
+			 {matricula : "0004", nome : "Diego Junior", cargo :"Auxiliar", diretoria : "Serviços Gerais" },
+			 {matricula : "0005", nome : "Felipe Suppi", cargo :"Gerente de Projetos", diretoria : "TI" },
+			 {matricula : "0006", nome : "Juliana Lemos", cargo :"Gerente Administrativo", diretoria : "Administração" },
+			 {matricula : "0007", nome : "Lima Matos", cargo :"CEO", diretoria : "Administração" },
+			 {matricula : "0008", nome : "Lord Byron", cargo :"Diretor de Finanças", diretoria : "Administração" },
+			 {matricula : "0009", nome : "Tereza Maria", cargo :"Auxiliar", diretoria : "Serviços Gerais" },
+			 {matricula : "0010", nome : "Vasco da Gama", cargo :"Vigilante", diretoria : "Serviços Gerais" },
+			 {matricula : "9999", nome : "N/I", cargo :"N/I", diretoria : "N/I" }];
 
 		this._idBonus = "";
 
@@ -31,8 +43,19 @@ class MetasController {
 		this._loadGridMetasResultado([]);
 	}
 
-	getDiretoria(cargo) {
-		this._diretoria.val(cargo).change();
+	getColaborador(matricula) {
+		console.log('Matricula => ' + matricula);
+		for (var i = 0; i < this._mockColaboradores.length; i ++) {
+			if (matricula == this._mockColaboradores[i].matricula) {
+				$('#nome').val(this._mockColaboradores[i].nome);
+				$('#cargo').val(this._mockColaboradores[i].cargo);
+				$('#diretoria').val(this._mockColaboradores[i].diretoria);
+				this._nome = $('#nome');
+				this._cargo = $('#cargo');
+				this._diretoria = $('#diretoria');
+				return;
+			}
+		}
 	}
 
 	calculaBonus(id) {
@@ -85,27 +108,29 @@ class MetasController {
 					return;
 				}
 
-				self._updateResultLabels();
+				args.item.Sequencia = self._gridMetaQuantitativa.jsGrid("option", "data").length + 1;
+
 				self._updateResultGrid();
 			},
 
 			deleteConfirm: "Deseja realmente excluir a meta selecionada?",
 			onItemDeleting : function (args) {
 				self._sumPesoMetaQuantitativa = self._sumPesoMetaQuantitativa - args.item.Peso;
-				self._updateResultLabels();
+				args.item.Sequencia = self._gridMetaQuantitativa.jsGrid("option", "data").length - 1
+		
 				self._updateResultGrid()
 				self._gridMetaQuantitativa.jsGrid("refresh");
 			},
 
 			fields: [
 				{ type: "control" },
-				{ name: "Sequencia", type: "number", width: 90, align : "center",
-				   validate : {
-						message : "Informe uma sequência válida (>=1)",
-						validator : function (value) {
-							return value > 0;
-						}
-					}
+				{ name: "Sequencia", title : "Sequência", type: "number", width: 90, align : "center", readOnly: true,
+					editTemplate : function (value, item) {
+						var $numberField = jsGrid.fields.number.prototype.editTemplate.apply(this, arguments);
+						$numberField.prop('disabled', 'true');
+					
+						return $numberField;
+					} 
 				},
 				{ name: "Descrição", type: "text", width: 200 , align : "center"},
 				{ name: "Peso", title : "Peso (%)", type: "number", width: 90, align : "center",
@@ -124,6 +149,7 @@ class MetasController {
 	}
 
 	_loadGridMetasProjeto(metasProjeto) {
+		console.log('Carrega grid Metas Projeto');
 		let self = this;
 		self._gridMetaProjeto.jsGrid({
 			width: "100%",
@@ -143,27 +169,29 @@ class MetasController {
 					args.cancel = true;
 					return;
 				}
-				self._updateResultLabels();
+
+				args.item.Sequencia =  self._gridMetaProjeto.jsGrid("option", "data").length + 1;				
 				self._updateResultGrid();
 			},
 
 			deleteConfirm: "Deseja realmente excluir a meta selecionada?",
 			onItemDeleting : function (args) {
 				self._sumPesoMetaProjeto = self._sumPesoMetaProjeto - args.item.Peso;
-				self._updateResultLabels();
+				args.item.Sequencia =  self._gridMetaProjeto.jsGrid("option", "data").length - 1;				
+				
 				self._updateResultGrid();
 				self._gridMetaProjeto.jsGrid("refresh");
 			},
 	 
 			fields: [
 				{ type: "control" },
-				{ name: "Sequencia", type: "number", width: 90, align : "center",
-				   validate : {
-						message : "Informe uma sequência válida (>=1)",
-						validator : function (value) {
-							return value > 0;
+				{ name: "Sequencia", title : "Sequência", type: "number", width: 90, align : "center", readOnly : true,
+						editTemplate : function (value, item) {
+							var $numberField = jsGrid.fields.number.prototype.editTemplate.apply(this, arguments);
+							$numberField.prop('disabled', 'true');
+							
+							return $numberField;
 						}
-					}
 				},
 				{ name: "Descrição", type: "text", width: 200 , align : "center"},
 				{ name: "Peso", title : "Peso (%)", type: "number", width: 90, align : "center",
@@ -222,11 +250,6 @@ class MetasController {
 		this._sumPesoMetaQuantitativa = this._sumPesoMetaQuantitativa + val;
 
 		return true;
-	}
-
-	_updateResultLabels() {
-		this._labelResultProjeto.text(this._sumPesoMetaProjeto + '%');
-		this._labelResultQuanti.text(this._sumPesoMetaQuantitativa + '%');
 	}
 
 	_updateResultGrid() {

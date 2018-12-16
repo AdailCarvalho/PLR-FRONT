@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">       
+    <link rel="stylesheet" href="../plr-front/static/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../plr-front/static/css/plr.css" />
+    <link type="text/css" rel="stylesheet" href="../plr-front/static/css/jsgrid.min.css" />
+    <link type="text/css" rel="stylesheet" href="../plr-front/static/css/jsgrid-theme.min.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" />
+</head>
+<body>
+     <!-- HEADER -->
+     <nav id="idHeader" class="navbar navbar-ligth plr-nav">                      
+            <a class="navbar-brand plr-logo" href="index.html"><img src="static/images/betania_logo.png" 
+                alt="PLR" class="d-inline-block align-top" width="40" height="40">
+                PLR
+            </a>
+      </nav>
+    <!-- FIM HEADER -->
+
+    <!-- SIDE MENU-->
+        <div class="row">
+            <div class="col-md-auto">
+                <div class="nav flex-column nav-pills plr-navside" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                    <a class="nav-link active" id="home-tab" data-toggle="pill" href="#home" 
+                       role="tab" aria-controls="home" aria-selected="true"><i class="fas fa-home" style="margin-right: 2px;"></i>Home</a>
+                    <a class="nav-link" id="colaborador-tab" data-toggle="pill" href="#colaborador" 
+                       role="tab" aria-controls="colaborador" aria-selected="false"><i class="fas fa-people-carry" style="margin-right: 2px;"></i>Colaboradores</a>
+                    <a class="nav-link" id="metas-tab" data-toggle="pill" href="#metas" 
+                       role="tab" aria-controls="metas" aria-selected="false"><i class="fas fa-chart-line" style="margin-right: 2px;"></i>Metas</a>
+                    <a class="nav-link" id="config-tab" data-toggle="pill" href="#config" 
+                       role="tab" aria-controls="config" aria-selected="false"><i class="fas fa-wrench" style="margin-right: 2px;"></i>Configurações</a>
+                    <a class="nav-link" id="sair-tab" data-toggle="pill" href="#sair" 
+                       role="tab" aria-controls="sair" aria-selected="false"><i class="fas fa-sign-out-alt" style="margin-right: 2px;"></i>Sair</a>                
+                </div>
+            </div>
+            <div class="col-md-10">
+                <div class="tab-content" id="v-pills-tabContent">
+                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab"></div>
+                    <div class="tab-pane fade" id="colaborador" role="tabpanel" aria-labelledby="colaborador-tab"></div>
+                    <div class="tab-pane fade" id="metas" role="tabpanel" aria-labelledby="metas-tab">
+                        <div w3-include-html="templates/metas/metas.html"></div>
+                    </div>
+                    <div class="tab-pane fade" id="config" role="tabpanel" aria-labelledby="config-tab"></div>
+                    <div class="tab-pane fade" id="sair" role="tabpanel" aria-labelledby="sair-tab"></div>
+                </div>
+            </div>
+        </div>
+
+    <!--FOOTEr-->
+    <div class="plr-footer">
+            <p>© Copyrigth : Focus Quality</p>
+    </div>  
+    
+    <!-- FECHA CONTAINER -->  
+    <script type="text/javascript" src="https://www.w3schools.com/lib/w3.js"></script>
+    <script type="text/javascript" src="../plr-front/static/js/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="../plr-front/static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../plr-front/static/js/bootstrap.js"></script>
+    <script type="text/javascript" src="../plr-front/static/js/include.js"></script>
+    <script type="text/javascript" src="../plr-front/static/js/metas/MetasController.js"></script>
+    <script type="text/javascript" src="../plr-front/static/js/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="../plr-front/static/js/jsgrid.min.js"></script>
+    <script type="text/javascript">
+        var metasController;
+        w3.includeHTML(initMetaController);
+
+        function initMetaController () {
+            metasController = new MetasController();
+        }
+    </script>
+
+</body>
+</html>
