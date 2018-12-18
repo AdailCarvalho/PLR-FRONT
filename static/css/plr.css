@@ -5,27 +5,9 @@
     min-height: 80px;
 }
 
-.plr-bold {
-    font-weight: bold;
-}
-
-.plr-logo {
-    color: white;
-    font-size: 30px;
-    font-weight: bold;
-}
-.plr-nav {
-    background-color:   #007ab3;
-}
-
-.plr-footer {
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  background-color: #007ab3;
-  color: white;
-  text-align: center;
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+    color: #fff;
+    background-color: #3cc300;
 }
 
 html {
@@ -40,9 +22,45 @@ body {
     clear: both;
 }
 
+.plr-bold {
+    font-weight: bold;
+}
+
+.plr-tab {
+    background-color : #dbffcc;
+}
+
+.plr-logo {
+    color: white;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.plr-logo-nome {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 40px;
+}
+
+.plr-logo-img {
+    border:2px solid white;
+    height: 70px;
+    width: 70px;
+    border-radius: 100%;
+}
+.plr-nav {
+    background-color:   #003cbe;
+}
+
+.plr-footer {
+  position : fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #003cbe;
+  color: white;
+  text-align: center;
+}
+
 .plr-navside {
-    font-family: Helvetica,Arial,sans-serif;
-    overflow: hidden;
-    height: 100%;
     border-top-right-radius: 5px;
 }

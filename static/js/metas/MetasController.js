@@ -44,7 +44,6 @@ class MetasController {
 	}
 
 	getColaborador(matricula) {
-		console.log('Matricula => ' + matricula);
 		for (var i = 0; i < this._mockColaboradores.length; i ++) {
 			if (matricula == this._mockColaboradores[i].matricula) {
 				$('#nome').val(this._mockColaboradores[i].nome);
@@ -123,14 +122,8 @@ class MetasController {
 			},
 
 			fields: [
-				{ type: "control" },
-				{ name: "Sequencia", title : "Sequência", type: "number", width: 90, align : "center", readOnly: true,
-					editTemplate : function (value, item) {
-						var $numberField = jsGrid.fields.number.prototype.editTemplate.apply(this, arguments);
-						$numberField.prop('disabled', 'true');
-					
-						return $numberField;
-					} 
+				{ name: "Sequencia", title : "Sequência", type: "number", width: 90, align : "center", 
+				  readOnly: true, disabled : "disabled"
 				},
 				{ name: "Descrição", type: "text", width: 200 , align : "center"},
 				{ name: "Peso", title : "Peso (%)", type: "number", width: 90, align : "center",
@@ -143,13 +136,23 @@ class MetasController {
 				},
 				{name: "Meta", type: "text", width: 200 , align : "center"},
 				{name: "Observações", type: "text", width: 200 , align : "center"},
-				{name: "Prazos", type : "text", align : "center", validate: "required"}
+				{name: "Prazos", type : "date", align : "center", validate: "required"},
+				{ type: "control", editButton: false,
+						itemTemplate: function(value, item) {
+							var $result = this.__proto__.itemTemplate.call(this, value, item);
+							var $info = $("<a style='color: inherit'><i class='fas fa-info-circle' " +
+						  		" title='Info' style= 'margin-left: 5px;'></i></a>")
+						
+							$result = $result.add($info);
+				
+							return $result;
+					}
+				 }
 			]
 		});
 	}
 
 	_loadGridMetasProjeto(metasProjeto) {
-		console.log('Carrega grid Metas Projeto');
 		let self = this;
 		self._gridMetaProjeto.jsGrid({
 			width: "100%",
@@ -184,14 +187,8 @@ class MetasController {
 			},
 	 
 			fields: [
-				{ type: "control" },
-				{ name: "Sequencia", title : "Sequência", type: "number", width: 90, align : "center", readOnly : true,
-						editTemplate : function (value, item) {
-							var $numberField = jsGrid.fields.number.prototype.editTemplate.apply(this, arguments);
-							$numberField.prop('disabled', 'true');
-							
-							return $numberField;
-						}
+				{ name: "Sequencia", title : "Sequência", type: "number", width: 90, align : "center", 
+				  disabled : "disabled", readOnly : true
 				},
 				{ name: "Descrição", type: "text", width: 200 , align : "center"},
 				{ name: "Peso", title : "Peso (%)", type: "number", width: 90, align : "center",
@@ -204,7 +201,18 @@ class MetasController {
 				},
 				{name: "Meta", type: "text", width: 200 , align : "center"},
 				{name: "Observações", type: "text", width: 200 , align : "center"},
-				{name: "Prazos", type : "text", align : "center", validate: "required"}
+				{name: "Prazos", type : "date", align : "center", validate: "required"},
+				{ type: "control" ,  editButton: false,
+				  	itemTemplate: function(value, item) {
+						var $result = this.__proto__.itemTemplate.call(this, value, item);
+						var $info = $("<a style='color: inherit'><i class='fas fa-info-circle' " +
+							  " title='Info' style= 'margin-left: 5px;'></i></a>")
+							
+						$result = $result.add($info);
+					
+						return $result;
+					}
+				}
 			]
 		});
 	}

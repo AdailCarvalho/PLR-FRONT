@@ -78,7 +78,7 @@
 										</label>
 										<div class="input-group">
 										   <input type="number" id="bonusEbitda" 
-											  class="form-control" placeholder="0"
+											  class="form-control" placeholder="0" min="0" max="100"
 											  aria-describedby="percent-addon" 
 											  onchange="metasController.calculaBonus(this.id)" />
 											<div class="input-group-prepend">
@@ -87,13 +87,13 @@
 										</div>
 									</div>
 							</div>
-							<div class="col-md-8">
-								<label class="plr-bold" for="obsBonusEbitda" title="Observações">
-									Observações:
-								</label>
+							<div class="col-md-10">
 								<div class="form-group">
+									<label class="plr-bold" for="obsBonusEbitda" title="Observações">
+										Observações:
+									</label>
 										<textarea id="obsBonusEbitda" class="form-control" 
-										maxlength="1024" rows="3" placeholder="Observações"></textarea>
+												  maxlength="1024" rows="3" placeholder="Observações"></textarea>
 								</div>
 							</div>				
 						</div>
@@ -109,7 +109,7 @@
 									</label>
 									<div class="input-group">
 										<input type="number" id="valMetaIndiv" class="form-control" 
-											   placeholder="0" aria-describedby="percent-addon" 
+											   placeholder="0" min="0" max="100" aria-describedby="percent-addon" 
 											   onchange="metasController.calculaBonus(this.id)" />
 										<div class="input-group-prepend">
 												<span class="input-group-text" id="percent-addon">%</span>
@@ -128,10 +128,11 @@
 							</div>
 						</div>
 
-						<!--Margem de Contribuição -->
-						<h6 class="card-subtitle text-muted">Margem de Contribuição</h6>
+						<!--Participação da Área -->
+						<h6 class="card-subtitle text-muted">Participação e Desempenho da Área</h6>
 						<hr>
 						<div class="form-row mb-2">
+							<!-- Aguardando confirmação para ser descartado.
 							<div class="col-md-2">
 								<div class="form-group">
 									<label class="plr-bold" for="valMargemDeriv" title="Margem de Contribuição">
@@ -150,6 +151,8 @@
 									</div>
 								</div>
 							</div>
+							-->
+							
 							<div class="col-md-2">
 								<div class="form-group">
 									<label class="plr-bold" for="bonusMargem" title="Bonus">
@@ -157,16 +160,16 @@
 									</label>
 									<div class="input-group">
 										<input type="number" id="bonusMargem" 
-															class="form-control" placeholder="0"
-															aria-describedby="percent-addon" 
-															onchange="metasController.calculaBonus(this.id)" />
+															 class="form-control" min="0" max="100" placeholder="0"
+															 aria-describedby="percent-addon" 
+															 onchange="metasController.calculaBonus(this.id)" />
 										<div class="input-group-prepend">
 											<span class="input-group-text" id="percent-addon">%</span>
 										</div>
 									</div>
 								</div>
 							</div>
-							<div class="col-md-8">
+							<div class="col-md-10">
 								<div class="form-group">
 										<label class="plr-bold" for="obsMetaContri" title="Observações">
 												Observações:
@@ -181,6 +184,7 @@
 						<h6 class="card-subtitle text-muted">Performance do Avaliado</h6>
 						<hr>
 						<div class="form-row mb-2">
+							<!-- Aguardando confirmação para ser descartado.
 							<div class="col-md-2">
 								<div class="form-group">
 									<label class="plr-bold" for="valPerformance" title="Valor da Performance">
@@ -198,6 +202,7 @@
 										</div>
 								</div>
 							</div>
+						    -->
 							<div class="col-md-2">
 								<div class="form-group">
 										<label class="plr-bold" for="bonusPerformance" title="Bonus">
@@ -205,7 +210,7 @@
 										</label>
 										<div class="input-group">
 											<input type="number" id="bonusPerformance" 
-													class="form-control" placeholder="0"
+													class="form-control" placeholder="0" min="0" max="100"
 													aria-describedby="percent-addon" 
 													onchange="metasController.calculaBonus(this.id)" />
 													<div class="input-group-prepend">
@@ -214,7 +219,7 @@
 										</div>
 								</div>
 							</div>
-							<div class="col-md-8">
+							<div class="col-md-10">
 								<div class="form-group">
 										<label class="plr-bold" for="obsPerformance" title="Observações">
 												Observações:
@@ -265,7 +270,7 @@
 
 		<!-- Resultados -->
 		<div class="row">
-			<div class="col-md-6  mb-12">
+			<div class="col-md-12  mb-2">
 				<div class="card border-primary bg-light">
 						<div class="card-header border-primary text-muted">Resultados</div>
 						<!-- Inicio Body de Resultados-->
@@ -274,20 +279,14 @@
 						<!-- Fim Card Body-->
 						</div>
 				</div>
-		<!-- Fim Metas Resultados-->
+			</div>		
+		</div>
+		<div class="row">
+			<div class="col-md-12 mb-2">
+					<button type="button" class="btn btn-success" onclick="metasController.salvar()">Salvar</button>
+					<button type="button" class="btn btn-primary">Exportar</button>
+					<button type="button" class="btn btn-danger">Cancelar</button>
 			</div>
-			<div class="col-md-6 mb-12">
-				<div class="card border-primary bg-light">
-					<div class="card-header border-primary text-muted">Ações</div>
-					<!-- Inicio Body de Ações-->
-					<div class="card-body">
-						<button type="button" class="btn btn-success" onclick="metasController.salvar()">Salvar</button>
-						<button type="button" class="btn btn-primary">Exportar</button>
-						<button type="button" class="btn btn-danger">Cancelar</button>			
-					<!-- Fim Card Body-->
-					</div>
-				</div>
-			</div>
-		</div> <!-- Fim Row -->		
+		</div>
 </body>
 </html>
