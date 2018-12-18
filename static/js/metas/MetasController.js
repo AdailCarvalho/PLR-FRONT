@@ -93,8 +93,7 @@ class MetasController {
 			height: "auto",
 	 
 			inserting: true,
-			editing: false,
-			editButton : false,
+			editing: true,
 			sorting: true,
 			paging: true,
 			pageSize: 15,
@@ -122,8 +121,20 @@ class MetasController {
 			},
 
 			fields: [
-				{ name: "Sequencia", title : "Sequência", type: "number", width: 90, align : "center", 
-				  readOnly: true, disabled : "disabled"
+				{ name: "Sequencia", title : "Sequência", type: "number", width: 90, align : "center",
+						insertTemplate : function(value, item) {
+							var $numberSequencia = jsGrid.fields.number.prototype.insertTemplate.apply(this, arguments);
+							$numberSequencia.prop('disabled', 'true');
+
+							return $numberSequencia;
+						},
+						editTemplate: function(value, editItem) {
+							var $numberSequencia = jsGrid.fields.number.prototype.editTemplate.apply(this, arguments);
+							$numberSequencia.prop('disabled', 'true');
+
+							return $numberSequencia;
+						}
+
 				},
 				{ name: "Descrição", type: "text", width: 200 , align : "center"},
 				{ name: "Peso", title : "Peso (%)", type: "number", width: 90, align : "center",
@@ -134,17 +145,18 @@ class MetasController {
 						}
 					}
 				},
-				{name: "Meta", type: "text", width: 200 , align : "center"},
-				{name: "Observações", type: "text", width: 200 , align : "center"},
+				{name: "Meta", type: "text", width: 160 , align : "center"},
+				{name: "Observações", type: "text", width: 160 , align : "center"},
 				{name: "Prazos", type : "date", align : "center", validate: "required"},
-				{ type: "control", editButton: false,
+				{type: "control", width : 80, align : "center",
 						itemTemplate: function(value, item) {
 							var $result = this.__proto__.itemTemplate.call(this, value, item);
+							
 							var $info = $("<a style='color: inherit'><i class='fas fa-info-circle' " +
 						  		" title='Info' style= 'margin-left: 5px;'></i></a>")
-						
+
 							$result = $result.add($info);
-				
+
 							return $result;
 					}
 				 }
@@ -159,8 +171,7 @@ class MetasController {
 			height: "auto",
 	 
 			inserting: true,
-			editing: false,
-			editButton : false,
+			editing: true,
 			sorting: true,
 			paging: true,
 			pageSize: 15,
@@ -188,7 +199,19 @@ class MetasController {
 	 
 			fields: [
 				{ name: "Sequencia", title : "Sequência", type: "number", width: 90, align : "center", 
-				  disabled : "disabled", readOnly : true
+				  		insertTemplate : function(value, item) {
+							var $numberSequencia = jsGrid.fields.number.prototype.insertTemplate.apply(this, arguments);
+							$numberSequencia.prop('disabled', 'true');
+
+							return $numberSequencia;
+						},
+						editTemplate: function(value, editItem) {
+							var $numberSequencia = jsGrid.fields.number.prototype.insertTemplate.apply(this, arguments);
+							$numberSequencia.prop('disabled', 'true');
+
+							return $numberSequencia;
+
+						}
 				},
 				{ name: "Descrição", type: "text", width: 200 , align : "center"},
 				{ name: "Peso", title : "Peso (%)", type: "number", width: 90, align : "center",
@@ -199,10 +222,10 @@ class MetasController {
 						}
 					}
 				},
-				{name: "Meta", type: "text", width: 200 , align : "center"},
-				{name: "Observações", type: "text", width: 200 , align : "center"},
+				{name: "Meta", type: "text", width: 160 , align : "center"},
+				{name: "Observações", type: "text", width: 160 , align : "center"},
 				{name: "Prazos", type : "date", align : "center", validate: "required"},
-				{ type: "control" ,  editButton: false,
+				{type: "control" , width : 80, align  : "center",
 				  	itemTemplate: function(value, item) {
 						var $result = this.__proto__.itemTemplate.call(this, value, item);
 						var $info = $("<a style='color: inherit'><i class='fas fa-info-circle' " +
