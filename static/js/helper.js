@@ -2,9 +2,14 @@
  * Script com funções globais / auxiliares.
  *  
  */
+
+//JS Grid Date Type Field 
 var MyDateField = function(config) {
     jsGrid.Field.call(this, config);
 };
+
+var formatDateOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
+var dateLocale = 'pt-BR';
  
 MyDateField.prototype = new jsGrid.Field({
  
@@ -18,7 +23,7 @@ MyDateField.prototype = new jsGrid.Field({
     },
  
     itemTemplate: function(value) {
-        return new Date(value).toDateString();
+        return new Date(value).toLocaleDateString(dateLocale, formatDateOptions);
     },
  
     insertTemplate: function(value) {

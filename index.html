@@ -12,39 +12,47 @@
 </head>
 <body>
      <!-- HEADER -->
-     <nav id="idHeader" class="navbar navbar-ligth plr-nav">                      
+     <nav id="idHeader" class="navbar navbar-ligth plr-nav">
+         <div class="d-inline-block align-top plr-logo-img">                      
             <a class="navbar-brand plr-logo" href="index.html"><img src="static/images/logo.png" 
-                alt="PLR" class="d-inline-block align-top plr-logo-img">
+                alt="PLR">
             </a>
+            <img src="static/images/logo-name.png" srcset="static/images/logo-name.svg" alt="Nome Logo">
+        </div>
       </nav>
     <!-- FIM HEADER -->
 
     <!-- SIDE MENU-->
-        <div class="row">
-            <div class="col-md-2 mt-2">
-                <div class="nav flex-column nav-pills plr-navside" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                    <a class="nav-link active" id="home-tab" data-toggle="pill" href="#home" 
-                       role="tab" aria-controls="home" aria-selected="true"><i class="fas fa-home" style="margin-right: 2px;"></i>PLR</a>
-                    <a class="nav-link" id="colaborador-tab" data-toggle="pill" href="#colaborador" 
-                       role="tab" aria-controls="colaborador" aria-selected="false"><i class="fas fa-people-carry" style="margin-right: 2px;"></i>Colaboradores</a>
-                    <a class="nav-link" id="metas-tab" data-toggle="pill" href="#metas" 
-                       role="tab" aria-controls="metas" aria-selected="false"><i class="fas fa-chart-line" style="margin-right: 2px;"></i>Metas</a>
-                    <a class="nav-link" id="config-tab" data-toggle="pill" href="#config" 
-                       role="tab" aria-controls="config" aria-selected="false"><i class="fas fa-wrench" style="margin-right: 2px;"></i>Configurações</a>
-                    <a class="nav-link" id="sair-tab" data-toggle="pill" href="#sair" 
-                       role="tab" aria-controls="sair" aria-selected="false"><i class="fas fa-sign-out-alt" style="margin-right: 2px;"></i>Sair</a>                
-                </div>
-            </div>
-            <div class="col-md-10 mt-2">
+        <div class="nav nav-pills plr-navside" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+            <a class="nav-link active" id="home-tab" data-toggle="pill" href="#home" 
+               role="tab" aria-controls="home" aria-selected="true">
+               <i class="fas fa-home" style="margin-right: 2px;"></i><span class="plr-menu-item">PLR</span></a>
+            <a class="nav-link" id="colaborador-tab" data-toggle="pill" href="#colaborador" 
+               role="tab" aria-controls="colaborador" aria-selected="false">
+               <i class="fas fa-people-carry" style="margin-right: 2px;"></i><span class="plr-menu-item">Colaboradores</span></a>
+            <a class="nav-link" id="metas-tab" data-toggle="pill" href="#metas" 
+               role="tab" aria-controls="metas" aria-selected="false">
+               <i class="fas fa-chart-line" style="margin-right: 2px;"></i><span class="plr-menu-item">Metas</span></a>
+            <a class="nav-link" id="config-tab" data-toggle="pill" href="#config" 
+               role="tab" aria-controls="config" aria-selected="false">
+               <i class="fas fa-wrench" style="margin-right: 2px;"></i><span class="plr-menu-item">Configurações</span></a>
+            <a class="nav-link" id="sair-tab" data-toggle="pill" href="#sair" 
+               role="tab" aria-controls="sair" aria-selected="false">
+               <i class="fas fa-sign-out-alt" style="margin-right: 2px;"></i><span class="plr-menu-item">Sair</span></a>                
+        </div>
+        <div class="container-fluid">
+            <div class="col-md-12 mt-2">
                 <div class="tab-content" id="v-pills-tabContent">
                     <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                             <a class="navbar-brand" href="#"><img src="static/images/background.png" 
                                 alt="HOME" width="100%" height="100%">
                             </a>
                     </div>
-                    <div class="tab-pane fade" id="colaborador" role="tabpanel" aria-labelledby="colaborador-tab"></div>
+                    <div class="tab-pane fade" id="colaborador" role="tabpanel" aria-labelledby="colaborador-tab">
+                            <div w3-include-html="templates/colaborador/colaboradorCadastro.html"></div>
+                    </div>
                     <div class="tab-pane fade" id="metas" role="tabpanel" aria-labelledby="metas-tab">
-                        <div w3-include-html="templates/metas/metas.html"></div>
+                        <div w3-include-html="templates/metas/metasCadastro.html"></div>
                     </div>
                     <div class="tab-pane fade" id="config" role="tabpanel" aria-labelledby="config-tab"></div>
                     <div class="tab-pane fade" id="sair" role="tabpanel" aria-labelledby="sair-tab"></div>
@@ -64,20 +72,25 @@
     <script type="text/javascript" src="../plr-front/static/js/jquery-3.3.1.js"></script>
     <script type="text/javascript" src="../plr-front/static/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="../plr-front/static/js/bootstrap.js"></script>
-    <script type="text/javascript" src="../plr-front/static/js/include.js"></script>
-    <script type="text/javascript" src="../plr-front/static/js/metas/MetasController.js"></script>
     <script type="text/javascript" src="../plr-front/static/js/jquery-3.3.1.js"></script>
     <script type="text/javascript" src="../plr-front/static/js/jsgrid.min.js"></script>
-    <script type="text/javascript" src="../plr-front/static/js/helper.js"></script>
     <script type="text/javascript" src="../plr-front/static/js/jquery-ui.js"></script>
+
+    <script type="text/javascript" src="../plr-front/static/js/colaborador/ColaboradorController.js"></script>
+    <script type="text/javascript" src="../plr-front/static/js/metas/MetasController.js"></script>
+    <script type="text/javascript" src="../plr-front/static/js/helper.js"></script>
   
     <script type="text/javascript">
         var metasController;
-        w3.includeHTML(initMetaController);
+        var colaboradorController;
 
-        function initMetaController () {
+        w3.includeHTML(initJSContext);
+
+        function initJSContext () {
             metasController = new MetasController();
+            colaboradorController = new ColaboradorController();
         }
+
     </script>
 </body>
 </html>

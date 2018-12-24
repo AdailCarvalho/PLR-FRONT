@@ -121,7 +121,7 @@ class MetasController {
 			},
 
 			fields: [
-				{ name: "Sequencia", title : "Sequência", type: "number", width: 90, align : "center",
+				{ name: "Sequencia", title : "Sequência", type: "number", width: 70, align : "center",
 						insertTemplate : function(value, item) {
 							var $numberSequencia = jsGrid.fields.number.prototype.insertTemplate.apply(this, arguments);
 							$numberSequencia.prop('disabled', 'true');
@@ -137,7 +137,7 @@ class MetasController {
 
 				},
 				{ name: "Descrição", type: "text", width: 200 , align : "center"},
-				{ name: "Peso", title : "Peso (%)", type: "number", width: 90, align : "center",
+				{ name: "Peso", title : "Peso (%)", type: "number", width: 70, align : "center",
 					validate : {
 						message : "Informe um peso válido (>=0)",
 						validator : function (value) {
@@ -198,7 +198,7 @@ class MetasController {
 			},
 	 
 			fields: [
-				{ name: "Sequencia", title : "Sequência", type: "number", width: 90, align : "center", 
+				{ name: "Sequencia", title : "Sequência", type: "number", width: 70, align : "center", 
 				  		insertTemplate : function(value, item) {
 							var $numberSequencia = jsGrid.fields.number.prototype.insertTemplate.apply(this, arguments);
 							$numberSequencia.prop('disabled', 'true');
@@ -214,7 +214,7 @@ class MetasController {
 						}
 				},
 				{ name: "Descrição", type: "text", width: 200 , align : "center"},
-				{ name: "Peso", title : "Peso (%)", type: "number", width: 90, align : "center",
+				{ name: "Peso", title : "Peso (%)", type: "number", width: 70, align : "center",
 					validate : {
 						message : "Informe um peso válido (>=0)",
 						validator : function (value) {
