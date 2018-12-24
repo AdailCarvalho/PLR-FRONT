@@ -119,7 +119,14 @@ class MetasController {
 				self._updateResultGrid()
 				self._gridMetaQuantitativa.jsGrid("refresh");
 			},
-
+			onItemDeleted : function (args) {
+				let i = 1;
+				let items = self._gridMetaQuantitativa.jsGrid("option","data");
+				for (i = 0; i < items.length; i ++) {
+					items[i].Sequencia = i + 1;
+				}
+				self._loadGridMetasQuantitativas(items);
+			},
 			fields: [
 				{ name: "Sequencia", title : "Sequência", type: "number", width: 70, align : "center",
 						insertTemplate : function(value, item) {
@@ -196,7 +203,14 @@ class MetasController {
 				self._updateResultGrid();
 				self._gridMetaProjeto.jsGrid("refresh");
 			},
-	 
+			onItemDeleted : function (args) {
+				var i = 1;
+				let items = self._gridMetaProjeto.jsGrid("option","data");
+				for (var i = 0; i < items.length; i ++) {
+					items[i].Sequencia = i + 1;
+				}
+				self._loadGridMetasProjeto(items);
+			},
 			fields: [
 				{ name: "Sequencia", title : "Sequência", type: "number", width: 70, align : "center", 
 				  		insertTemplate : function(value, item) {

@@ -8,17 +8,18 @@
     <link type="text/css" rel="stylesheet" href="../plr-front/static/css/jsgrid.min.css" />
     <link type="text/css" rel="stylesheet" href="../plr-front/static/css/jsgrid-theme.min.css" />
     <link rel="stylesheet" href="../plr-front/static/css/jquery-ui.css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" />
+    <link rel="stylesheet" href="../plr-front/static/css/all.css" />
 </head>
 <body>
      <!-- HEADER -->
-     <nav id="idHeader" class="navbar navbar-ligth plr-nav">
-         <div class="d-inline-block align-top plr-logo-img">                      
-            <a class="navbar-brand plr-logo" href="index.html"><img src="static/images/logo.png" 
-                alt="PLR">
+     <nav id="idHeader" class="navbar navbar-ligth plr-nav d-inline-block align-top">               
+            <a class="navbar-brand plr-logo" href="index.html">
+                <img class="align-top plr-logo-img" src="static/images/logo.png" alt="PLR">
             </a>
-            <img src="static/images/logo-name.png" srcset="static/images/logo-name.svg" alt="Nome Logo">
-        </div>
+            <a class="navbar-brand plr-logo" href="index.html">
+                    <img src="static/images/logo-name.png" 
+                    srcset="static/images/logo-name.svg" alt="Nome Logo">
+            </a>
       </nav>
     <!-- FIM HEADER -->
 
@@ -26,27 +27,25 @@
         <div class="nav nav-pills plr-navside" id="v-pills-tab" role="tablist" aria-orientation="vertical">
             <a class="nav-link active" id="home-tab" data-toggle="pill" href="#home" 
                role="tab" aria-controls="home" aria-selected="true">
-               <i class="fas fa-home" style="margin-right: 2px;"></i><span class="plr-menu-item">PLR</span></a>
+               <i class="fas fa-home" style="margin-right: 2px; color: #003cbe;"></i><span class="plr-menu-item">PLR</span></a>
             <a class="nav-link" id="colaborador-tab" data-toggle="pill" href="#colaborador" 
                role="tab" aria-controls="colaborador" aria-selected="false">
-               <i class="fas fa-people-carry" style="margin-right: 2px;"></i><span class="plr-menu-item">Colaboradores</span></a>
+               <i class="fas fa-people-carry" style="margin-right: 2px; color: #003cbe;"></i><span class="plr-menu-item">Colaboradores</span></a>
             <a class="nav-link" id="metas-tab" data-toggle="pill" href="#metas" 
                role="tab" aria-controls="metas" aria-selected="false">
-               <i class="fas fa-chart-line" style="margin-right: 2px;"></i><span class="plr-menu-item">Metas</span></a>
+               <i class="fas fa-chart-line" style="margin-right: 2px; color: #003cbe;"></i><span class="plr-menu-item">Metas</span></a>
             <a class="nav-link" id="config-tab" data-toggle="pill" href="#config" 
                role="tab" aria-controls="config" aria-selected="false">
-               <i class="fas fa-wrench" style="margin-right: 2px;"></i><span class="plr-menu-item">Configurações</span></a>
+               <i class="fas fa-wrench" style="margin-right: 2px; color: #003cbe;"></i><span class="plr-menu-item">Configurações</span></a>
             <a class="nav-link" id="sair-tab" data-toggle="pill" href="#sair" 
                role="tab" aria-controls="sair" aria-selected="false">
-               <i class="fas fa-sign-out-alt" style="margin-right: 2px;"></i><span class="plr-menu-item">Sair</span></a>                
+               <i class="fas fa-sign-out-alt" style="margin-right: 2px; color: #003cbe;"></i><span class="plr-menu-item">Sair</span></a>                
         </div>
         <div class="container-fluid">
             <div class="col-md-12 mt-2">
                 <div class="tab-content" id="v-pills-tabContent">
                     <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                            <a class="navbar-brand" href="#"><img src="static/images/background.png" 
-                                alt="HOME" width="100%" height="100%">
-                            </a>
+                            
                     </div>
                     <div class="tab-pane fade" id="colaborador" role="tabpanel" aria-labelledby="colaborador-tab">
                             <div w3-include-html="templates/colaborador/colaboradorCadastro.html"></div>
@@ -68,7 +67,7 @@
     </div>
     
     <!-- FECHA CONTAINER -->  
-    <script type="text/javascript" src="https://www.w3schools.com/lib/w3.js"></script>
+    <script type="text/javascript" src="../plr-front/static/js/w3.js"></script>
     <script type="text/javascript" src="../plr-front/static/js/jquery-3.3.1.js"></script>
     <script type="text/javascript" src="../plr-front/static/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="../plr-front/static/js/bootstrap.js"></script>

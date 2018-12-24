@@ -17,22 +17,8 @@ class ColaboradorController {
 		this._sumBonusEbitda = 0;
 		this._sumBonusContri = 0;
 		this._sumBonusPerformance = 0;
-    }
-
-    getColaborador(matricula) {
-		for (var i = 0; i < this._mockColaboradores.length; i ++) {
-			if (matricula == this._mockColaboradores[i].matricula) {
-				$('#nome').val(this._mockColaboradores[i].nome);
-				$('#cargo').val(this._mockColaboradores[i].cargo);
-				$('#diretoria').val(this._mockColaboradores[i].diretoria);
-				this._nome = $('#nome');
-				this._cargo = $('#cargo');
-				this._diretoria = $('#diretoria');
-				return;
-			}
-		}
 	}
-
+	
 	calculaBonus(id) {
 		let val = $('#' + id).val();
 		let numVal = Number(val);
@@ -60,6 +46,19 @@ class ColaboradorController {
 		} else {
 			this._updateResultGrid();
 		}
+	}
 
+    getColaborador(matricula) {
+		for (var i = 0; i < this._mockColaboradores.length; i ++) {
+			if (matricula == this._mockColaboradores[i].matricula) {
+				$('#nome').val(this._mockColaboradores[i].nome);
+				$('#cargo').val(this._mockColaboradores[i].cargo);
+				$('#diretoria').val(this._mockColaboradores[i].diretoria);
+				this._nome = $('#nome');
+				this._cargo = $('#cargo');
+				this._diretoria = $('#diretoria');
+				return;
+			}
+		}
 	}
 }

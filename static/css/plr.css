@@ -6,7 +6,7 @@
 }
 
 .nav-pills .nav-link.active, .nav-pills .show>.nav-link {
-    color: #fff;
+    color: white !important;
     background-color: #3cc300;
 }
 
@@ -16,7 +16,7 @@ html, body {
 }
 
 body {
-    background-color: #dbffcc;
+    background-color: #e6e6e6;
     margin-bottom: 50px;
 }
 
@@ -48,11 +48,11 @@ body {
 
 .plr-menu-item {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
-    color: white;
 }
 
 .plr-nav {
     background-color:   #003cbe;
+    width: 100%; 
 }
 
 .plr-footer {
@@ -63,8 +63,10 @@ body {
   background-color: #003cbe;
   color: white;
   text-align: center;
+  box-shadow:  2px 2px 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .plr-navside {
-    background-color:  #4d4d4d;
+    background-color:  whitesmoke;
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
 }
