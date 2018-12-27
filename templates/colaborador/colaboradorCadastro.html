@@ -23,19 +23,33 @@
 									<label class="plr-bold" for="nome" title="Nome">
 											Nome:
 									</label>
-									<input type="text" id="nome" maxlength="32" placeholder="Nome" class="form-control" readonly />
+									<input type="text" id="nome" maxlength="32" placeholder="Nome" class="form-control" />
 								</div>
 								<div class="form-group col-md-4">
 										<label class="plr-bold" for="cargo" title="cargo">
 												Cargo:
 										</label>
-										<input type="text" id="cargo" maxlength="32" placeholder="Cargo" class="form-control" readonly />
+										<select id="cargo" placeholder="Cargo" class="form-control">
+											<option value=""></option>
+											<option value="Auxiliar">Auxiliar</option>
+											<option value="Consultor">Consultor</option>
+											<option value="Diretor">Diretor</option>
+											<option value="Gerente">Gerente</option>
+											<option value="Outros">Outros</option>
+										</select>
 								</div>
 								<div class="form-group col-md-4">
 										<label class="plr-bold" for="diretoria" title="diretoria">
 												Diretoria:
 										</label>
-										<input type="text" id="diretoria" maxlength="64" placeholder="Diretoria" class="form-control" readonly>
+										<select id="diretoria" placeholder="Diretoria" class="form-control">
+												<option value=""></option>
+												<option value="A&B">A&B</option>
+												<option value="Diretoria">Diretoria</option>
+												<option value="RH">RH</option>
+												<option value="Serviços Gerais">Serviços Gerais</option>
+												<option value="Outros">Outros</option>
+										</select>
 								</div>
 							<!-- Fim dados Gerais do Colaborador -->
 							</div>
@@ -47,7 +61,7 @@
 						</div>
 						<hr>
 						<div class="form-row">
-							<h6 class="card-subtitle text-muted mt-2">EBITDA Anual</h6>
+							<h6 class="card-subtitle text-muted">EBITDA Anual</h6>
 							<hr>
 						</div>
 
@@ -89,7 +103,7 @@
 							
 						<!-- Metas Individuais -->
 						<div class="form-row">
-							<h6 class="card-subtitle text-muted mt-2 mb-2">Metas Individuais</h6>
+							<h6 class="card-subtitle text-muted">Metas Individuais</h6>
 							<hr>
 						</div>
 
@@ -116,7 +130,7 @@
 						
 						<!--Participação e Desempenho-->
 						<div class="form-row">
-							<h6 class="card-subtitle text-muted mt-2 mb-2">Participação e Desempenho da Área</h6>
+							<h6 class="card-subtitle text-muted">Participação e Desempenho da Área</h6>
 							<hr>
 						</div>
 						<form>
@@ -133,15 +147,17 @@
 									</div>
 								</div>
 								<div class="col-10">
-									<textarea id="obsParticipacao" class="form-control" 
-										maxlength="1024" rows="1" placeholder="Observações"></textarea>
+									<div class="form-group">
+											<textarea id="obsParticipacao" class="form-control" 
+												maxlength="1024" rows="1" placeholder="Observações"></textarea>	
+									</div>
 								</div>
 							</div>
 						</form>
 
 						<!-- Performance do Avaliado -->
 						<div class="form-row">
-							<h6 class="card-subtitle text-muted mt-2 mb-2">Performance do Avaliado</h6>
+							<h6 class="card-subtitle text-muted">Performance do Avaliado</h6>
 							<hr>
 						</div>	
 						<form>
