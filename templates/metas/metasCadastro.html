@@ -17,25 +17,25 @@
 							<div class="form-row">
 								<div class="form-group col-md-1">
 									<label class="plr-bold" for="matricula" title="Matricula">Matrícula: </label>
-									<input type="text" id="matricula" maxlength="8" class="form-control" placeholder="Mat." onchange="metasController.getColaborador(this.value)" />							  
+									<input type="text" id="matriculaMeta" maxlength="8" class="form-control" placeholder="Mat." onchange="metasController.getColaborador(this.value)" />							  
 								</div>
-								<div class="form-group col-md-3">
+								<div class="form-group col-md-4">
 									<label class="plr-bold" for="nome" title="Nome">
 											Nome:
 									</label>
-									<input type="text" id="nome" maxlength="32" placeholder="Nome" class="form-control" readonly />
+									<input type="text" id="nomeMeta" maxlength="32" placeholder="Nome" class="form-control" readonly />
 								</div>
 								<div class="form-group col-md-4">
 										<label class="plr-bold" for="cargo" title="cargo">
 												Cargo:
 										</label>
-										<input type="text" id="cargo" maxlength="32" placeholder="Cargo" class="form-control" readonly />
+										<input type="text" id="cargoMeta" maxlength="32" placeholder="Cargo" class="form-control" readonly />
 								</div>
-								<div class="form-group col-md-4">
+								<div class="form-group col-md-3">
 										<label class="plr-bold" for="diretoria" title="diretoria">
 												Diretoria:
 										</label>
-										<input type="text" id="diretoria" maxlength="64" placeholder="Diretoria" class="form-control" readonly>
+										<input type="text" id="diretoriaMeta" maxlength="64" placeholder="Diretoria" class="form-control" readonly>
 								</div>
 							<!-- Fim dados Gerais do Colaborador -->
 							</div>
@@ -60,20 +60,20 @@
 												<span class="input-group-text" id="money-addon">R$</span>
 										</div>
 										<input type="number" 
-												id="valMetaGeral"
+												id="valMetaGeralMeta"
 												min="0.00" 
+												readonly
 												class="form-control" 
 												placeholder="Valor" 
-												readonly
 												aria-describedby="money-addon"/>	
 									</div>
 								</div>
 								<div class="col-2">
 									<div class="input-group">
-										<input type="number" id="bonusEbitda" 
+										<input type="number" id="bonusEbitdaMeta" 
 											class="form-control" placeholder="Bônus" min="0" max="100"
-											aria-describedby="percent-addon" 
-											onchange="metasController.calculaBonus(this.id)" readonly/>
+											aria-describedby="percent-addon"
+											readonly />
 										  <div class="input-group-prepend">
 												  <span class="input-group-text" id="percent-addon">%</span>
 										  </div>
@@ -81,7 +81,7 @@
 								</div>
 								<div class="col-8">
 									<div class="form-group">
-										<textarea id="obsBonusEbitda" class="form-control" 
+										<textarea id="obsBonusEbitdaMeta" class="form-control" 
 										maxlength="1024" rows="1" placeholder="Observações" readonly></textarea>
 									</div>	
 								</div>
@@ -98,9 +98,9 @@
 							<div class="row">
 								<div class="col-2">
 									<div class="input-group">
-										<input type="number" id="valMetaIndiv" class="form-control" 
-											placeholder="Bônus" min="0" max="100" aria-describedby="percent-addon" 
-											onchange="metasController.calculaBonus(this.id)" readonly/>
+										<input type="number" id="bonusIndivMeta" class="form-control" 
+											placeholder="Bônus" min="0" max="100" aria-describedby="percent-addon" readonly 
+											/>
 									 	<div class="input-group-prepend">
 											<span class="input-group-text" id="percent-addon">%</span>
 									 	</div>
@@ -108,7 +108,7 @@
 								</div>
 								<div class="col-10">
 									<div class="form-group">
-										<textarea id="obsMetaIndiv" class="form-control" 
+										<textarea id="obsMetaIndivMeta" class="form-control" 
 										          maxlength="1024" rows="1" placeholder="Observações" readonly></textarea>
 									</div>
 								</div>
@@ -124,10 +124,11 @@
 							<div class="row">
 								<div class="col-2">
 									<div class="input-group">
-										<input type="number" id="bonusParticipacao" 
+										<input type="number" id="bonusParticipacaoMeta" 
 											class="form-control" placeholder="Bônus" min="0" max="100"
-											aria-describedby="percent-addon" readonly
-											onchange="metasController.calculaBonus(this.id)" />
+											aria-describedby="percent-addon"
+											readonly
+											 />
 										<div class="input-group-prepend">
 											<span class="input-group-text" id="percent-addon">%</span>
 										</div>
@@ -135,7 +136,7 @@
 								</div>
 								<div class="col-10">
 									<div class="form-group">
-											<textarea id="obsParticipacao" class="form-control" 
+											<textarea id="obsParticipacaoMeta" class="form-control" 
 												maxlength="1024" rows="1" placeholder="Observações" readonly></textarea>	
 									</div>
 								</div>
@@ -151,10 +152,10 @@
 							<div class="row">
 								<div class="col-2">
 									<div class="input-group">
-										<input type="number" id="bonusPerformance" 
+										<input type="number" id="bonusPerformanceMeta" 
 											class="form-control" placeholder="Bônus" min="0" max="100"
-											aria-describedby="percent-addon" readonly 
-											onchange="metasController.calculaBonus(this.id)" />
+											aria-describedby="percent-addon"
+											readonly />
 										<div class="input-group-prepend">
 											<span class="input-group-text" id="percent-addon">%</span>
 										</div>
@@ -162,8 +163,8 @@
 								</div>
 								<div class="col-10">
 										<div class="form-group">
-												<textarea id="obsPerformance" class="form-control" 
-														  maxlength="1024" rows="1" placeholder="Observações" readonly></textarea>
+												<textarea id="obsPerformanceMeta" class="form-control" readonly 
+														  maxlength="1024" rows="1" placeholder="Observações"></textarea>
 										</div>
 								</div>
 							</div>
@@ -204,24 +205,11 @@
 		</div>
 		</div> <!-- Fim Row -->
 
-		<!-- Resultados -->
-		<div class="row">
-			<div class="col-md-12  mb-2">
-				<div class="card border-primary bg-light">
-						<div class="card-header border-primary text-muted">Resultados</div>
-						<!-- Inicio Body de Resultados-->
-						<div class="card-body">
-							<div id="jsGridResultados"></div>
-						<!-- Fim Card Body-->
-						</div>
-				</div>
-			</div>		
-		</div>
 		<div class="row">
 			<div class="col-md-12">
-					<button type="button" class="btn btn-success btn-sm" onclick="metasController.salvar()">Salvar</button>
-					<button type="button" class="btn btn-primary btn-sm">Exportar</button>
-					<button type="button" class="btn btn-danger btn-sm">Cancelar</button>
+					<button id="btnSave" type="button" class="btn btn-success btn-sm" onclick="metasController.validateAndSave()">Salvar</button>
+					<button id="btnExport" type="button" class="btn btn-primary btn-sm">Exportar</button>
+					<button id="btnCancel" type="button" class="btn btn-danger btn-sm">Cancelar</button>
 			</div>
 		</div>
 </body>

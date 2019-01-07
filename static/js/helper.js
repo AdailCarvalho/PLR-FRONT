@@ -55,3 +55,8 @@ MyDateField.prototype = new jsGrid.Field({
 });
  
 jsGrid.fields.date = MyDateField;
+
+
+app_properties = {
+    base_uri :  'http://localhost:8040'
+}
