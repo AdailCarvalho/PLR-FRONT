@@ -1,0 +1,72 @@
+/*!
+ * PLR Style
+ */
+.navbar {
+    min-height: 80px;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+    color: white !important;
+    background-color: #3cc300;
+}
+
+html, body {
+    min-height: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    background-color: #e6e6e6;
+    margin-bottom: 50px;
+}
+
+.plr-bold {
+    font-weight: bold;
+}
+
+.plr-tab {
+    background-color : #dbffcc;
+}
+
+.plr-logo {
+    color: white;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.plr-logo-nome {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 40px;
+}
+
+.plr-logo-img {
+    border:2px solid white;
+    height: 70px;
+    width: 70px;
+    border-radius: 100%;
+}
+
+.plr-menu-item {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.plr-nav {
+    background-color:   #003cbe;
+    width: 100%; 
+}
+
+.plr-footer {
+  position : fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #003cbe;
+  color: white;
+  text-align: center;
+  box-shadow:  2px 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.plr-navside {
+    background-color:  whitesmoke;
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
+}
