@@ -1,6 +1,6 @@
 class ColaboradorBusiness  {
     constructor() {   
-        this._API_BASE_URI = 'http://localhost:8040';
+    	this._API_BASE_URI = 'http://localhost:8040';
     }
 
     findByMatricula(matricula) {

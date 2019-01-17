@@ -44,11 +44,8 @@
         <div class="container-fluid">
             <div class="col-md-12 mt-2">
                 <div class="tab-content" id="v-pills-tabContent">
-                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                            
-                    </div>
-                    <div class="tab-pane fade" id="colaborador" role="tabpanel" aria-labelledby="colaborador-tab">
-                            <div w3-include-html="templates/colaborador/colaboradorCadastro.html"></div>
+                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab"></div>
+                    <div class="tab-pane fade" id="colaborador" role="tabpanel" aria-labelledby="colaborador-tab"></div>
                     </div>
                     <div class="tab-pane fade" id="metas" role="tabpanel" aria-labelledby="metas-tab">
                         <div w3-include-html="templates/metas/metasCadastro.html"></div>
@@ -84,13 +81,11 @@
   
     <script type="text/javascript">
         var metasController;
-        var colaboradorController;
         
         w3.includeHTML(initJSContext);
 
         function initJSContext () {
             metasController = new MetasController();
-            colaboradorController = new ColaboradorController();
         }
 
     </script>

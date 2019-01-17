@@ -42,17 +42,45 @@ MyDateField.prototype = new jsGrid.Field({
     },
  
     editTemplate: function(value) {
-        return this._editPicker = $("<input>").datepicker().datepicker("setDate", new Date(value));
+      var result = this._editPicker = $("<input>").datepicker(portugueseCalendar).datepicker("setDate", new Date(value).toLocaleDateString(dateLocale, formatDateOptions));
+      return result;
     },
  
     insertValue: function() {
-        return this._insertPicker.datepicker("getDate").toLocaleDateString(dateLocale, formatDateOptions);
+        var dateValue = this._insertPicker.datepicker("getDate");
+        var strDateValue = $.datepicker.formatDate(portugueseCalendar.dateFormat, dateValue)
+        return strDateValue.toDate(portugueseCalendar.dateFormat);
     },
  
     editValue: function() {
-        return this._editPicker.datepicker("getDate").toLocaleDateString(dateLocale, formatDateOptions);
+        var dateValue = this._editPicker.datepicker("getDate");
+        var strDateValue = $.datepicker.formatDate(portugueseCalendar.dateFormat, dateValue)
+        return strDateValue.toDate(portugueseCalendar.dateFormat);
     }
 });
+
+String.prototype.toDate = function(format)
+{
+  var normalized      = this.replace(/[^a-zA-Z0-9]/g, '-');
+  var normalizedFormat= format.toLowerCase().replace(/[^a-zA-Z0-9]/g, '-');
+  var formatItems     = normalizedFormat.split('-');
+  var dateItems       = normalized.split('-');
+
+  var monthIndex  = formatItems.indexOf("mm");
+  var dayIndex    = formatItems.indexOf("dd");
+  var yearIndex   = formatItems.indexOf("yyyy");
+  var hourIndex     = formatItems.indexOf("hh");
+  var minutesIndex  = formatItems.indexOf("ii");
+  var secondsIndex  = formatItems.indexOf("ss");
+
+  var today = new Date();
+
+  var year  = yearIndex>-1  ? dateItems[yearIndex]    : today.getFullYear();
+  var month = monthIndex>-1 ? dateItems[monthIndex]-1 : today.getMonth()-1;
+  var day   = dayIndex>-1   ? dateItems[dayIndex]     : today.getDate();
+ 
+  return new Date(year,month,day);
+};
  
 jsGrid.fields.date = MyDateField;
 

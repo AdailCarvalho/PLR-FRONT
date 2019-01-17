@@ -63,6 +63,7 @@ class MetasController {
 
 	_clearInfoColaborador() {
 		this._idsInputsMetas.forEach(item => $(item.id).val(""));
+		this._enableGridEdition = false;
 		this._loadGridMetasQuantitativas([]);
 		this._loadGridMetasProjeto([]);
 
@@ -90,15 +91,19 @@ class MetasController {
 		self._diretoria = $('#diretoriaMeta');
 		self._bonusIndivMeta = $('#bonusIndivMeta');
 		
+		self._enableGridEdition = true;
+
 		if (metasGerais.length > 0) {
 			metasGerais.forEach(element => self._setMetaGeralDoColaborador(element));
 		}
 
 		if (colaborador.metasQuantitativas.length > 0) {
+			colaborador.metasQuantitativas.forEach(meta => meta.prazo = meta.prazo.toDate(portugueseCalendar.dateFormat));
 			colaborador.metasQuantitativas.forEach(meta => self._sumMetaQuantitativa(meta.peso));
 		}
 
 		if (colaborador.metasProjetos.length > 0) {
+			colaborador.metasProjetos.forEach(meta => meta.prazo = meta.prazo.toDate(portugueseCalendar.dateFormat));
 			colaborador.metasProjetos.forEach(meta => self._sumMetaProjeto(meta.peso));
 		}
 
@@ -149,8 +154,8 @@ class MetasController {
 			width: "100%",
 			height: "auto",
 	 
-			inserting: true,
-			editing: true,
+			inserting: self._enableGridEdition,
+			editing: self._enableGridEdition,
 			sorting: true,
 			paging: true,
 			pageSize: 15,
@@ -173,12 +178,17 @@ class MetasController {
 					args.item.id = 1;
 				}
 
-				//args.item.prazo = self._formatDate(args.item.prazo);
 				args.item.sequencia = self._gridMetaQuantitativa.jsGrid("option", "data").length + 1;
 			},
 			onItemUpdating : function(args) {
-				//args.item.prazo = self._formatDate(args.item.prazo);
-				self._sumPesoMetaQuantitativa = self._sumPesoMetaQuantitativa + args.item.peso;
+				let diff = 0;
+				if (args.item.peso < args.previousItem.peso) {
+					diffPeso = args.previousItem.peso - args.item.peso;
+					self._sumPesoMetaQuantitativa = self._sumPesoMetaQuantitativa - diffPeso;				
+				} else if (args.item.peso > args.previousItem.peso) {
+					diffPeso = args.item.peso - args.previousItem.peso;
+					self._sumPesoMetaQuantitativa = self._sumPesoMetaQuantitativa + diffPeso;
+				}
 				self._gridMetaQuantitativa.jsGrid("refresh");
 			},
 
@@ -227,9 +237,16 @@ class MetasController {
 				},
 				{name: "meta", title : "Meta", type: "text", width: 150 , align : "center"},
 				{name: "observacao", title : "Observações", type: "text", width: 150 , align : "center"},
-				{name: "prazo", title : "Prazos", type : "date", align : "center", width : 80, validate: "required"},
+				{name: "prazo", title : "Prazos", type : "date", align : "center", width : 80, 
+					validate: {
+						message : "Informe um prazo",
+						validator : function (value) {
+							return (value != undefined && value != null);
+						}
+					}
+				},
 				{name : "frequenciaMedicao", title : "Freq. Medição", type : "select", items : self._selectFrequenciaAvaliacao, 
-				 align : "center", valueField : "frequencia", textField : "frequencia", validate : "required"},
+				 align : "center", valueField : "frequencia", textField : "frequencia", validate : "required", width : 80},
 				{type: "control", width : 70, align : "center",
 						itemTemplate: function(value, item) {
 							var $result = this.__proto__.itemTemplate.call(this, value, item);
@@ -252,8 +269,8 @@ class MetasController {
 			width: "100%",
 			height: "auto",
 	 
-			inserting: true,
-			editing: true,
+			inserting: self._enableGridEdition,
+			editing: self._enableGridEdition,
 			sorting: true,
 			paging: true,
 			pageSize: 15,
@@ -276,13 +293,17 @@ class MetasController {
 					args.item.id = 2;
 				}
 
-				//args.item.prazo = self._formatDate(args.item.prazo);
-
 				args.item.sequencia =  self._gridMetaProjeto.jsGrid("option", "data").length + 1;				
 			},
 			onItemUpdating : function(args) {
-				//args.item.prazo = self._formatDate(args.item.prazo);
-				self._sumPesoMetaProjeto = self._sumPesoMetaProjeto + args.item.peso;
+				let diff = 0;
+				if (args.item.peso < args.previousItem.peso) {
+					diffPeso = args.previousItem.peso - args.item.peso;
+					self._sumPesoMetaProjeto = self._sumPesoMetaProjeto - diffPeso;				
+				} else if (args.item.peso > args.previousItem.peso) {
+					diffPeso = args.item.peso - args.previousItem.peso;
+					self._sumPesoMetaProjeto = self._sumPesoMetaProjeto + diffPeso;
+				}
 				self._gridMetaProjeto.jsGrid("refresh");
 			},
 			deleteConfirm: "Deseja realmente excluir a meta selecionada?",
@@ -330,7 +351,14 @@ class MetasController {
 				},
 				{name: "meta", title : "Meta", type: "text", width: 150 , align : "center"},
 				{name: "observacao", title: "Observações", type: "text", width: 150 , align : "center"},
-				{name: "prazo", title : "Prazos", type : "date", align : "center", width : 80, validate: "required"},
+				{name: "prazo", title : "Prazos", type : "date", align : "center", width : 80, editing : false,
+					validate: {
+						message : "Informe um prazo",
+						validator : function (value) {
+							return (value != undefined && value != null);
+						}
+					}
+				},
 				{name : "frequenciaMedicao", title : "Freq. Medição", type : "select", items : self._selectFrequenciaAvaliacao, 
 				 align : "center", valueField : "frequencia", textField : "frequencia", validate : "required", width : 80},
 				{type: "control" , width : 70, align  : "center",
