@@ -11,6 +11,8 @@ class MetasController {
 		this._nome = $('#nomeMeta');
 		this._cargo = $('#cargoMeta');
 		this._diretoria = $('#diretoriaMeta');
+		this._blocoMetaExtra = $('#blocoMetaExtra');
+
 
 		this._gridMetaQuantitativa = $("#jsGridMetaQuantitativa");
 		this._gridMetaProjeto = $("#jsGridMetaProjeto");
@@ -20,7 +22,8 @@ class MetasController {
 								{id : '#obsBonusEbitdaMeta', required : false},{id : '#bonusIndivMeta', required : true},
 								{id : '#obsMetaIndivMeta', required : false},{id : '#bonusParticipacaoMeta', required : true},
 								{id : '#obsParticipacaoMeta', required : false},{id : "#bonusPerformanceMeta", required : true},
-								{id : "#obsPerformanceMeta", required : false}];
+								{id : "#obsPerformanceMeta", required : false}, {id : "#bonusMetaExtra", required : false},
+								{id : "#obsMetaExtra", required : false}];
 
 		//Buttons
 		this._idsButtons = [{id : '#btnSave'}, {id : '#btnCancel'},{id : "#btnExport"}];
@@ -64,6 +67,7 @@ class MetasController {
 	_clearInfoColaborador() {
 		this._idsInputsMetas.forEach(item => $(item.id).val(""));
 		this._enableGridEdition = false;
+		this._blocoMetaExtra.hide();
 		this._loadGridMetasQuantitativas([]);
 		this._loadGridMetasProjeto([]);
 
@@ -92,6 +96,16 @@ class MetasController {
 		self._bonusIndivMeta = $('#bonusIndivMeta');
 		
 		self._enableGridEdition = true;
+
+		//Testa bloco extra
+		if (cargo.diretoria.possuiMetaExtra == 'S') {
+			if (self._blocoMetaExtra.is(':hidden') == true) {
+				self._blocoMetaExtra.removeAttr('hidden');
+				self._blocoMetaExtra.show();
+			}
+		} else {
+			self._blocoMetaExtra.hide();
+		}
 
 		if (metasGerais.length > 0) {
 			metasGerais.forEach(element => self._setMetaGeralDoColaborador(element));
