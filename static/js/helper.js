@@ -75,9 +75,9 @@ String.prototype.toDate = function(format)
 
   var today = new Date();
 
-  var year  = yearIndex>-1  ? dateItems[yearIndex]    : today.getFullYear();
-  var month = monthIndex>-1 ? dateItems[monthIndex]-1 : today.getMonth()-1;
-  var day   = dayIndex>-1   ? dateItems[dayIndex]     : today.getDate();
+  var year  = yearIndex >-1  ? dateItems[yearIndex]    : today.getFullYear();
+  var month = monthIndex >-1 ? dateItems[monthIndex]-1 : today.getMonth()-1;
+  var day   = dayIndex >-1   ? dateItems[dayIndex]     : today.getDate();
  
   return new Date(year,month,day);
 };

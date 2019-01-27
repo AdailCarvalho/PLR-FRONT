@@ -35,8 +35,8 @@ class MetasController {
 		this._sumPesoMetaQuantitativa = 0;
 		this._sumPesoMetaProjeto = 0;
 
-		this._loadGridMetasQuantitativas([]);
-		this._loadGridMetasProjeto([]);
+		this._loadGridMetasIndividuais(this._gridMetaQuantitativa,[], 1);
+		this._loadGridMetasIndividuais(this._gridMetaProjeto,[], 2);
 		this._enableDisableElements(this._idsButtons, true);
 	}
 
@@ -68,8 +68,8 @@ class MetasController {
 		this._idsInputsMetas.forEach(item => $(item.id).val(""));
 		this._enableGridEdition = false;
 		this._blocoMetaExtra.hide();
-		this._loadGridMetasQuantitativas([]);
-		this._loadGridMetasProjeto([]);
+		this._loadGridMetasIndividuais(this._gridMetaQuantitativa, [], 1);
+		this._loadGridMetasIndividuais(this._gridMetaProjeto, [], 2);
 
 	}
 
@@ -97,7 +97,6 @@ class MetasController {
 		
 		self._enableGridEdition = true;
 
-		//Testa bloco extra
 		if (cargo.diretoria.possuiMetaExtra == 'S') {
 			if (self._blocoMetaExtra.is(':hidden') == true) {
 				self._blocoMetaExtra.removeAttr('hidden');
@@ -121,8 +120,8 @@ class MetasController {
 			colaborador.metasProjetos.forEach(meta => self._sumMetaProjeto(meta.peso));
 		}
 
-		self._loadGridMetasQuantitativas(colaborador.metasQuantitativas);
-		self._loadGridMetasProjeto(colaborador.metasProjetos);
+		self._loadGridMetasIndividuais(this._gridMetaQuantitativa, colaborador.metasQuantitativas, 1);
+		self._loadGridMetasIndividuais(this._gridMetaProjeto, colaborador.metasProjetos, 2);
 	}
 
 	_setMetaGeralDoColaborador(meta) {
@@ -145,6 +144,10 @@ class MetasController {
 				self._setFieldValue("bonusPerformanceMeta", meta.bonus);
 				self._setFieldValue("obsPerformanceMeta", meta.observacao);
 				break;
+			case 5:
+				self._setFieldValue("bonusMetaExtra", meta.bonus);
+				self._setFieldValue("obsMetaExtra", meta.observacao);
+				break;
 			default:
 				break;
 		}
@@ -162,9 +165,9 @@ class MetasController {
 	 * GRIDS
 	*/
 
-	_loadGridMetasQuantitativas(metasQuantitativas) {
+	_loadGridMetasIndividuais(gridObject, metasData, idTipoMeta) {
 		let self = this;
-		self._gridMetaQuantitativa.jsGrid({
+		gridObject.jsGrid({
 			width: "100%",
 			height: "auto",
 	 
@@ -173,10 +176,14 @@ class MetasController {
 			sorting: true,
 			paging: true,
 			pageSize: 15,
-			data: metasQuantitativas,
+			data: metasData,
 	 
 			onItemInserting : function (args) {
-				if(self._sumMetaQuantitativa(args.item.peso) == false) {
+				if (args.item.id == null) {
+					args.item.id = idTipoMeta; 
+				}
+
+				if(self._sumMeta(idTipoMeta, args.item.peso) == false) {
 					alert("O resultado das metas está excedendo o valor das Metas Individuais! Reveja os pesos das metas informadas.");
 					args.cancel = true;
 					return;
@@ -188,29 +195,30 @@ class MetasController {
 					return;
 				}
 
-				if (args.item.id == null) {
-					args.item.id = 1;
-				}
+				args.item.sequencia = gridObject.jsGrid("option", "data").length + 1;
+				args.item.prazo = args.item.prazo.toLocaleDateString('pt-BR');
 
-				args.item.sequencia = self._gridMetaQuantitativa.jsGrid("option", "data").length + 1;
+				self._insertMeta(args.item);
+				self.getColaborador(self._matricula.val());
 			},
 			onItemUpdating : function(args) {
-				let diff = 0;
-				if (args.item.peso < args.previousItem.peso) {
-					diffPeso = args.previousItem.peso - args.item.peso;
-					self._sumPesoMetaQuantitativa = self._sumPesoMetaQuantitativa - diffPeso;				
-				} else if (args.item.peso > args.previousItem.peso) {
-					diffPeso = args.item.peso - args.previousItem.peso;
-					self._sumPesoMetaQuantitativa = self._sumPesoMetaQuantitativa + diffPeso;
+				args.item.prazo = args.item.prazo.toLocaleDateString('pt-BR');
+
+				if(self._recalcMeta(args.item.id, args.previousItem.peso, args.item.peso) == false) {
+					alert("O resultado das metas está excedendo o valor das Metas Individuais! Reveja os pesos das metas informadas.");
+					args.cancel = true;
+					return;
 				}
-				self._gridMetaQuantitativa.jsGrid("refresh");
+
+				self._updateMeta(args.item);
+				self.getColaborador(self._matricula.val());
 			},
 
 			deleteConfirm: "Deseja realmente excluir a meta selecionada?",
 			onItemDeleting : function (args) {
-				self._sumPesoMetaQuantitativa = self._sumPesoMetaQuantitativa - args.item.peso;
-				
+				self._subtractMeta(idTipoMeta, args.item.peso);			
 				self._deleteMeta(args.item);
+				
 				args.item.sequencia = self._gridMetaQuantitativa.jsGrid("option", "data").length - 1
 		
 				self._gridMetaQuantitativa.jsGrid("refresh");
@@ -221,7 +229,6 @@ class MetasController {
 				for (i = 0; i < items.length; i ++) {
 					items[i].sequencia = i + 1;
 				}
-				self._loadGridMetasQuantitativas(items);
 			},
 			fields: [
 				{name : "id", type : "number", visible : false},
@@ -277,148 +284,98 @@ class MetasController {
 		});
 	}
 
-	_loadGridMetasProjeto(metasProjeto) {
-		let self = this;
-		self._gridMetaProjeto.jsGrid({
-			width: "100%",
-			height: "auto",
-	 
-			inserting: self._enableGridEdition,
-			editing: self._enableGridEdition,
-			sorting: true,
-			paging: true,
-			pageSize: 15,
-			data: metasProjeto,
-
-			onItemInserting : function (args) {
-				if(self._sumMetaProjeto(args.item.peso) == false) {
-					alert("O resultado das metas está excedendo o valor das Metas Individuais! Reveja os pesos das metas informadas.");
-					args.cancel = true;
-					return;
-				}
-
-				if (self._matricula.val() == "") {
-					alert("Informe um colaborador antes de adicionar uma meta.");
-					args.cancel = true;
-					return;
-				}
-
-				if (args.item.id == null) {
-					args.item.id = 2;
-				}
-
-				args.item.sequencia =  self._gridMetaProjeto.jsGrid("option", "data").length + 1;				
-			},
-			onItemUpdating : function(args) {
-				let diff = 0;
-				if (args.item.peso < args.previousItem.peso) {
-					diffPeso = args.previousItem.peso - args.item.peso;
-					self._sumPesoMetaProjeto = self._sumPesoMetaProjeto - diffPeso;				
-				} else if (args.item.peso > args.previousItem.peso) {
-					diffPeso = args.item.peso - args.previousItem.peso;
-					self._sumPesoMetaProjeto = self._sumPesoMetaProjeto + diffPeso;
-				}
-				self._gridMetaProjeto.jsGrid("refresh");
-			},
-			deleteConfirm: "Deseja realmente excluir a meta selecionada?",
-			onItemDeleting : function (args) {
-				self._sumPesoMetaProjeto = self._sumPesoMetaProjeto - args.item.peso;
-
-				self._deleteMeta(args.item);
-				args.item.sequencia =  self._gridMetaProjeto.jsGrid("option", "data").length - 1;				
-				
-				self._gridMetaProjeto.jsGrid("refresh");
-			},
-			onItemDeleted : function (args) {
-				var i = 1;
-				let items = self._gridMetaProjeto.jsGrid("option","data");
-				for (var i = 0; i < items.length; i ++) {
-					items[i].sequencia = i + 1;
-				}
-				self._loadGridMetasProjeto(items);
-			},
-			fields: [
-				{name : "id", type : "number", visible : false},
-				{ name: "sequencia", title : "Sequência", type: "number", width: 80, align : "center", 
-				  		insertTemplate : function(value, item) {
-							var $numberSequencia = jsGrid.fields.number.prototype.insertTemplate.apply(this, arguments);
-							$numberSequencia.prop('disabled', 'true');
-
-							return $numberSequencia;
-						},
-						editTemplate: function(value, editItem) {
-							var $numberSequencia = jsGrid.fields.number.prototype.insertTemplate.apply(this, arguments);
-							$numberSequencia.prop('disabled', 'true');
-
-							return $numberSequencia;
-
-						}
-				},
-				{ name: "descricao", title : "Descrição", type: "text", width: 150 , align : "center"},
-				{ name: "peso", title : "Peso (%)", type: "number", width: 70, align : "center",
-					validate : {
-						message : "Informe um peso válido (>=0)",
-						validator : function (value) {
-							return value >= 0;
-						}
-					}
-				},
-				{name: "meta", title : "Meta", type: "text", width: 150 , align : "center"},
-				{name: "observacao", title: "Observações", type: "text", width: 150 , align : "center"},
-				{name: "prazo", title : "Prazos", type : "date", align : "center", width : 80, editing : false,
-					validate: {
-						message : "Informe um prazo",
-						validator : function (value) {
-							return (value != undefined && value != null);
-						}
-					}
-				},
-				{name : "frequenciaMedicao", title : "Freq. Medição", type : "select", items : self._selectFrequenciaAvaliacao, 
-				 align : "center", valueField : "frequencia", textField : "frequencia", validate : "required", width : 80},
-				{type: "control" , width : 70, align  : "center",
-				  	itemTemplate: function(value, item) {
-						var $result = this.__proto__.itemTemplate.call(this, value, item);
-						var $info = $("<a style='color: inherit'><i class='fas fa-info-circle' " +
-							  " title='Info' style= 'margin-left: 5px;'></i></a>")
-							
-						$result = $result.add($info);
-					
-						return $result;
-					}
-				}
-			]
-		});
-	}
-
 	/**
 	 * Validações
 	 */
 
+	 _sumMeta(idTipoMeta,val) {
+	 	if (idTipoMeta == 1) {
+	 		return this._sumMetaQuantitativa(val);
+	 	} else {
+	 		return this._sumMetaProjeto(val);
+	 	}
+	 }
+
+	 _recalcMeta(idTipoMeta, previousPeso, currentPeso) {
+		let diffPeso = 0;
+		let operation = "";
+		if (currentPeso < previousPeso) {
+			diffPeso = previousPeso - currentPeso;
+			operation = "-";
+		} else if (currentPeso > previousPeso) {
+			diffPeso = currentPeso - previousPeso;
+			operation = "+";
+		}
+
+	 	if (idTipoMeta == 1) {
+			return this._recalcMetaQuantitativa(diffPeso, operation);
+	 	} else {
+	 		return this._recalcMetaProjeto(diffPeso, operation);
+	 	}
+	 }
+
+	 _recalcMetaQuantitativa(diffPeso, operation) {
+	 	let calc = '' + this._sumPesoMetaQuantitativa + operation + diffPeso;
+	 	let tmpPesoQuant = this._sumPesoMetaQuantitativa;
+	 	this._sumPesoMetaQuantitativa = eval(calc);
+
+	 	if (this._validateSum(0) == false) {
+	 		this._sumPesoMetaQuantitativa = tmpPesoQuant;
+	 		return false;
+	 	} else {
+	 		return true;
+	 	}
+	 }
+
+	 _recalcMetaProjeto(diffPeso, operation) {
+	 	let calc = '' + this._sumPesoMetaProjeto + operation + diffPeso;
+	 	let tmpPesoProj = this._sumPesoMetaProjeto;
+	 	this._sumPesoMetaProjeto = eval(calc);
+	 	
+	 	if (this._validateSum(0) == false) {
+	 		this._sumPesoMetaProjeto = tmpPesoProj;
+	 		return false;
+	 	} else {
+	 		return true;
+	 	}
+	 }
+
 	_sumMetaProjeto(val) {
-		if ((this._sumPesoMetaProjeto + this._sumPesoMetaQuantitativa + val) > this._bonusIndivMeta.val()) {
+		if (this._validateSum(val) == false) {
 			return false;
 		}
 		
-		this._sumPesoMetaProjeto = this._sumPesoMetaProjeto + val;
+		this._sumPesoMetaProjeto +=  val;
 
 		return true;
 
 	}
 
 	_sumMetaQuantitativa(val) {
-		if ((this._sumPesoMetaProjeto + this._sumPesoMetaQuantitativa + val) > this._bonusIndivMeta.val()) {
+		if (this._validateSum(val) == false) {
 			return false;
 		}
 
-		this._sumPesoMetaQuantitativa = this._sumPesoMetaQuantitativa + val;
+		this._sumPesoMetaQuantitativa += val;
 
 		return true;
 	}
 
+	_subtractMeta(idTipoMetaval, val) {
+		if (idTipoMetaval == 1) {
+			this._sumPesoMetaQuantitativa -= val;
+		} else {
+			this._sumPesoMetaProjeto -= val;
+		}
+	}
+
+	_validateSum(val) {
+		return ((this._sumPesoMetaProjeto + this._sumPesoMetaQuantitativa + val) <= this._bonusIndivMeta.val());
+	}
+
 	validateAndSave() {
 		if ((this._sumPesoMetaProjeto + this._sumPesoMetaQuantitativa) != this._bonusIndivMeta.val()) {
-			alert("O somatório das metas quantitativas e de projetos está diferente do valor da Meta Individual. Reveja as metas, e tente"
-			 + "novamente");
+			alert("O somatório das metas quantitativas e de projetos está diferente do valor da Meta Individual. Reveja as metas.");
 			return;
 		}
 
@@ -426,9 +383,6 @@ class MetasController {
 	}
 
 	_save() {
-		let self = this;
-		self._insertMetas(self._gridMetaQuantitativa.jsGrid("option", "data"));
-		self._insertMetas(self._gridMetaProjeto.jsGrid("option", "data"));
 		alert('Informações salvas com sucesso.');
 	}
 
@@ -436,11 +390,15 @@ class MetasController {
 	 * CRUD METAS
 	 */
 	
-	 _insertMetas(itens) {
-		this._metasBusiness.insertMetas(this._matricula.val(), itens);
+	 _insertMeta(item) {
+		this._metasBusiness.insertMeta(this._matricula.val(), item);
 	 }
 
 	 _deleteMeta(item){
 		this._metasBusiness.deleteMeta(this._matricula.val(), item);
+	 }
+
+	 _updateMeta(item) {
+		this._metasBusiness.updateMeta(this._matricula.val(), item);
 	 }
 }
