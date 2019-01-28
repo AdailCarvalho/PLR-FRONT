@@ -382,6 +382,14 @@ class MetasController {
 		this._save();
 	}
 
+	exportar() {
+		if (this._matricula.val() == "") {
+			alert("Pesquise um colaborador primeiro, para que seja possível realizar o export.");
+		} else {
+			this._colaboradorBusiness.exportXls(this._matricula.val());
+		}
+	}
+
 	_save() {
 		alert('Informações salvas com sucesso.');
 	}
