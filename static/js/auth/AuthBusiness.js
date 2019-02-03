@@ -14,11 +14,11 @@ class AuthBusiness extends PLRBusiness {
 	}
 
 	redirectToHome() {
-		window.location.href = this._API_BASE_URI + '/home.html'
+		window.location.href = this._APP_BASE_URI + '/home.html'
 	}
 
 	redirectToLogin() {
-		window.location.href = this._API_BASE_URI
+		window.location.href = this._APP_BASE_URI
 	}
 
 	updateUserInfo(user) {

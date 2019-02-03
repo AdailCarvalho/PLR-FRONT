@@ -133,11 +133,13 @@ app_properties = {
 }
 
 app_standalone_properties = {
-    app_base_uri :  'http://localhost:8040'
+    app_base_uri : 'http://localhost:8080/plr',
+    api_base_uri : 'http://localhost:8040'
 }
 
 app_tomcat_properties = {
-    app_base_uri : 'http://localhost:8080/plr-api'
+    app_base_uri : 'http://localhost:8080/plr',
+    api_base_uri : 'http://localhost:8080/plr-api'
 }
 
 function getPropertyVal(key) {
