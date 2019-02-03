@@ -13,6 +13,14 @@ class AuthBusiness extends PLRBusiness {
 		});
 	}
 
+	redirectToHome() {
+		window.location.href = this._API_BASE_URI + '/home.html'
+	}
+
+	redirectToLogin() {
+		window.location.href = this._API_BASE_URI
+	}
+
 	updateUserInfo(user) {
 		return $.ajax({
 			url : this._API_BASE_URI + '/usuarios/',

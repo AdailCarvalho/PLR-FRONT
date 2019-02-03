@@ -70,11 +70,11 @@ class AuthController {
 
 
     redirectToHome() {
-    	window.location.href = 'http://localhost:8080/plr/home.html'
+    	this._business.redirectToHome();
     }
 
     redirectToLogin() {
-    	window.location.href = 'http://localhost:8080/plr'
+        this._business.redirectToLogin();
     }
 
     redefineSenha() {
