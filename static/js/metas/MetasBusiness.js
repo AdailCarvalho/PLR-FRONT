@@ -1,7 +1,7 @@
-class MetasBusiness  {
+class MetasBusiness extends PLRBusiness {
     
     constructor() {
-        this._API_BASE_URI = 'http://localhost:8080/plr';
+        super();
     }
 
     /**

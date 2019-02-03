@@ -1,6 +1,6 @@
 class PLRBusiness {
     
     constructor() {
-        this.BASE_API_URI = 'http://localhost:8040';
+        this._API_BASE_URI = getPropertyVal('app_base_uri');
     }
 }

@@ -3,19 +3,23 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">       
-    <link rel="stylesheet" href="../plr-front/static/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="../plr-front/static/css/plr.css" />
-    <link rel="stylesheet" href="../plr-front/static/css/jquery-ui.css">
-    <link rel="stylesheet" href="../plr-front/static/css/all.css" />
+    <link rel="stylesheet" href="../plr/static/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../plr/static/css/plr.css" />
+    <link rel="stylesheet" href="../plr/static/css/jquery-ui.css">
+    <link rel="stylesheet" href="../plr/static/css/all.css" />
+    <link type="text/css" rel="stylesheet" href="../plr/static/css/jsgrid.min.css" />
+    <link type="text/css" rel="stylesheet" href="../plr/static/css/jsgrid-theme.min.css" />
+    <link rel="stylesheet" href="../plr/static/css/jquery-ui.css">
+    <link rel="stylesheet" href="../plr/static/css/all.css" />
     <title>Login</title>
 </head>
 <body>
 	<!-- HEADER -->
      <nav id="idHeader" class="navbar navbar-ligth plr-nav d-inline-block align-top">               
-            <a class="navbar-brand plr-logo" href="index.html">
+            <a class="navbar-brand plr-logo" href="login.html">
                 <img class="align-top plr-logo-img" src="static/images/logo.png" alt="PLR">
             </a>
-            <a class="navbar-brand plr-logo" href="index.html">
+            <a class="navbar-brand plr-logo" href="login.html">
                     <img src="static/images/logo-name.png" 
                     srcset="static/images/logo-name.svg" alt="Nome Logo">
             </a>
@@ -32,8 +36,8 @@
 							<!-- Dados Gerais do Colaborador -->
 							<div class="form-row">
 								<div class="form-group">
-									<label class="plr-bold" for="matricula" title="Username">Usuário: </label>
-									<input type="text" id="username" maxlength="12" class="form-control" placeholder="Username" />							  
+									<label class="plr-bold" for="matricula" title="matricula">Matrícula: </label>
+									<input type="text" id="matricula" maxlength="12" class="form-control" placeholder="Matrícula" />							  
 								</div>
 							</div>
                             <div class="form-row">
@@ -46,7 +50,7 @@
                             <div class="form-group">
                                 <button id="btnLogin" type="button" 
                                         class="btn btn-success btn-sm" 
-                                        onclick="">Entrar</button>
+                                        onclick="authController.login()">Entrar</button>
                             </div>
                           </div>
 					   </form>
@@ -61,12 +65,26 @@
     <!--FOOTER-->
     <div class="row">
         <div class="col-md-12 plr-footer">
-                    <p>© Copyright : Focus Quality|v0.3.0-SNAPSHOT|2019</p>
+                    <p>© Copyright : Focus Quality|v1.1.0-SNAPSHOT|2019</p>
         </div>
     </div>
 
-    <script type="text/javascript" src="../plr-front/static/js/w3.js"></script>
-	<script type="text/javascript" src="../plr-front/static/js/jquery-3.3.1.js"></script>
+	<script type="text/javascript" src="../plr/static/js/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="../plr/static/js/jsgrid.min.js"></script>
+    <script type="text/javascript" src="../plr/static/js/jquery-ui.js"></script>
+
+    <script type="text/javascript" src="../plr/static/js/PLRBusiness.js"></script>
+    <script type="text/javascript" src="../plr/static/js/auth/AuthController.js"></script>
+    <script type="text/javascript" src="../plr/static/js/auth/AuthBusiness.js"></script>
+    <script type="text/javascript" src="../plr/static/js/helper.js"></script>
+
+    <script type="text/javascript">
+        var authController = new AuthController();
+        if(!authController.checkActiveSession()) {
+            authController.redirectToHome();
+        }
+
+    </script>
 
 </body>
 </html>

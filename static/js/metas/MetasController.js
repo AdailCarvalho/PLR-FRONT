@@ -4,6 +4,13 @@ class MetasController {
 		this._metasBusiness = new MetasBusiness();
 		this._colaboradorBusiness = new ColaboradorBusiness();
 		this._initFields();
+		this.MAX_METAS_ESPECIFICAS = 7;
+
+		let $body = $("body");
+        $(document).on({
+            ajaxStart: function() { $body.addClass("loading");    },
+            ajaxStop: function() { $body.removeClass("loading"); }
+        });
 	}
 	
 	_initFields() {
@@ -30,7 +37,7 @@ class MetasController {
 
 		//GRIDS
 		this._selectFrequenciaAvaliacao = [{frequencia : ""}, {frequencia : "Mensal"},{frequencia : "Bimestral"},{frequencia : "Trimestral"},
-										   {frequencia : "Semestral"},{frequencia : "Anual"}];
+										   {frequencia : "Semestral"},{frequencia : "Anual"},{frequencia : "Data Específica"}];
 
 		this._sumPesoMetaQuantitativa = 0;
 		this._sumPesoMetaProjeto = 0;
@@ -183,6 +190,12 @@ class MetasController {
 					args.item.id = idTipoMeta; 
 				}
 
+				if (gridObject.jsGrid("option", "data").length + 1 > self.MAX_METAS_ESPECIFICAS) {
+					alert("Limite de metas atingido.");
+					args.cancel = true;
+					return;
+				}
+
 				if(self._sumMeta(idTipoMeta, args.item.peso) == false) {
 					alert("O resultado das metas está excedendo o valor das Metas Individuais! Reveja os pesos das metas informadas.");
 					args.cancel = true;
@@ -257,8 +270,8 @@ class MetasController {
 					}
 				},
 				{name: "meta", title : "Meta", type: "text", width: 150 , align : "center"},
-				{name: "observacao", title : "Observações", type: "text", width: 150 , align : "center"},
-				{name: "prazo", title : "Prazos", type : "date", align : "center", width : 80, 
+				{name: "observacao", title : "Observações", type: "text", width: 140 , align : "center"},
+				{name: "prazo", title : "Prazos", type : "date", align : "center", width : 90, 
 					validate: {
 						message : "Informe um prazo",
 						validator : function (value) {

@@ -1,6 +1,6 @@
-class ColaboradorBusiness  {
+class ColaboradorBusiness extends PLRBusiness  {
     constructor() {   
-    	this._API_BASE_URI = 'http://localhost:8080/plr';
+        super();
     }
 
     findByMatricula(matricula) {

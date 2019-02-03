@@ -4,6 +4,12 @@
 class ColaboradorController {
     constructor() {
         this._initFields();
+
+        let $body = $("body");
+        $(document).on({
+            ajaxStart: function() { $body.addClass("loading");    },
+            ajaxStop: function() { $body.removeClass("loading"); }
+        });
     }
 
     _initFields() {

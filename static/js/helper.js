@@ -59,6 +59,9 @@ MyDateField.prototype = new jsGrid.Field({
     }
 });
 
+jsGrid.fields.date = MyDateField;
+
+//Date Formatter
 String.prototype.toDate = function(format)
 {
   var normalized      = this.replace(/[^a-zA-Z0-9]/g, '-');
@@ -82,9 +85,72 @@ String.prototype.toDate = function(format)
   return new Date(year,month,day);
 };
  
-jsGrid.fields.date = MyDateField;
+//Logged user
+function setLoggedUser(user) {
+  console.log('Loggind..');
+  sessionStorage.setItem("plrLoggedUser",user.matricula);
+  sessionStorage.setItem("plrIsFirstAccess", user.inPrimeiroAcesso);
+  registerBrowserSession(user.matricula);
+}
 
+function getLoggedUser() {
+  return sessionStorage.getItem("plrLoggedUser"); 
+}
 
+function isPrimeiroAcesso() {
+  return sessionStorage.getItem("plrIsFirstAccess") == 'S';
+}
+
+//Session (half hour as default = 1800s)
+var MAX_SESSION_TIME = 1800;
+function registerBrowserSession(matricula) {
+  let localDateTime = new Date().toISOString();
+  sessionStorage.setItem(matricula, localDateTime);
+}
+
+function resetBrowserSession() {
+  let sessionStartTime = sessionStorage.getItem(getLoggedUser());
+  if (sessionStartTime != null && ((new Date() - new Date(sessionStartTime)) / 1000) <= MAX_SESSION_TIME) {
+    return false;
+  } else {
+    removeSession();
+    return true;
+  }
+}
+
+function removeSessionItem(item) {
+  sessionStorage.removeItem(item);
+}
+
+function removeSession() {
+  sessionStorage.removeItem("plrLoggedUser");
+  sessionStorage.removeItem("plrIsFirstAccess");
+}
+
+//Properties
 app_properties = {
-    base_uri :  'http://localhost:8040'
+  profile : 'tomcat'
+}
+
+app_standalone_properties = {
+    app_base_uri :  'http://localhost:8040'
+}
+
+app_tomcat_properties = {
+    app_base_uri : 'http://localhost:8080/plr-api'
+}
+
+function getPropertyVal(key) {
+  let val = '';
+  switch(app_properties.profile) {
+    case('standalone'):
+      val = app_standalone_properties[key];
+      break;
+    case('tomcat'):
+      val = app_tomcat_properties[key];
+      break;
+    default:
+      break;
+  }
+  return val;
 }
