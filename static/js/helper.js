@@ -87,14 +87,18 @@ String.prototype.toDate = function(format)
  
 //Logged user
 function setLoggedUser(user) {
-  console.log('Loggind..');
   sessionStorage.setItem("plrLoggedUser",user.matricula);
+  sessionStorage.setItem("plrLoggedPhrase", user.phrase);
   sessionStorage.setItem("plrIsFirstAccess", user.inPrimeiroAcesso);
   registerBrowserSession(user.matricula);
 }
 
 function getLoggedUser() {
   return sessionStorage.getItem("plrLoggedUser"); 
+}
+
+function getLoggedPhrase() {
+  return sessionStorage.getItem("plrLoggedPhrase");
 }
 
 function isPrimeiroAcesso() {
@@ -118,13 +122,15 @@ function resetBrowserSession() {
   }
 }
 
-function removeSessionItem(item) {
-  sessionStorage.removeItem(item);
+function removeSessionItens(itens) {
+  itens.forEach(item => sessionStorage.removeItem(item));
 }
 
 function removeSession() {
+  sessionStorage.removeItem(getLoggedUser());
   sessionStorage.removeItem("plrLoggedUser");
   sessionStorage.removeItem("plrIsFirstAccess");
+  sessionStorage.removeItem("plrLoggedPhrase");
 }
 
 //Properties

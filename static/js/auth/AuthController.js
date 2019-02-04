@@ -3,17 +3,12 @@ class AuthController {
 		this._business = new AuthBusiness();
 		this._matricula = $('#matricula');
 		this._password = $('#password'); 
+        this._phrase = '';
+        this._hash = '';
         this._dialogPrimeiroAcesso = $('#dialogPrimeiroAcesso');
         this._newPassword = $('#idNewPassword')
         this._confirmPassword = $('#idConfirmNewPassword');
         this._passwordRegex =/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/i;
-        
-        
-        let $body = $("body");
-        $(document).on({
-            ajaxStart: function() { $body.addClass("loading");    },
-            ajaxStop: function() { $body.removeClass("loading"); }
-        });
 
         this._init();
 	}
@@ -30,31 +25,44 @@ class AuthController {
     }
 
 	get _userData() {
+        if (this._hash == "") {
+            this._hash = this._matricula.val();
+        } 
+
         return {
             login : this._matricula.val(),
             matricula : this._matricula.val(),
-            password : this._password.val()
+            password : this._password.val(),
+            hash : this._hash,
+            phrase : this._phrase
         }
     }
+
 
     checkActiveSession() {
         return resetBrowserSession();
     }
 
-	login() {
+    login() {
         let self = this;
-		if (self._validateForm()) {
-			$.when(self._business.login(self._userData))
-			 .done(function(userDTO) {
-			 	setLoggedUser(userDTO);
-			 	self.redirectToHome();
-			 })
-			 .fail(function(xhr, textStatus, errorThrown) {
-                if (xhr.status == 404) {
-                    alert("Usuário não encontrado.");
+        if (self._validateForm()) {
+            $.when(self._business.login(this._userData))
+            .done(function(userDTO) {
+                self._phrase = userDTO.phrase;
+                self._hash = userDTO.hash;
+                setLoggedUser(userDTO);
+                if (userDTO.inPrimeiroAcesso == 'S') {
+                    self.redirectToHome();
+                } else {
+                    if(self._validateAuth()) {
+                        self.redirectToHome();
+                    }
                 }
-			 });
-		}
+            })
+            .fail(function(xhr, textStatus, errorThrown) {
+                alert('Login inválido!');
+            });
+        }
     }
 
     logout() {
@@ -67,7 +75,6 @@ class AuthController {
             this._dialogPrimeiroAcesso.dialog('open');
         }
     }
-
 
     redirectToHome() {
     	this._business.redirectToHome();
@@ -85,11 +92,12 @@ class AuthController {
             user.matricula = user.login;
             user.inPrimeiroAcesso = 'N';
             user.password = this._newPassword.val();
-   
+            user.hash = CryptoJS.AES.encrypt(getLoggedPhrase(), this._newPassword.val()).toString();
+          
             $.when(self._business.updateUserInfo(user))
              .done(function(userDTO) {
                 alert('Informações atualizadas com sucesso!');
-                removeSessionItem("plrIsFirstAccess");
+                removeSessionItens(["plrIsFirstAccess", "plrLoggedPhrase"]);
                 
                 self._dialogPrimeiroAcesso.close();
                 location.reload();
@@ -98,6 +106,17 @@ class AuthController {
                 alert("Erro ao atualizar informações do usuário.");
                 self.logout();
              });
+        }
+    }
+
+    _validateAuth() {
+        let decryptedPhrase = CryptoJS.AES.decrypt(this._hash, this._password.val());
+        if (decryptedPhrase.toString(CryptoJS.enc.Utf8) != this._phrase) {
+            alert('Senha inválida.');
+            this._password.focus();
+            return false;
+        } else {
+            return true;
         }
     }
 
