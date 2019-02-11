@@ -10,7 +10,7 @@ class AuthController extends PLRController {
         this._dialogPrimeiroAcesso = $('#dialogPrimeiroAcesso');
         this._newPassword = $('#idNewPassword')
         this._confirmPassword = $('#idConfirmNewPassword');
-        this._passwordRegex =/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/i;
+        this._passwordRegex =/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/i;
 
         this._init();
 	}
@@ -151,7 +151,7 @@ class AuthController extends PLRController {
 
         if (this._newPassword.val() == this._confirmPassword.val()) {
             if(this._newPassword.val().match(this._passwordRegex) == null) {
-                alert('A senha deve possuir 8 caracteres, pelo menos 1 caractere especial e um número.');
+                alert('A senha deve possuir 6 caracteres, e possuir ao menos um número.');
                 return false;
             }
         } else {
