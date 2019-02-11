@@ -87,33 +87,45 @@ String.prototype.toDate = function(format)
  
 //Logged user
 function setLoggedUser(user) {
-  sessionStorage.setItem("plrLoggedUser",user.matricula);
-  sessionStorage.setItem("plrLoggedPhrase", user.phrase);
-  sessionStorage.setItem("plrIsFirstAccess", user.inPrimeiroAcesso);
+  let userName = user.nome.split(" ");
+  let finalName = userName[0] + ' ' + userName[1];
+  localStorage.setItem("plrLoggedUser",user.matricula);
+  localStorage.setItem("plrLoggedName", finalName);
+  localStorage.setItem("plrLoggedPhrase", user.phrase);
+  localStorage.setItem("plrIsFirstAccess", user.inPrimeiroAcesso);
   registerBrowserSession(user.matricula);
 }
 
 function getLoggedUser() {
-  return sessionStorage.getItem("plrLoggedUser"); 
+  return localStorage.getItem("plrLoggedUser"); 
+}
+
+function getLoggedName() {
+  return localStorage.getItem("plrLoggedName");
 }
 
 function getLoggedPhrase() {
-  return sessionStorage.getItem("plrLoggedPhrase");
+  return localStorage.getItem("plrLoggedPhrase");
 }
 
 function isPrimeiroAcesso() {
-  return sessionStorage.getItem("plrIsFirstAccess") == 'S';
+  return localStorage.getItem("plrIsFirstAccess") == 'S';
 }
 
 //Session (half hour as default = 1800s)
-var MAX_SESSION_TIME = 1800;
+var MAX_SESSION_TIME = 120;
 function registerBrowserSession(matricula) {
   let localDateTime = new Date().toISOString();
-  sessionStorage.setItem(matricula, localDateTime);
+  localStorage.setItem(matricula, localDateTime);
+}
+
+function sessionRemainingMin (){
+  let userSessionStartTime = localStorage.getItem(getLoggedUser());
+  return (MAX_SESSION_TIME - (new Date() - new Date(userSessionStartTime)) / 1000) / 60;
 }
 
 function resetBrowserSession() {
-  let sessionStartTime = sessionStorage.getItem(getLoggedUser());
+  let sessionStartTime = localStorage.getItem(getLoggedUser());
   if (sessionStartTime != null && ((new Date() - new Date(sessionStartTime)) / 1000) <= MAX_SESSION_TIME) {
     return false;
   } else {
@@ -123,14 +135,15 @@ function resetBrowserSession() {
 }
 
 function removeSessionItens(itens) {
-  itens.forEach(item => sessionStorage.removeItem(item));
+  itens.forEach(item => localStorage.removeItem(item));
 }
 
 function removeSession() {
-  sessionStorage.removeItem(getLoggedUser());
-  sessionStorage.removeItem("plrLoggedUser");
-  sessionStorage.removeItem("plrIsFirstAccess");
-  sessionStorage.removeItem("plrLoggedPhrase");
+  localStorage.removeItem(getLoggedUser());
+  localStorage.removeItem("plrLoggedUser");
+  localStorage.removeItem("plrIsFirstAccess");
+  localStorage.removeItem("plrLoggedPhrase");
+  localStorage.removeItem("plrLoggedName");
 }
 
 //Properties

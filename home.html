@@ -12,7 +12,8 @@
 </head>
 <body>
      <!-- HEADER -->
-     <nav id="idHeader" class="navbar navbar-ligth plr-nav d-inline-block align-top">               
+     <nav id="idHeader" class="navbar navbar-ligth plr-nav align-top">
+         <div class="d-inline-block">               
             <a class="navbar-brand plr-logo" href="home.html">
                 <img class="align-top plr-logo-img" src="static/images/logo.png" alt="PLR">
             </a>
@@ -20,6 +21,15 @@
                     <img src="static/images/logo-name.png" 
                     srcset="static/images/logo-name.svg" alt="Nome Logo">
             </a>
+        </div>
+        <div id="idMensagemSessao" class="navbar-nav ml-md-auto mr-md-4 plr-welcome-msg">
+            <i class="fas fa-user-circle mb-1" title="Usuário Logado" style="margin-right: 2px; color: white;">
+                    <span id="idNomeUsuarioLogado"></span>
+            </i>
+            <i class="fas fa-clock" title="Tempo restante de sessão" style="margin-right: 2px; color: white;">
+                    <span id="idTempoRestante"></span>
+            </i>
+       </div>
       </nav>
     <!-- FIM HEADER -->
 
@@ -45,9 +55,9 @@
             <div class="col-md-12 mt-2">
                 <div class="tab-content" id="v-pills-tabContent">
                     <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <div w3-include-html="templates/metas/metasPesquisa.html"></div>
                     </div>
                     <div class="tab-pane fade" id="colaborador" role="tabpanel" aria-labelledby="colaborador-tab">
-                    </div>
                     </div>
                     <div class="tab-pane fade" id="metas" role="tabpanel" aria-labelledby="metas-tab">
                         <div w3-include-html="templates/metas/metasCadastro.html"></div>
@@ -63,7 +73,7 @@
     <!--FOOTER-->
     <div class="row">
         <div class="col-md-12 plr-footer">
-                    <p>© Copyright : Focus Quality|v1.2.0-SNAPSHOT|2019</p>
+                    <p>© Copyright : Focus Quality|v1.3.0-SNAPSHOT|2019</p>
         </div>
     </div>
 
@@ -98,6 +108,7 @@
     <script type="text/javascript" src="../plr/static/js/jquery-ui.js"></script>
     <script type="text/javascript" src="../plr/static/js/crypto-js.js"></script>
 
+    <script type="text/javascript" src="../plr/static/js/PLRController.js"></script>
     <script type="text/javascript" src="../plr/static/js/PLRBusiness.js"></script>
     <script type="text/javascript" src="../plr/static/js/colaborador/ColaboradorController.js"></script>
     <script type="text/javascript" src="../plr/static/js/metas/MetasController.js"></script>
@@ -109,13 +120,14 @@
   
     <script type="text/javascript">
         var metasController;
+        var plrController = new PLRController();
         var authController = new  AuthController();
         if (authController.checkActiveSession()) {
             authController.redirectToLogin();
         } else {
             authController.openDialogPrimeiroAcesso();
         }
-        
+                
         w3.includeHTML(initJSContext);
 
         function initJSContext () {
@@ -126,6 +138,20 @@
             authController.logout();
         }
 
+        plrController.writeSessionMessage();
+
+        $(document).ready(
+            function() {                
+                setInterval(function() {
+                    if (sessionRemainingMin() <= 0) {
+                        logout();
+                        resetBrowserSession();
+                    }   
+                    
+                    plrController.writeSessionMessage();
+                }, 60000); 
+            }
+        );
     </script>
 </body>
 </html>

@@ -5,6 +5,13 @@ class MetasBusiness extends PLRBusiness {
     }
 
     /**
+     * Query
+     */
+    findMetasCadastradasByLoggedUser() {
+        return $.ajax({url : this._API_BASE_URI + '/metaEspecifica/colaborador/' + getLoggedUser(), type : "GET"});
+    }
+
+    /**
      * CRUD Grids
      */
     insertMeta(matricula, item) {

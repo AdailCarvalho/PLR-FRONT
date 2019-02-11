@@ -1,16 +1,14 @@
-class MetasController {
+class MetasController extends PLRController {
 	
 	constructor() {
+		super();
+
 		this._metasBusiness = new MetasBusiness();
 		this._colaboradorBusiness = new ColaboradorBusiness();
+		
 		this._initFields();
+		this._findMetasCadastradasByLoggedUser();
 		this.MAX_METAS_ESPECIFICAS = 7;
-
-		let $body = $("body");
-        $(document).on({
-            ajaxStart: function() { $body.addClass("loading");    },
-            ajaxStop: function() { $body.removeClass("loading"); }
-        });
 	}
 	
 	_initFields() {
@@ -18,11 +16,13 @@ class MetasController {
 		this._nome = $('#nomeMeta');
 		this._cargo = $('#cargoMeta');
 		this._diretoria = $('#diretoriaMeta');
+		this._bonusIndivMeta = $('#bonusIndivMeta');
 		this._blocoMetaExtra = $('#blocoMetaExtra');
-
 
 		this._gridMetaQuantitativa = $("#jsGridMetaQuantitativa");
 		this._gridMetaProjeto = $("#jsGridMetaProjeto");
+		this._divGridMetaUsuarioLogado = $('#idJsGridMinhasMetas');
+		this._gridMetaUsuarioLogado = $('#jsGridMinhasMetas');
 
 		this._idsInputsMetas = [{id : '#matriculaMeta', required : true},{id: '#nomeMeta', required : true},{id: '#cargoMeta', required : true},
 								{id: '#diretoriaMeta',required : true},{id : '#bonusEbitdaMeta', required : true},{id : '#valMetaGeralMeta', required : true},
@@ -44,7 +44,7 @@ class MetasController {
 
 		this._loadGridMetasIndividuais(this._gridMetaQuantitativa,[], 1);
 		this._loadGridMetasIndividuais(this._gridMetaProjeto,[], 2);
-		this._enableDisableElements(this._idsButtons, true);
+		this.enableDisableElements(this._idsButtons, true);
 	}
 
 	/**
@@ -77,40 +77,35 @@ class MetasController {
 		this._blocoMetaExtra.hide();
 		this._loadGridMetasIndividuais(this._gridMetaQuantitativa, [], 1);
 		this._loadGridMetasIndividuais(this._gridMetaProjeto, [], 2);
-
 	}
 
+	/**
+	 * CADASTRO
+	 */
 	_setColaborador(colaborador){
 		let self = this;
 		if (colaborador.matricula == undefined) {
 			self._clearInfoColaborador();
-			self._enableDisableElements(self._idsButtons, true);
+			self.enableDisableElements(self._idsButtons, true);
 			return;
 		} else {
-			self._enableDisableElements(self._idsButtons, false);
+			self.enableDisableElements(self._idsButtons, false);
 		}
 
 		let cargo = colaborador.cargo;
 		let metasGerais = colaborador.metasGerais; 
 
-		$('#nomeMeta').val(colaborador.nome);
-		$('#cargoMeta').val(cargo.nome);
-		$('#diretoriaMeta').val(cargo.diretoria.nome);
-		
-		self._nome = $('#nomeMeta');
-		self._cargo = $('#cargoMeta');
-		self._diretoria = $('#diretoriaMeta');
-		self._bonusIndivMeta = $('#bonusIndivMeta');
-		
+		self._matricula.val(colaborador.matricula);
+		self._nome.val(colaborador.nome);
+		self._cargo.val(cargo.nome);
+		self._diretoria.val(cargo.diretoria.nome);
+
 		self._enableGridEdition = true;
 
 		if (cargo.diretoria.possuiMetaExtra == 'S') {
-			if (self._blocoMetaExtra.is(':hidden') == true) {
-				self._blocoMetaExtra.removeAttr('hidden');
-				self._blocoMetaExtra.show();
-			}
+			self.showHiddenElement(self._blocoMetaExtra);
 		} else {
-			self._blocoMetaExtra.hide();
+			self.hideElement(self._blocoMetaExtra);
 		}
 
 		if (metasGerais.length > 0) {
@@ -135,37 +130,29 @@ class MetasController {
 		let self = this;
 		switch(meta.id) {
 			case 1: 
-				self._setFieldValue("bonusEbitdaMeta", meta.bonus);
-				self._setFieldValue("valMetaGeralMeta", meta.valor);
-				self._setFieldValue("obsBonusEbitdaMeta", meta.observacao);
+				self.setFieldValue("bonusEbitdaMeta", meta.bonus);
+				self.setFieldValue("valMetaGeralMeta", meta.valor);
+				self.setFieldValue("obsBonusEbitdaMeta", meta.observacao);
 				break;
 			case 2:
-				self._setFieldValue("bonusIndivMeta", meta.bonus);
-				self._setFieldValue("obsMetaIndivMeta", meta.observacao);
+				self.setFieldValue("bonusIndivMeta", meta.bonus);
+				self.setFieldValue("obsMetaIndivMeta", meta.observacao);
 				break;
 			case 3:
-				self._setFieldValue("bonusParticipacaoMeta", meta.bonus);
-				self._setFieldValue("obsParticipacaoMeta", meta.observacao);
+				self.setFieldValue("bonusParticipacaoMeta", meta.bonus);
+				self.setFieldValue("obsParticipacaoMeta", meta.observacao);
 				break;
 			case 4:
-				self._setFieldValue("bonusPerformanceMeta", meta.bonus);
-				self._setFieldValue("obsPerformanceMeta", meta.observacao);
+				self.setFieldValue("bonusPerformanceMeta", meta.bonus);
+				self.setFieldValue("obsPerformanceMeta", meta.observacao);
 				break;
 			case 5:
-				self._setFieldValue("bonusMetaExtra", meta.bonus);
-				self._setFieldValue("obsMetaExtra", meta.observacao);
+				self.setFieldValue("bonusMetaExtra", meta.bonus);
+				self.setFieldValue("obsMetaExtra", meta.observacao);
 				break;
 			default:
 				break;
 		}
-	}
-
-	_setFieldValue(field, value) {
-		$('#' + field).val(value);
-	}
-
-	_enableDisableElements(elems, stat) {
-		elems.forEach(elm => $(elm.id).prop('disabled', stat));
 	}
 
 	/** 
@@ -210,9 +197,11 @@ class MetasController {
 
 				args.item.sequencia = gridObject.jsGrid("option", "data").length + 1;
 				args.item.prazo = args.item.prazo.toLocaleDateString('pt-BR');
+				args.item.responsavel = getLoggedUser();
 
 				self._insertMeta(args.item);
 				self.getColaborador(self._matricula.val());
+				self._findMetasCadastradasByLoggedUser();
 			},
 			onItemUpdating : function(args) {
 				args.item.prazo = args.item.prazo.toLocaleDateString('pt-BR');
@@ -234,7 +223,7 @@ class MetasController {
 				
 				args.item.sequencia = self._gridMetaQuantitativa.jsGrid("option", "data").length - 1
 		
-				self._gridMetaQuantitativa.jsGrid("refresh");
+				self._findMetasCadastradasByLoggedUser();
 			},
 			onItemDeleted : function (args) {
 				let i = 1;
@@ -361,7 +350,6 @@ class MetasController {
 		this._sumPesoMetaProjeto +=  val;
 
 		return true;
-
 	}
 
 	_sumMetaQuantitativa(val) {
@@ -422,4 +410,68 @@ class MetasController {
 	 _updateMeta(item) {
 		this._metasBusiness.updateMeta(this._matricula.val(), item);
 	 }
+
+	 	/**
+	 * PESQUISA
+	 */
+	_findMetasCadastradasByLoggedUser() {
+		let self = this;
+		$.when(self._metasBusiness.findMetasCadastradasByLoggedUser())
+		 .done(function(metas) {
+			if (metas && metas.length > 0) {
+				self.showHiddenElement(self._divGridMetaUsuarioLogado);
+				self._loadGridMetasUsuarioLogado(self._gridMetaUsuarioLogado ,metas);
+			}
+		 })
+		 .fail(function(xhr, textStatus, errorThrown) {
+			alert('Colaborador não encontrado.');
+			self._clearInfoColaborador();
+		 });
+	}
+
+	_loadGridMetasUsuarioLogado(gridObject, metasData) {
+		let self = this;
+		gridObject.jsGrid({
+			width: "100%",
+			height: "auto",
+	 
+			inserting: false,
+			editing: false,
+			sorting: true,
+			paging: true,
+			pageSize: 15,
+			data: metasData,
+			fields: [
+				{name : "dataInclusao", title: "Cadastro", type : "text", align : "center", width : 40},
+				{name : "matricula", title : "Matrícula", type : "text", align: "center", width : 40},
+				{name : "nomeColaborador", title: "Colaborador", type : "text" , align : "center", width :100},
+				{name : "cargo", title: "Cargo", type : "text" , align : "center", width :80},
+				{name : "diretoria", title: "Diretoria", type : "text" , align : "center", width :80},
+				{type: "control", width : 50, align : "center", deleteButton : false, editButton : false,
+						itemTemplate: function(value, item) {
+							var $result = this.__proto__.itemTemplate.call(this, value, item);
+							
+							var $view = $("<a style='color: inherit'><i class='fas fa-eye fa-lg' " +
+							" title='Visualizar Meta' style= 'margin-left: 7px;'></i></a>")
+										   .click(function() {
+												$('.nav a[href="#' + 'metas' + '"]').tab('show');
+												self.getColaborador(item.matricula);
+										   });
+
+							$result = $result.add($view);
+
+							var $download = $("<a style='color: inherit'><i class='fas fa-file-download fa-lg' " +
+								  " title='Baixar Meta' style= 'margin-left: 7px;'></i></a>")
+								  		.click(function() { 
+											self._colaboradorBusiness.exportXls(item.matricula);
+								  		});
+
+							$result = $result.add($download);
+
+							return $result;
+					}
+				 }
+			]
+		});
+	}
 }

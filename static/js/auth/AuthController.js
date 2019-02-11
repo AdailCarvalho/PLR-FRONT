@@ -1,5 +1,7 @@
-class AuthController {
+class AuthController extends PLRController {
 	constructor() {
+        super();
+
 		this._business = new AuthBusiness();
 		this._matricula = $('#matricula');
 		this._password = $('#password'); 
