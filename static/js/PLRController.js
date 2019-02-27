@@ -2,7 +2,7 @@ class PLRController {
     constructor() {
 
     }
-
+    
 	enableDisableElements(elems, stat) {
 		elems.forEach(elm => $(elm.id).prop('disabled', stat));
     }

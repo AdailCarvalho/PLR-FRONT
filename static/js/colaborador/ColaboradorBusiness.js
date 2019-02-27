@@ -3,8 +3,13 @@ class ColaboradorBusiness extends PLRBusiness  {
         super();
     }
 
-    findByMatricula(matricula) {
-    	return $.ajax({url : this._API_BASE_URI + '/colaboradores/' + matricula, type : "GET"});
+    findByMatricula(matricula, version) {
+        let finalURI =  this._API_BASE_URI + '/colaboradores/' + matricula;
+        if (version) {
+            finalURI = finalURI + '?filterVersion=' + version;
+        }
+
+    	return $.ajax({url : finalURI , type : "GET"});
     }
 
     exportXls(matricula) {

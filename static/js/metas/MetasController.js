@@ -5,10 +5,13 @@ class MetasController extends PLRController {
 
 		this._metasBusiness = new MetasBusiness();
 		this._colaboradorBusiness = new ColaboradorBusiness();
+		this._historicoBusiness = new HistoricoBusiness();
+
+		this._dialogVersao = $('#dialogVersao');
+		this.MAX_METAS_ESPECIFICAS = 7;
 		
 		this._initFields();
-		this._findMetasCadastradasByLoggedUser();
-		this.MAX_METAS_ESPECIFICAS = 7;
+		this._findHistoricoByLoggedUser();
 	}
 	
 	_initFields() {
@@ -18,11 +21,12 @@ class MetasController extends PLRController {
 		this._diretoria = $('#diretoriaMeta');
 		this._bonusIndivMeta = $('#bonusIndivMeta');
 		this._blocoMetaExtra = $('#blocoMetaExtra');
+		this._historicVersion = null;
 
 		this._gridMetaQuantitativa = $("#jsGridMetaQuantitativa");
 		this._gridMetaProjeto = $("#jsGridMetaProjeto");
-		this._divGridMetaUsuarioLogado = $('#idJsGridMinhasMetas');
-		this._gridMetaUsuarioLogado = $('#jsGridMinhasMetas');
+		this._divGridHistoricoUsuarioLogado = $('#idJsGridHistorico');
+		this._gridHistorico = $('#jsGridHistorico');
 
 		this._idsInputsMetas = [{id : '#matriculaMeta', required : true},{id: '#nomeMeta', required : true},{id: '#cargoMeta', required : true},
 								{id: '#diretoriaMeta',required : true},{id : '#bonusEbitdaMeta', required : true},{id : '#valMetaGeralMeta', required : true},
@@ -33,39 +37,59 @@ class MetasController extends PLRController {
 								{id : "#obsMetaExtra", required : false}];
 
 		//Buttons
-		this._idsButtons = [{id : '#btnSave'}, {id : '#btnCancel'},{id : "#btnExport"}];
+		this._idsButtons = [{id : '#btnSave'}, {id : '#btnCancel'},{id : "#btnExport"},{id : "#btnCriarVersao"}];
 
 		//GRIDS
 		this._selectFrequenciaAvaliacao = [{frequencia : ""}, {frequencia : "Mensal"},{frequencia : "Bimestral"},{frequencia : "Trimestral"},
 										   {frequencia : "Semestral"},{frequencia : "Anual"},{frequencia : "Data Específica"}];
+		this._selectTipoMetas = [{tipoMeta : ""},{tipoMeta : "Quanto Maior, Melhor"},{tipoMeta : "Quanto Menor, Melhor"},{tipoMeta : "Cumpriu/Não Cumpriu"}];										   
+		this._selectSituacao = [{situacao : "A", descSituacao : "Ativo"}, {situacao : "I", descSituacao : "Inativo"}];
 
 		this._sumPesoMetaQuantitativa = 0;
 		this._sumPesoMetaProjeto = 0;
 
 		this._loadGridMetasIndividuais(this._gridMetaQuantitativa,[], 1);
 		this._loadGridMetasIndividuais(this._gridMetaProjeto,[], 2);
+		this._loadGridHistorico(this._gridHistorico, []);
 		this.enableDisableElements(this._idsButtons, true);
+
+		this._dialogVersao.dialog({
+			resizable: false,
+			height: "auto",
+			width: 600,
+			modal: true,
+			autoOpen: false,
+			closeOnEscape: false
+		});
 	}
 
 	/**
 	 * Info Colaborador 
 	 */
-	getColaborador(matricula) {
+
+	editColaborador() {
+		if (this._matricula.val() != "" && this._historicVersion) {
+			this._historicVersion = null;
+			this.getColaborador(this._matricula.val());
+		}
+	}
+
+	getColaborador(matricula, version) {
 		let self = this;
 
 		this._sumPesoMetaQuantitativa = 0;
 		this._sumPesoMetaProjeto = 0;
 		
-		$.when(self._colaboradorBusiness.findByMatricula(matricula))
-		 .done(function(serverResponse) {
+		$.when(self._colaboradorBusiness.findByMatricula(matricula, version))
+		 .done(function (serverResponse) {
 			if (serverResponse.matricula && serverResponse.matricula != null) {
-				self._setColaborador(serverResponse);
+				self._setColaborador(serverResponse, version);
 			} else {
 				alert('Colaborador não encontrado.');
 				self._clearInfoColaborador();
 			}
 		 })
-		 .fail(function(xhr, textStatus, errorThrown) {
+		 .fail(function (xhr, textStatus, errorThrown) {
 			alert('Colaborador não encontrado.');
 			self._clearInfoColaborador();
 		 });
@@ -77,12 +101,13 @@ class MetasController extends PLRController {
 		this._blocoMetaExtra.hide();
 		this._loadGridMetasIndividuais(this._gridMetaQuantitativa, [], 1);
 		this._loadGridMetasIndividuais(this._gridMetaProjeto, [], 2);
+		this._loadGridHistorico(this._gridHistorico, []);
 	}
 
 	/**
 	 * CADASTRO
 	 */
-	_setColaborador(colaborador){
+	_setColaborador(colaborador, version){
 		let self = this;
 		if (colaborador.matricula == undefined) {
 			self._clearInfoColaborador();
@@ -99,8 +124,15 @@ class MetasController extends PLRController {
 		self._nome.val(colaborador.nome);
 		self._cargo.val(cargo.nome);
 		self._diretoria.val(cargo.diretoria.nome);
+		self._historicVersion = version;
 
-		self._enableGridEdition = true;
+		if (version) {
+			self._enableGridEdition = false;
+			$('#btnCriarVersao').attr('disabled', true);
+		} else {
+			self._enableGridEdition = true;
+			$('#btnCriarVersao').removeAttr('disabled');
+		}
 
 		if (cargo.diretoria.possuiMetaExtra == 'S') {
 			self.showHiddenElement(self._blocoMetaExtra);
@@ -201,7 +233,7 @@ class MetasController extends PLRController {
 
 				self._insertMeta(args.item);
 				self.getColaborador(self._matricula.val());
-				self._findMetasCadastradasByLoggedUser();
+				self._findHistoricoByLoggedUser();
 			},
 			onItemUpdating : function(args) {
 				args.item.prazo = args.item.prazo.toLocaleDateString('pt-BR');
@@ -223,7 +255,7 @@ class MetasController extends PLRController {
 				
 				args.item.sequencia = self._gridMetaQuantitativa.jsGrid("option", "data").length - 1
 		
-				self._findMetasCadastradasByLoggedUser();
+				self._findHistoricoByLoggedUser();
 			},
 			onItemDeleted : function (args) {
 				let i = 1;
@@ -234,7 +266,7 @@ class MetasController extends PLRController {
 			},
 			fields: [
 				{name : "id", type : "number", visible : false},
-				{ name: "sequencia", title : "Sequência", type: "number", width: 80, align : "center",
+				{ name: "sequencia", title : "Seq.", type: "number", width: 60, align : "center",
 						insertTemplate : function(value, item) {
 							var $numberSequencia = jsGrid.fields.number.prototype.insertTemplate.apply(this, arguments);
 							$numberSequencia.prop('disabled', 'true');
@@ -270,18 +302,11 @@ class MetasController extends PLRController {
 				},
 				{name : "frequenciaMedicao", title : "Freq. Medição", type : "select", items : self._selectFrequenciaAvaliacao, 
 				 align : "center", valueField : "frequencia", textField : "frequencia", validate : "required", width : 80},
-				{type: "control", width : 70, align : "center",
-						itemTemplate: function(value, item) {
-							var $result = this.__proto__.itemTemplate.call(this, value, item);
-							
-							var $info = $("<a style='color: inherit'><i class='fas fa-info-circle' " +
-						  		" title='Info' style= 'margin-left: 5px;'></i></a>")
-
-							$result = $result.add($info);
-
-							return $result;
-					}
-				 }
+				{name : "tipoMeta", title : "Tipo", type : "select", items : self._selectTipoMetas, 
+				 align : "center", valueField : "tipoMeta", textField : "tipoMeta", validate : "required", width : 80},
+				{type: "control", width : 50, align : "center", inserting : self._enableGridEdition,
+						deleteButton : self._enableGridEdition, editButton : self._enableGridEdition
+				}
 			]
 		});
 	}
@@ -386,6 +411,11 @@ class MetasController extends PLRController {
 	exportar() {
 		if (this._matricula.val() == "") {
 			alert("Pesquise um colaborador primeiro, para que seja possível realizar o export.");
+			return;
+		} 
+		
+		if (this._historicVersion) {
+			this._historicoBusiness.exportHistorico(this._matricula.val(), this._historicVersion);
 		} else {
 			this._colaboradorBusiness.exportXls(this._matricula.val());
 		}
@@ -411,16 +441,17 @@ class MetasController extends PLRController {
 		this._metasBusiness.updateMeta(this._matricula.val(), item);
 	 }
 
-	 	/**
-	 * PESQUISA
+	/**
+	 * HISTORICO
 	 */
-	_findMetasCadastradasByLoggedUser() {
+
+	_findHistoricoByLoggedUser() {
 		let self = this;
-		$.when(self._metasBusiness.findMetasCadastradasByLoggedUser())
-		 .done(function(metas) {
-			if (metas && metas.length > 0) {
-				self.showHiddenElement(self._divGridMetaUsuarioLogado);
-				self._loadGridMetasUsuarioLogado(self._gridMetaUsuarioLogado ,metas);
+		$.when(self._historicoBusiness.findHistoricoForResponsavel(getLoggedUser()))
+		 .done(function(historico) {
+			if (historico && historico.length > 0) {
+				self.showHiddenElement(self._divGridHistoricoUsuarioLogado);
+				self._loadGridHistorico(self._gridHistorico ,historico);
 			}
 		 })
 		 .fail(function(xhr, textStatus, errorThrown) {
@@ -429,25 +460,101 @@ class MetasController extends PLRController {
 		 });
 	}
 
-	_loadGridMetasUsuarioLogado(gridObject, metasData) {
+	openDialogVersao() {
+		this._dialogVersao.dialog('open');
+	}
+
+	closeDialogVersao() {
+		this._dialogVersao.dialog('close');
+	}
+
+	validateDialogVersao() {
+		let inicioVigencia = $('#idInicioVigencia');
+		let fimVigencia = $('#idFimVigencia');
+
+		if (inicioVigencia.val() == "") {
+			alert('Informe o início da vigência!');
+			inicioVigencia.focus();
+			return;
+		}
+
+		if (fimVigencia.val() == "") {
+			alert('Informe o fim da vigência!');
+			fimVigencia.focus();
+			return;
+		}
+
+		if (new Date(fimVigencia.val()) < new Date(inicioVigencia.val())) {
+			alert('O fim da vigência não pode ser menor que o início!');
+			fimVigencia.focus();
+			return;
+		}
+
+		this.criaVersao();
+	}
+
+	criaVersao() {
+		let self = this;
+		self.closeDialogVersao();
+		$.when(self._historicoBusiness.generateHistoricVersion(this._historico))
+		 .done(function(historico) {
+			if (historico) {
+				alert('Versão criada com sucesso!');
+				self._findHistoricoByLoggedUser();
+			}
+		 })
+		 .fail(function(xhr, textStatus, errorThrown) {
+			alert('Colaborador não encontrado.');
+			self._clearInfoColaborador();
+		 });
+	}
+
+	get _historico() {
+		let situacaoFinal = 'A';
+		if ($('#idInativo').is(':checked')) {
+			situacaoFinal = 'I';
+		}
+
+		return {
+			matricula : this._matricula.val(),
+			matriculaResponsavel : getLoggedUser(),
+			inicioVigencia : $('#idInicioVigencia').val(),
+			fimVigencia : $('#idFimVigencia').val(),
+			situacao : situacaoFinal,
+			comentario : $('#idComentarioVersao').val(),
+		}
+	}
+
+
+	_loadGridHistorico(gridObject, historicoData) {
 		let self = this;
 		gridObject.jsGrid({
 			width: "100%",
 			height: "auto",
 	 
 			inserting: false,
-			editing: false,
+			editing: true,
 			sorting: true,
 			paging: true,
 			pageSize: 15,
-			data: metasData,
+			data: historicoData,
+			rowClick : function (args) {
+				return false;
+			},
+			onItemUpdating : function (args) {
+				self._historicoBusiness.updateHistorico(args.item);	
+			},
 			fields: [
-				{name : "dataInclusao", title: "Cadastro", type : "text", align : "center", width : 40},
-				{name : "matricula", title : "Matrícula", type : "text", align: "center", width : 40},
-				{name : "nomeColaborador", title: "Colaborador", type : "text" , align : "center", width :100},
-				{name : "cargo", title: "Cargo", type : "text" , align : "center", width :80},
-				{name : "diretoria", title: "Diretoria", type : "text" , align : "center", width :80},
-				{type: "control", width : 50, align : "center", deleteButton : false, editButton : false,
+				{name : "id", title : "Nº Doc.", type : "number", align : "center", width : 30, editing: false},
+				{name : "versao", title: "Versão", type : "number", align : "center", width : 30, editing: false},
+				{name : "dataInclusao", title: "Criação", type : "text", align : "center", width : 40, editing: false},
+				{name : "situacao", title : "Status", type : "select", items : self._selectSituacao, valueField : "situacao", 
+						textField : "descSituacao", align : "center", width : 40},
+				{name : "nomeColaborador", title : "Colaborador", type : "text", align : "center", width : 60, editing: false},
+				{name : "comentario", title : "Comentário", type : "text", align : "left", width : 120},
+				{name : "inicioVigencia", title : "Ini. Vigência", type : "text", align : "center", width : 45, editing: false},
+				{name : "fimVigencia", title : "Fim Vigência", type : "text", align : "center", width : 45, editing: false},
+				{type: "control", width : 50, align : "center", deleteButton : false, inserting : false,
 						itemTemplate: function(value, item) {
 							var $result = this.__proto__.itemTemplate.call(this, value, item);
 							
@@ -455,15 +562,15 @@ class MetasController extends PLRController {
 							" title='Visualizar Meta' style= 'margin-left: 7px;'></i></a>")
 										   .click(function() {
 												$('.nav a[href="#' + 'metas' + '"]').tab('show');
-												self.getColaborador(item.matricula);
+												self.getColaborador(item.matricula, item.versao);
 										   });
 
 							$result = $result.add($view);
 
 							var $download = $("<a style='color: inherit'><i class='fas fa-file-download fa-lg' " +
-								  " title='Baixar Meta' style= 'margin-left: 7px;'></i></a>")
+								  " title='Baixar Versão de Meta' style= 'margin-left: 7px;'></i></a>")
 								  		.click(function() { 
-											self._colaboradorBusiness.exportXls(item.matricula);
+											self._historicoBusiness.exportHistorico(item.matricula, item.versao);
 								  		});
 
 							$result = $result.add($download);
@@ -472,6 +579,7 @@ class MetasController extends PLRController {
 					}
 				 }
 			]
+		
 		});
 	}
 }

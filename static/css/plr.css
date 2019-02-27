@@ -24,6 +24,11 @@ body {
     margin-bottom: 50px;
 }
 
+/*! Habilita scroll nos grids*/
+.jsgrid-grid-header, .jsgrid-grid-body {
+  overflow: scroll;
+}
+
 .plr-bold {
     font-weight: bold;
 }

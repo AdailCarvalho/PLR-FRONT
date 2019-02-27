@@ -221,7 +221,7 @@
 
 		<!--Metas de Projeto -->
 		<div class="row">
-		<div class="col-md-12  mb-2">
+			<div class="col-md-12  mb-2">
 				<div class="card border-primary bg-light">
 					<div class="card-header border-primary text-muted">Metas de Projetos</div>
 						<!-- Inicio Body de Metas Quantitativas-->
@@ -230,16 +230,60 @@
 						<!-- Fim Card Body-->
 						</div>
 					</div>
-		<!-- Fim Metas de Projetos-->
-		</div>
+			<!-- Fim Metas de Projetos-->
+			</div>
 		</div> <!-- Fim Row -->
+
+		<div id="dialogVersao" title="Criar Versão">
+				<div class="row">
+						<div class="col-md-6 mt-2">
+								<label for="inicioVigencia" title="Início da Vigência">Início da Vigência:</label>
+								<div class="input-group">
+									<input id="idInicioVigencia" type="date" placeholder = "Início" class="form-control"/>
+								</div>
+						</div> 
+						<div class="col-md-6 mt-2">
+								<label for="fimVigencia" title="Início da Vigência">Fim da Vigência:</label>
+								<div class="input-group">
+									<input id="idFimVigencia" type="date" placeholder = "Fim" class="form-control"/>
+								</div>
+						</div>
+				</div>
+				<div class="row">
+						<div class="col-md-12 mt-2">
+								<label for="comentario" title="Comentário">Comentário:</label>
+								<div class="input-group">
+									<textarea id="idComentarioVersao" placeholder = "Comentário" rows="1"  class="form-control" maxlength="2048"></textarea>
+								</div>
+							</div>
+				</div>
+				<div class="row">
+						<div class="col-md-3 mt-4">
+								<div class="btn-group btn-group-toggle" data-toggle="buttons">
+										<label class="btn btn-secondary active" title="Meta Ativa">
+										  <input type="radio" name="options" id="idAtivo" autocomplete="off" checked>Ativo
+										</label>
+										<label class="btn btn-secondary" title="Meta Inativa">
+										  <input type="radio" name="options" id="idInativo" autocomplete="off">Inativo
+										</label>
+								</div>		
+						</div>
+				</div>
+				<hr>
+				<div class="row">
+						<div class="col-md-auto mt-2">
+								<button id="btnCriarVersaoConfirm" class="btn btn-success btn-sm" onclick="metasController.validateDialogVersao()">Salvar</button>
+								<button id="btnCancelarVersao" class="btn btn-danger btn-sm" onclick="metasController.closeDialogVersao()">Cancelar</button> 
+						</div>
+				</div>
+		</div>
 
 		<div class="row">
 			<div class="col-md-12">
-					<button id="btnSave" type="button" class="btn btn-success btn-sm" onclick="metasController.validateAndSave()">Salvar</button>
-					<button id="btnExport" type="button" class="btn btn-primary btn-sm" onclick="metasController.exportar()">Exportar</button>
-					<button id="btnCancel" type="button" class="btn btn-danger btn-sm">Cancelar</button>
+					<button id="btnSave" type="button" class="btn btn-success btn-sm" onclick="metasController.openDialogVersao()">Criar Versão</button>
+					<button id="btnExport" type="button" class="btn btn-primary btn-sm" title="Exportar esta versão" onclick="metasController.exportar()">Exportar</button>
+					<button id="btnExport" type="button" class="btn btn-secondary btn-sm" title="Editar meta deste colaborador" onclick="metasController.editColaborador()">Editar</button>
 			</div>
-		</div>
+		</div>	
 </body>
 </html>
