@@ -8,6 +8,7 @@ class MetasController extends PLRController {
 		this._historicoBusiness = new HistoricoBusiness();
 
 		this._dialogVersao = $('#dialogVersao');
+		this._dialogMetaMensal = $('#dialogMetaMensal');
 		this.MAX_METAS_ESPECIFICAS = 7;
 		
 		this._initFields();
@@ -44,6 +45,23 @@ class MetasController extends PLRController {
 										   {frequencia : "Semestral"},{frequencia : "Anual"},{frequencia : "Data Específica"}];
 		this._selectTipoMetas = [{tipoMeta : ""},{tipoMeta : "Quanto Maior, Melhor"},{tipoMeta : "Quanto Menor, Melhor"},{tipoMeta : "Cumpriu/Não Cumpriu"}];										   
 		this._selectSituacao = [{situacao : "A", descSituacao : "Ativo"}, {situacao : "I", descSituacao : "Inativo"}];
+		
+		//Mensal
+		this._sampleDataGridMetasMensais = [
+			{mes : "Janeiro", 	valorMeta : "", valorRealizado : ""},
+			{mes : "Fevereiro", 	valorMeta : "", valorRealizado : ""},
+			{mes : "Março", 	valorMeta : "", valorRealizado : ""},
+			{mes : "Abril", 	valorMeta : "", valorRealizado : ""},
+			{mes : "Maio", 	valorMeta : "", valorRealizado : ""},
+			{mes : "Junho", 	valorMeta : "", valorRealizado : ""},
+			{mes : "Julho", 	valorMeta : "", valorRealizado : ""},
+			{mes : "Agosto", 	valorMeta : "", valorRealizado : ""},
+			{mes : "Setembro", 	valorMeta : "", valorRealizado : ""},
+			{mes : "Outubro", 	valorMeta : "", valorRealizado : ""},
+			{mes : "Novembro", 	valorMeta : "", valorRealizado : ""},
+			{mes : "Dezembro", 	valorMeta : "", valorRealizado : ""},
+
+		];
 
 		this._sumPesoMetaQuantitativa = 0;
 		this._sumPesoMetaProjeto = 0;
@@ -59,7 +77,16 @@ class MetasController extends PLRController {
 			width: 600,
 			modal: true,
 			autoOpen: false,
-			closeOnEscape: false
+			closeOnEscape: true
+		});
+
+		this._dialogMetaMensal.dialog({
+			resizable: false,
+			height: "auto",
+			width: 600,
+			modal: true,
+			autoOpen: false,
+			closeOnEscape: true
 		});
 	}
 
@@ -205,6 +232,7 @@ class MetasController extends PLRController {
 			data: metasData,
 	 
 			onItemInserting : function (args) {
+				console.log('Debug grid metas');
 				if (args.item.id == null) {
 					args.item.id = idTipoMeta; 
 				}
@@ -281,7 +309,7 @@ class MetasController extends PLRController {
 						}
 
 				},
-				{ name: "descricao", title : "Descrição", type: "text", width: 150 , align : "center"},
+				{ name: "descricao", title : "Descrição", type: "text", width: 120 , align : "center"},
 				{ name: "peso", title : "Peso (%)", type: "number", width: 70, align : "center",
 					validate : {
 						message : "Informe um peso válido (>=0)",
@@ -291,7 +319,7 @@ class MetasController extends PLRController {
 					}
 				},
 				{name: "meta", title : "Meta", type: "text", width: 150 , align : "center"},
-				{name: "observacao", title : "Observações", type: "text", width: 140 , align : "center"},
+				{name: "observacao", title : "Observações", type: "text", width: 120 , align : "center"},
 				{name: "prazo", title : "Prazos", type : "date", align : "center", width : 90, 
 					validate: {
 						message : "Informe um prazo",
@@ -301,11 +329,27 @@ class MetasController extends PLRController {
 					}
 				},
 				{name : "frequenciaMedicao", title : "Freq. Medição", type : "select", items : self._selectFrequenciaAvaliacao, 
-				 align : "center", valueField : "frequencia", textField : "frequencia", validate : "required", width : 80},
+				 align : "center", valueField : "frequencia", textField : "frequencia", validate : "required", width : 90},
 				{name : "tipoMeta", title : "Tipo", type : "select", items : self._selectTipoMetas, 
-				 align : "center", valueField : "tipoMeta", textField : "tipoMeta", validate : "required", width : 80},
-				{type: "control", width : 50, align : "center", inserting : self._enableGridEdition,
-						deleteButton : self._enableGridEdition, editButton : self._enableGridEdition
+				 align : "center", valueField : "tipoMeta", textField : "tipoMeta", validate : "required", width : 90},
+				{type: "control", width : 70, align : "center", inserting : self._enableGridEdition,
+						deleteButton : self._enableGridEdition, editButton : self._enableGridEdition, 
+						itemTemplate: function(value, item) {
+							if (item.sequencia == null) {
+								return;
+							}
+
+							var $result = this.__proto__.itemTemplate.call(this, value, item);
+							
+							var $calendario = $("<a style='color: green'><i class='fas fa-calendar-alt' " +
+							" title='Metas Mensais' style= 'margin-left: 7px;'></i></a>")
+										   .click(function() {
+												self.configDialogMetasMensais(item);
+										   });
+
+							$result = $result.add($calendario);
+							return $result;
+					}
 				}
 			]
 		});
@@ -525,7 +569,6 @@ class MetasController extends PLRController {
 		}
 	}
 
-
 	_loadGridHistorico(gridObject, historicoData) {
 		let self = this;
 		gridObject.jsGrid({
@@ -580,6 +623,58 @@ class MetasController extends PLRController {
 				 }
 			]
 		
+		});
+	}
+
+	
+	/**
+	* Metas Mensais
+	*/
+	configDialogMetasMensais(item) {
+		this.openDialogMetasMensais();
+		let tipoMeta = '';
+		if (item.id == 1) {
+			tipoMeta = 'Quantitativa';
+		} else {
+			tipoMeta = 'Projeto';
+		}
+
+		$('#idMetaMensal').val(item.sequencia);
+		$('#idDescMetaMensal').val(item.descricao);
+		$('#idTipoMetaMensal').val(tipoMeta);
+
+		this._loadGridMetaMensal($('#jsGridMetaMensal'), this._sampleDataGridMetasMensais);
+	}
+
+	openDialogMetasMensais() {
+		this._dialogMetaMensal.dialog('open');
+	}
+
+	closeDialogMetasMensais() {
+		this._dialogMetaMensal.dialog('close');
+	}
+
+	_loadGridMetaMensal(gridObject, metaMensalData) {
+		let self = this;
+		gridObject.jsGrid({
+			width: "100%",
+			height: "auto",
+	 
+			inserting: false,
+			editing: true,
+			sorting: false,
+			paging: true,
+			pageSize: 6,
+			data: metaMensalData,
+			rowClick : function (args) {
+				return false;
+			},
+			fields: [
+				{name : "mes", title : "Mês", type : "text", align : "center", width : 80, editing: false, sorting : false},
+				{name : "valorMeta", title: "Acumulado", type : "number", align : "center", width : 50, sorting : false},
+				{name : "valorRealizado", title: "Realizado", type : "number", align : "center", width : 50, sorting : false},
+				{type: "control", width : 30, align : "center", deleteButton : false}
+			]
 		});
 	}
 }

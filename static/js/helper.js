@@ -148,7 +148,7 @@ function removeSession() {
 
 //Properties
 app_properties = {
-  profile : 'tomcat'
+  profile : 'standalone'
 }
 
 app_standalone_properties = {

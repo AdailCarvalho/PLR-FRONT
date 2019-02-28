@@ -234,6 +234,7 @@
 			</div>
 		</div> <!-- Fim Row -->
 
+		<!-- Versões-->
 		<div id="dialogVersao" title="Criar Versão">
 				<div class="row">
 						<div class="col-md-6 mt-2">
@@ -278,9 +279,97 @@
 				</div>
 		</div>
 
+		<!-- Dialog Metas Mensais -->
+		<div id="dialogMetaMensal" title="Metas Mensais">
+			<div class="row">
+				<div class="col-md-2 mt-2">
+					<label for="meta" title="Meta">Meta:</label>
+					<div class="input-group">
+						<input id="idMetaMensal" type="number" placeholder = "Meta" class="form-control" readonly/>
+					</div>
+				</div>
+				<div class="col-md-5 mt-2">
+						<label for="tipoMeta" title="Tipo da Meta">Tipo da Meta:</label>
+						<div class="input-group">
+							<input id="idTipoMetaMensal" type="text" placeholder = "Tipo da Meta" class="form-control" readonly/>
+						</div>
+				</div>
+				<div class="col-md-5 mt-2">
+					<label for="descMeta" title="Descrição">Descrição:</label>
+					<div class="input-group">
+						<input id="idDescMetaMensal" type="text" placeholder = "Descrição" class="form-control" readonly/>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-12 mt-2">
+					<div id="jsGridMetaMensal"></div>
+				</div>
+			</div>
+			<hr>
+			
+			<form>
+			<div class="row">
+				<div class="col-md-3">
+					<h5>Planejado:</h5>
+				</div>			
+				<div class="col-md-4">
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text" id="sum-addon">Σ</span>
+						</div>
+						<input id="idMetaMensalAcumulado" type="number" placeholder = "Acumulado" class="form-control" aria-describedby="sum-addon" readonly/>
+					</div>
+				</div>
+				<div class="col-md-5">
+						<div class="input-group">
+							<div class="input-group-prepend">
+								<span class="input-group-text" id="avg-addon">AVG</span>
+							</div>
+							<input id="idMetaMensalMedia" type="number" placeholder = "Media" class="form-control" aria-describedby="avg-addon" readonly/>
+						</div>
+				</div>
+			</div>
+			</form>
+			<hr>
+			
+			<form>
+			<div class="row">
+				<div class="col-md-3">
+					<h5 title="Realizado">Realizado:</h5>
+				</div>
+				<div class="col-md-4">
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text" id="sum-addon">Σ</span>
+						</div>
+						<input id="idMetaMensalAcumulado" type="number" placeholder = "Acumulado" class="form-control" aria-describedby="sum-addon" readonly/>
+					</div>
+				</div>
+				<div class="col-md-5">
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text" id="avg-addon">AVG</span>
+						</div>
+						<input id="idMetaMensalMedia" type="number" placeholder = "Media" class="form-control" aria-describedby="avg-addon" readonly/>
+					</div>
+				</div>
+			</div>
+		</form>
+			<hr>
+			<div class="row">
+				<div class="col-md-auto mt-2">
+					<button id="btnSalvarMetaMensal" class="btn btn-success btn-sm" title="Salvar metas mensais" onclick="">Salvar</button>
+					<button id="btnCancelarMetaMensal" class="btn btn-danger btn-sm" title="Cancelar edição de metas mensais" onclick="metasController.closeDialogMetasMensais()">Cancelar</button> 
+				</div>
+			</div>
+		</div>
+		<!-- Fecha Dialog Mensais -->
+
 		<div class="row">
 			<div class="col-md-12">
-					<button id="btnSave" type="button" class="btn btn-success btn-sm" onclick="metasController.openDialogVersao()">Criar Versão</button>
+					<button id="btnSave" type="button" class="btn btn-success btn-sm" title="Criar versão desta folha de meta." onclick="metasController.openDialogVersao()">Criar Versão</button>
 					<button id="btnExport" type="button" class="btn btn-primary btn-sm" title="Exportar esta versão" onclick="metasController.exportar()">Exportar</button>
 					<button id="btnExport" type="button" class="btn btn-secondary btn-sm" title="Editar meta deste colaborador" onclick="metasController.editColaborador()">Editar</button>
 			</div>
