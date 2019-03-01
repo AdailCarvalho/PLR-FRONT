@@ -4,10 +4,6 @@
  */
 
 //JS Grid Date Type Field 
-var MyDateField = function(config) {
-    jsGrid.Field.call(this, config);
-};
-
 var formatDateOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
 var dateLocale = 'pt-BR';
 
@@ -22,7 +18,11 @@ var portugueseCalendar = {
     prevText: 'Anterior',
     defaultDate : new Date()};
  
-MyDateField.prototype = new jsGrid.Field({
+var CustomDateField = function(config) {
+      jsGrid.Field.call(this, config);
+  };
+   
+CustomDateField.prototype = new jsGrid.Field({
  
     css: "date-field",            // redefine general property 'css'
     align: "center",              // redefine general property 'align'
@@ -59,7 +59,7 @@ MyDateField.prototype = new jsGrid.Field({
     }
 });
 
-jsGrid.fields.date = MyDateField;
+jsGrid.fields.date = CustomDateField;
 
 //Date Formatter
 String.prototype.toDate = function(format)
@@ -84,6 +84,77 @@ String.prototype.toDate = function(format)
  
   return new Date(year,month,day);
 };
+
+
+/**
+ * JS Grid custom currency
+ */
+var optionsCurrency = {
+  digitGroupSeparator: '.',
+  decimalCharacter: ',',
+  decimalCharacterAlternative: '.',
+  currencySymbol: 'R$',
+  currencySymbolPlacement: 's',
+  decimalPlacesOverride: 2,
+  minimumValue: '0.00',
+  emptyInputBehavior: 'zero',
+  leadingZero: 'deny',
+  defaultValueOverride: '0.00'
+};
+
+var CustomCurrencyField = function (config) {
+  jsGrid.Field.call(this, config);
+};
+
+CustomCurrencyField.prototype = new jsGrid.Field({
+  sorter: function (num1, num2) {
+    return num1 - num2;
+  },
+  
+  itemTemplate: function (value) {
+   // return $.fn.autoFormat(value, optionsCurrency);
+   return value;
+  },
+  
+  insertTemplate: function (value) {
+    this._insertPicker = $('<input type="text">').val(value);
+    this._insertPicker.autoNumeric('init', optionsCurrency);
+    return this._insertPicker;
+  },
+  
+  editTemplate: function (value) {
+    this._editPicker = $('<input type="text">').val(value);
+    this._editPicker.autoNumeric('init', optionsCurrency);
+    return this._editPicker;
+  },
+  
+  filterTemplate: function () {
+    if (!this.filtering)
+      return '';
+    var grid = this._grid,
+      $result = $('<input type="text">').val(0);
+    if (this.autosearch) {
+      $result.on('change', function (e) {
+        grid.search();
+      });
+    }
+    return $result;
+  },
+  
+  filterValue: function () {
+    return this._insertPicker.val();
+  },
+  
+  insertValue: function () {
+    return this._insertPicker.autoNumeric('get');
+  },
+  
+  editValue: function () {
+    return this._editPicker.autoNumeric('get');
+  }
+});
+
+jsGrid.fields.decimalReal = CustomCurrencyField;
  
 //Logged user
 function setLoggedUser(user) {
@@ -148,7 +219,7 @@ function removeSession() {
 
 //Properties
 app_properties = {
-  profile : 'standalone'
+  profile : 'tomcat'
 }
 
 app_standalone_properties = {

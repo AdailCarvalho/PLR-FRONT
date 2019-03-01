@@ -9,10 +9,13 @@ class MetasController extends PLRController {
 
 		this._dialogVersao = $('#dialogVersao');
 		this._dialogMetaMensal = $('#dialogMetaMensal');
+		this._dialogCancelaMetaMensal = $('#dialogMetaMensalCancelar');
 		this.MAX_METAS_ESPECIFICAS = 7;
+		this.HAS_EDITED_METAS_MENSAIS = false;
 		
 		this._initFields();
 		this._findHistoricoByLoggedUser();
+
 	}
 	
 	_initFields() {
@@ -48,18 +51,18 @@ class MetasController extends PLRController {
 		
 		//Mensal
 		this._sampleDataGridMetasMensais = [
-			{mes : "Janeiro", 	valorMeta : "", valorRealizado : ""},
-			{mes : "Fevereiro", 	valorMeta : "", valorRealizado : ""},
-			{mes : "Março", 	valorMeta : "", valorRealizado : ""},
-			{mes : "Abril", 	valorMeta : "", valorRealizado : ""},
-			{mes : "Maio", 	valorMeta : "", valorRealizado : ""},
-			{mes : "Junho", 	valorMeta : "", valorRealizado : ""},
-			{mes : "Julho", 	valorMeta : "", valorRealizado : ""},
-			{mes : "Agosto", 	valorMeta : "", valorRealizado : ""},
-			{mes : "Setembro", 	valorMeta : "", valorRealizado : ""},
-			{mes : "Outubro", 	valorMeta : "", valorRealizado : ""},
-			{mes : "Novembro", 	valorMeta : "", valorRealizado : ""},
-			{mes : "Dezembro", 	valorMeta : "", valorRealizado : ""},
+			{numMes : 1, mes : "Janeiro", 	valorMeta : "", valorRealizado : ""},
+			{numMes : 2, mes : "Fevereiro", 	valorMeta : "", valorRealizado : ""},
+			{numMes : 3, mes : "Março", 	valorMeta : "", valorRealizado : ""},
+			{numMes : 4, mes : "Abril", 	valorMeta : "", valorRealizado : ""},
+			{numMes : 5, mes : "Maio", 	valorMeta : "", valorRealizado : ""},
+			{numMes : 6, mes : "Junho", 	valorMeta : "", valorRealizado : ""},
+			{numMes : 7, mes : "Julho", 	valorMeta : "", valorRealizado : ""},
+			{numMes : 8, mes : "Agosto", 	valorMeta : "", valorRealizado : ""},
+			{numMes : 9, mes : "Setembro", 	valorMeta : "", valorRealizado : ""},
+			{numMes : 10, mes : "Outubro", 	valorMeta : "", valorRealizado : ""},
+			{numMes : 11, mes : "Novembro", 	valorMeta : "", valorRealizado : ""},
+			{numMes : 12, mes : "Dezembro", 	valorMeta : "", valorRealizado : ""},
 
 		];
 
@@ -81,6 +84,15 @@ class MetasController extends PLRController {
 		});
 
 		this._dialogMetaMensal.dialog({
+			resizable: true,
+			height: "auto",
+			width: 600,
+			modal: true,
+			autoOpen: false,
+			closeOnEscape: true
+		});
+
+		this._dialogCancelaMetaMensal.dialog({
 			resizable: false,
 			height: "auto",
 			width: 600,
@@ -344,7 +356,7 @@ class MetasController extends PLRController {
 							var $calendario = $("<a style='color: green'><i class='fas fa-calendar-alt' " +
 							" title='Metas Mensais' style= 'margin-left: 7px;'></i></a>")
 										   .click(function() {
-												self.configDialogMetasMensais(item);
+												self.loadMetasMensais(item);
 										   });
 
 							$result = $result.add($calendario);
@@ -601,7 +613,7 @@ class MetasController extends PLRController {
 						itemTemplate: function(value, item) {
 							var $result = this.__proto__.itemTemplate.call(this, value, item);
 							
-							var $view = $("<a style='color: inherit'><i class='fas fa-eye fa-lg' " +
+							var $view = $("<a style='color: green'><i class='fas fa-eye fa-lg' " +
 							" title='Visualizar Meta' style= 'margin-left: 7px;'></i></a>")
 										   .click(function() {
 												$('.nav a[href="#' + 'metas' + '"]').tab('show');
@@ -610,7 +622,7 @@ class MetasController extends PLRController {
 
 							$result = $result.add($view);
 
-							var $download = $("<a style='color: inherit'><i class='fas fa-file-download fa-lg' " +
+							var $download = $("<a style='color: green'><i class='fas fa-file-download fa-lg' " +
 								  " title='Baixar Versão de Meta' style= 'margin-left: 7px;'></i></a>")
 								  		.click(function() { 
 											self._historicoBusiness.exportHistorico(item.matricula, item.versao);
@@ -630,8 +642,21 @@ class MetasController extends PLRController {
 	/**
 	* Metas Mensais
 	*/
-	configDialogMetasMensais(item) {
-		this.openDialogMetasMensais();
+	cleanDialogMetasMensaisFields() {
+		$('#idMetaMensal').val('');
+		$('#idDescMetaMensal').val('');
+		$('#idTipoMetaMensal').val('');
+
+		$('#idMetaMensalSomaPlan').val('');
+		$('#idMetaMensalMediaPlan').val('');
+		$('#idMetaMensalRealizadoSoma').val('');
+		$('#idMetaMensalRealizadoMedia').val('');
+
+		this._sampleDataGridMetasMensais.forEach(item => (item.valorMeta = "", item.valorRealizado = ""));
+	}
+
+	configDialogMetasMensais(item, metasMensaisData) {
+		
 		let tipoMeta = '';
 		if (item.id == 1) {
 			tipoMeta = 'Quantitativa';
@@ -639,42 +664,147 @@ class MetasController extends PLRController {
 			tipoMeta = 'Projeto';
 		}
 
+		this.cleanDialogMetasMensaisFields();
+		this.openDialogMetasMensais();
+
 		$('#idMetaMensal').val(item.sequencia);
 		$('#idDescMetaMensal').val(item.descricao);
 		$('#idTipoMetaMensal').val(tipoMeta);
 
-		this._loadGridMetaMensal($('#jsGridMetaMensal'), this._sampleDataGridMetasMensais);
+		if (metasMensaisData && metasMensaisData.length > 0) {
+			this._loadGridMetaMensal($('#jsGridMetaMensal'), metasMensaisData);
+		} else {
+			this._sampleDataGridMetasMensais
+				.forEach(dataItem => (dataItem.idMeta = item.id, dataItem.sequencia = item.sequencia, dataItem.matricula = this._matricula.val()));
+			this._loadGridMetaMensal($('#jsGridMetaMensal'), this._sampleDataGridMetasMensais);
+		}
+	}
+
+	loadMetasMensais(item) {
+		let self = this;
+		$.when(self._metasBusiness.findMetasMensais(item.id, item.sequencia, self._matricula.val()), self._historicVersion)
+		 .done(function (serverData) {
+			self.configDialogMetasMensais(item, serverData[0]);
+		 }).fail(function(xhr, textStatus, errorThrown) {
+			alert('Erro ao carregar dados mensais do colaborador.');
+		 });
 	}
 
 	openDialogMetasMensais() {
 		this._dialogMetaMensal.dialog('open');
 	}
 
+	confirmDialogMetasMensais() {
+		if (this.HAS_EDITED_METAS_MENSAIS) {
+			this._dialogCancelaMetaMensal.dialog('open');
+		} else {
+			this.closeDialogMetasMensais();
+		}
+	}
+
 	closeDialogMetasMensais() {
+		this._dialogCancelaMetaMensal.dialog('close');
 		this._dialogMetaMensal.dialog('close');
+	}
+
+	saveMetasMensais() {
+		let metasMensaisData = $('#jsGridMetaMensal').jsGrid('option', 'data');
+		if (this.HAS_EDITED_METAS_MENSAIS) {
+			$.when(this._metasBusiness.saveMetasMensais(this._matricula.val(), metasMensaisData))
+			 .done(function() {
+				alert('Informacoes salvas!');
+			 })
+			 .fail(function(xhr, textStatus, errorThrown) {
+				alert('Erro ao salvar informacoes de metas mensais para o colaborador');
+			 });
+		}
+		this.closeDialogMetasMensais();
+	}
+
+	_configValoresCalculados(sumPlanejado, avgPlanejado, sumRealizado, avgRealizado) {
+		$('#idMetaMensalSomaPlan').val(sumPlanejado);
+		$('#idMetaMensalMediaPlan').val(avgPlanejado);
+		$('#idMetaMensalRealizadoSoma').val(sumRealizado);
+		$('#idMetaMensalRealizadoMedia').val(avgRealizado);
 	}
 
 	_loadGridMetaMensal(gridObject, metaMensalData) {
 		let self = this;
+
+		self.HAS_EDITED_METAS_MENSAIS = false;
+		if (metaMensalData && metaMensalData.length > 0) {
+			self._calculaAgregadosMensais(metaMensalData);
+		}
+
 		gridObject.jsGrid({
 			width: "100%",
 			height: "auto",
 	 
 			inserting: false,
-			editing: true,
+			editing: self._enableGridEdition,
 			sorting: false,
 			paging: true,
 			pageSize: 6,
+			pagerFormat: 'Páginas: {first} {prev} {pages} {next} {last} &nbsp;&nbsp; {pageIndex} de {pageCount}',
+			pageNextText: 'Próxima',
+			pagePrevText: 'Anterior',
+			pageFirstText: 'Primeira',
+			pageLastText: 'Última', 
 			data: metaMensalData,
 			rowClick : function (args) {
 				return false;
 			},
+			onItemUpdating : function (args) {
+				self.HAS_EDITED_METAS_MENSAIS = true;
+			},
+			onItemUpdated : function(args) {
+				let currentData = gridObject.jsGrid('option', 'data');
+				self._calculaAgregadosMensais(currentData);
+			},
 			fields: [
+				{name : "numMes", type : "number", title : "Número Mês", visible : false},
 				{name : "mes", title : "Mês", type : "text", align : "center", width : 80, editing: false, sorting : false},
-				{name : "valorMeta", title: "Acumulado", type : "number", align : "center", width : 50, sorting : false},
+				{name : "valorMeta", title: "Meta", type : "number", align : "center", width : 50, sorting : false},
 				{name : "valorRealizado", title: "Realizado", type : "number", align : "center", width : 50, sorting : false},
-				{type: "control", width : 30, align : "center", deleteButton : false}
+				{type: "control", width : 30, align : "center", deleteButton : false, editButton : self._enableGridEdition}
 			]
 		});
+	}
+
+	_calculaAgregadosMensais(dadosMensais) {
+		let totLinhasPreenchidasMeta = 0;
+		let totLinhasPreenchidasReal = 0;
+		let sumPlanejado = 0;
+		let sumRealizado = 0;
+		let avgPlanejado = 0;
+		let avgRealizado = 0; 
+		
+		for (var i = 0; i < dadosMensais.length; i ++) {
+			if (dadosMensais[i].valorMeta != "" && dadosMensais[i].valorMeta != null) {
+				sumPlanejado += parseFloat(dadosMensais[i].valorMeta);
+				totLinhasPreenchidasMeta++
+			}
+			if (dadosMensais[i].valorRealizado != "" && dadosMensais[i].valorRealizado != null) {
+				sumRealizado += parseFloat(dadosMensais[i].valorRealizado);
+				totLinhasPreenchidasReal++;
+			}
+		}
+
+		if (totLinhasPreenchidasMeta > 0) {
+			avgPlanejado = sumPlanejado / totLinhasPreenchidasMeta;
+		}
+
+		if (totLinhasPreenchidasReal > 0) {
+			avgRealizado = sumRealizado / totLinhasPreenchidasReal;
+		}
+		this._configValoresCalculados(sumPlanejado, avgPlanejado, sumRealizado, avgRealizado);
+	}
+
+	_nullSafeValNumerico(val) {
+		if (val == null || val == "" || val == "NaN") {
+			return 0;
+		} else {
+			return parseFloat(val);
+		}
 	}
 }

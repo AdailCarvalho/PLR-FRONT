@@ -43,4 +43,27 @@ class MetasBusiness extends PLRBusiness {
             async: false
         });
     }
+
+    /**
+     * CRUD Grid Metas Mensais  
+     */
+    findMetasMensais(idMeta, sequencia, matricula, filterVersion) {
+        let finalURL = this._API_BASE_URI + "/metaEspecifica/colaborador/" + matricula 
+                                          + "/mensal?idMeta=" + idMeta + "&sequencia=" + sequencia;
+        if (filterVersion) {
+            finalURL = finalURL + '&filterVersion=' + filterVersion;
+        }
+        return $.ajax({url : finalURL, type : 'GET'});
+
+    }
+    
+    saveMetasMensais(matricula, metasMensaisData) {
+        $.ajax({
+            url : this._API_BASE_URI + '/metaEspecifica/colaborador/' + matricula + '/mensal',
+            type : "POST",
+            contentType: "application/json; charset=utf-8",
+            data : JSON.stringify(metasMensaisData),
+            async : false
+        });
+    }
 }

@@ -319,7 +319,7 @@
 						<div class="input-group-prepend">
 							<span class="input-group-text" id="sum-addon">Σ</span>
 						</div>
-						<input id="idMetaMensalAcumulado" type="number" placeholder = "Acumulado" class="form-control" aria-describedby="sum-addon" readonly/>
+						<input id="idMetaMensalSomaPlan" type="number" placeholder = "Acumulado" class="form-control" aria-describedby="sum-addon" readonly/>
 					</div>
 				</div>
 				<div class="col-md-5">
@@ -327,7 +327,7 @@
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="avg-addon">AVG</span>
 							</div>
-							<input id="idMetaMensalMedia" type="number" placeholder = "Media" class="form-control" aria-describedby="avg-addon" readonly/>
+							<input id="idMetaMensalMediaPlan" type="number" placeholder = "Media" class="form-control" aria-describedby="avg-addon" readonly/>
 						</div>
 				</div>
 			</div>
@@ -344,7 +344,7 @@
 						<div class="input-group-prepend">
 							<span class="input-group-text" id="sum-addon">Σ</span>
 						</div>
-						<input id="idMetaMensalAcumulado" type="number" placeholder = "Acumulado" class="form-control" aria-describedby="sum-addon" readonly/>
+						<input id="idMetaMensalRealizadoSoma" type="number" placeholder = "Acumulado" class="form-control" aria-describedby="sum-addon" readonly/>
 					</div>
 				</div>
 				<div class="col-md-5">
@@ -352,7 +352,7 @@
 						<div class="input-group-prepend">
 							<span class="input-group-text" id="avg-addon">AVG</span>
 						</div>
-						<input id="idMetaMensalMedia" type="number" placeholder = "Media" class="form-control" aria-describedby="avg-addon" readonly/>
+						<input id="idMetaMensalRealizadoMedia" type="number" placeholder = "Media" class="form-control" aria-describedby="avg-addon" readonly/>
 					</div>
 				</div>
 			</div>
@@ -360,12 +360,28 @@
 			<hr>
 			<div class="row">
 				<div class="col-md-auto mt-2">
-					<button id="btnSalvarMetaMensal" class="btn btn-success btn-sm" title="Salvar metas mensais" onclick="">Salvar</button>
-					<button id="btnCancelarMetaMensal" class="btn btn-danger btn-sm" title="Cancelar edição de metas mensais" onclick="metasController.closeDialogMetasMensais()">Cancelar</button> 
+					<button id="btnSalvarMetaMensal" class="btn btn-success btn-sm" title="Salvar metas mensais" onclick="metasController.saveMetasMensais()">Salvar</button>
+					<button id="btnCancelarMetaMensal" class="btn btn-secondary btn-sm" title="Sair da edição de metas mensais" onclick="metasController.confirmDialogMetasMensais()">Sair</button> 
 				</div>
 			</div>
 		</div>
 		<!-- Fecha Dialog Mensais -->
+
+		<div id="dialogMetaMensalCancelar" title="Confirmar">
+			<div class="row">
+				<div class="col-md-auto">
+					<p>Deseja salvar suas alterações?</p>
+				</div>
+			</div>
+			<hr>
+			<div class="row">
+				<div class="col-md-auto">
+						<button id="btnSalvarMetaMensalCancelar" class="btn btn-success btn-sm" title="Salvar metas mensais" onclick="metasController.saveMetasMensais()">Salvar</button>
+						<button id="btnCancelarMetaMensalCancelar" class="btn btn-secondary btn-sm" title="Sair de editor de metas mensais" onclick="metasController.closeDialogMetasMensais()">Sair</button> 
+				</div>
+			</div>
+		</div>
+
 
 		<div class="row">
 			<div class="col-md-12">
