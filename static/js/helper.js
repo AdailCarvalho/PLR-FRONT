@@ -87,75 +87,49 @@ String.prototype.toDate = function(format)
 
 
 /**
- * JS Grid custom currency
+ * JS Grid custom decimal
  */
-var optionsCurrency = {
-  digitGroupSeparator: '.',
-  decimalCharacter: ',',
-  decimalCharacterAlternative: '.',
-  currencySymbol: 'R$',
-  currencySymbolPlacement: 's',
-  decimalPlacesOverride: 2,
-  minimumValue: '0.00',
-  emptyInputBehavior: 'zero',
-  leadingZero: 'deny',
-  defaultValueOverride: '0.00'
-};
 
-var CustomCurrencyField = function (config) {
-  jsGrid.Field.call(this, config);
-};
+var NumberField = jsGrid.NumberField;
 
-CustomCurrencyField.prototype = new jsGrid.Field({
-  sorter: function (num1, num2) {
-    return num1 - num2;
+function DecimalField(config) {
+  NumberField.call(this, config);
+}
+
+DecimalField.prototype = new NumberField({
+
+  step: 0.01,
+
+  filterValue: function() {
+    return this.filterControl.val() ? parseFloat(this.filterControl.val()) : undefined;
   },
-  
-  itemTemplate: function (value) {
-   // return $.fn.autoFormat(value, optionsCurrency);
-   return value;
-  },
-  
-  insertTemplate: function (value) {
-    this._insertPicker = $('<input type="text">').val(value);
-    this._insertPicker.autoNumeric('init', optionsCurrency);
-    return this._insertPicker;
-  },
-  
-  editTemplate: function (value) {
-    this._editPicker = $('<input type="text">').val(value);
-    this._editPicker.autoNumeric('init', optionsCurrency);
-    return this._editPicker;
-  },
-  
-  filterTemplate: function () {
-    if (!this.filtering)
-      return '';
-    var grid = this._grid,
-      $result = $('<input type="text">').val(0);
-    if (this.autosearch) {
-      $result.on('change', function (e) {
-        grid.search();
-      });
+
+  insertValue: function() {
+    let value = this.insertControl.val() ? parseFloat(this.insertControl.val()) : undefined;
+    if (value) {
+      return accounting.formatMoney(value, "", 2, ".", ",");
+    } else {
+      return undefined;
     }
-    return $result;
   },
-  
-  filterValue: function () {
-    return this._insertPicker.val();
+
+  editValue: function() {
+    let value = this.editControl.val() ? parseFloat(this.editControl.val()) : undefined;
+    if (value) {
+      return accounting.formatMoney(value, "", 2, ".", ","); 
+    } else {
+      return undefined;
+    }
   },
-  
-  insertValue: function () {
-    return this._insertPicker.autoNumeric('get');
-  },
-  
-  editValue: function () {
-    return this._editPicker.autoNumeric('get');
+
+  _createTextBox: function() {
+    return NumberField.prototype._createTextBox.call(this)
+      .attr("step", this.step);
   }
 });
 
-jsGrid.fields.decimalReal = CustomCurrencyField;
- 
+jsGrid.fields.decimal = jsGrid.DecimalField = DecimalField;
+
 //Logged user
 function setLoggedUser(user) {
   let userName = user.nome.split(" ");
@@ -219,7 +193,7 @@ function removeSession() {
 
 //Properties
 app_properties = {
-  profile : 'tomcat'
+  profile : 'standalone'
 }
 
 app_standalone_properties = {

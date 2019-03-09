@@ -66,8 +66,7 @@ class MetasController extends PLRController {
 
 		];
 
-		this._sumPesoMetaQuantitativa = 0;
-		this._sumPesoMetaProjeto = 0;
+		this._sumPesoMetasIndividuais = 0;
 
 		this._loadGridMetasIndividuais(this._gridMetaQuantitativa,[], 1);
 		this._loadGridMetasIndividuais(this._gridMetaProjeto,[], 2);
@@ -115,9 +114,6 @@ class MetasController extends PLRController {
 
 	getColaborador(matricula, version) {
 		let self = this;
-
-		this._sumPesoMetaQuantitativa = 0;
-		this._sumPesoMetaProjeto = 0;
 		
 		$.when(self._colaboradorBusiness.findByMatricula(matricula, version))
 		 .done(function (serverResponse) {
@@ -185,12 +181,10 @@ class MetasController extends PLRController {
 
 		if (colaborador.metasQuantitativas.length > 0) {
 			colaborador.metasQuantitativas.forEach(meta => meta.prazo = meta.prazo.toDate(portugueseCalendar.dateFormat));
-			colaborador.metasQuantitativas.forEach(meta => self._sumMetaQuantitativa(meta.peso));
 		}
 
 		if (colaborador.metasProjetos.length > 0) {
 			colaborador.metasProjetos.forEach(meta => meta.prazo = meta.prazo.toDate(portugueseCalendar.dateFormat));
-			colaborador.metasProjetos.forEach(meta => self._sumMetaProjeto(meta.peso));
 		}
 
 		self._loadGridMetasIndividuais(this._gridMetaQuantitativa, colaborador.metasQuantitativas, 1);
@@ -230,6 +224,35 @@ class MetasController extends PLRController {
 	 * GRIDS
 	*/
 
+	exportar() {
+		if (this._matricula.val() == "") {
+			alert("Pesquise um colaborador primeiro, para que seja possível realizar o export.");
+			return;
+		} 
+		
+		if (this._historicVersion) {
+			this._historicoBusiness.exportHistorico(this._matricula.val(), this._historicVersion);
+		} else {
+			this._colaboradorBusiness.exportXls(this._matricula.val());
+		}
+	}
+
+	_calculaPesosMetasIndividuais() {
+		let dadosQuantitativas = this._gridMetaQuantitativa.jsGrid('option', 'data');
+		let dadosProjetos = this._gridMetaProjeto.jsGrid('option', 'data');
+		let sumQuantitativas = 0;
+		let sumProjetos = 0;
+		for (var i = 0; i < dadosQuantitativas.length; i ++) {
+			sumQuantitativas += dadosQuantitativas[i].peso;
+		}
+
+		for (var i = 0; i < dadosProjetos.length; i ++) {
+			sumProjetos += dadosProjetos[i].peso;
+		}
+
+		this._sumPesoMetasIndividuais = sumQuantitativas + sumProjetos;
+	}
+
 	_loadGridMetasIndividuais(gridObject, metasData, idTipoMeta) {
 		let self = this;
 		gridObject.jsGrid({
@@ -244,7 +267,6 @@ class MetasController extends PLRController {
 			data: metasData,
 	 
 			onItemInserting : function (args) {
-				console.log('Debug grid metas');
 				if (args.item.id == null) {
 					args.item.id = idTipoMeta; 
 				}
@@ -255,7 +277,8 @@ class MetasController extends PLRController {
 					return;
 				}
 
-				if(self._sumMeta(idTipoMeta, args.item.peso) == false) {
+				self._calculaPesosMetasIndividuais();
+				if(!self._validateForGrid()) {
 					alert("O resultado das metas está excedendo o valor das Metas Individuais! Reveja os pesos das metas informadas.");
 					args.cancel = true;
 					return;
@@ -275,10 +298,14 @@ class MetasController extends PLRController {
 				self.getColaborador(self._matricula.val());
 				self._findHistoricoByLoggedUser();
 			},
+
 			onItemUpdating : function(args) {
 				args.item.prazo = args.item.prazo.toLocaleDateString('pt-BR');
-
-				if(self._recalcMeta(args.item.id, args.previousItem.peso, args.item.peso) == false) {
+			},
+			
+			onItemUpdated : function(args) {
+				self._calculaPesosMetasIndividuais();
+				if(!self._validateForGrid()) {
 					alert("O resultado das metas está excedendo o valor das Metas Individuais! Reveja os pesos das metas informadas.");
 					args.cancel = true;
 					return;
@@ -290,7 +317,6 @@ class MetasController extends PLRController {
 
 			deleteConfirm: "Deseja realmente excluir a meta selecionada?",
 			onItemDeleting : function (args) {
-				self._subtractMeta(idTipoMeta, args.item.peso);			
 				self._deleteMeta(args.item);
 				
 				args.item.sequencia = self._gridMetaQuantitativa.jsGrid("option", "data").length - 1
@@ -299,10 +325,12 @@ class MetasController extends PLRController {
 			},
 			onItemDeleted : function (args) {
 				let i = 1;
-				let items = self._gridMetaQuantitativa.jsGrid("option","data");
+				let items = gridObject.jsGrid("option","data");
 				for (i = 0; i < items.length; i ++) {
 					items[i].sequencia = i + 1;
 				}
+
+				self._calculaPesosMetasIndividuais();
 			},
 			fields: [
 				{name : "id", type : "number", visible : false},
@@ -371,126 +399,28 @@ class MetasController extends PLRController {
 	 * Validações
 	 */
 
-	 _sumMeta(idTipoMeta,val) {
-	 	if (idTipoMeta == 1) {
-	 		return this._sumMetaQuantitativa(val);
-	 	} else {
-	 		return this._sumMetaProjeto(val);
-	 	}
-	 }
-
-	 _recalcMeta(idTipoMeta, previousPeso, currentPeso) {
-		let diffPeso = 0;
-		let operation = "";
-		if (currentPeso < previousPeso) {
-			diffPeso = previousPeso - currentPeso;
-			operation = "-";
-		} else if (currentPeso > previousPeso) {
-			diffPeso = currentPeso - previousPeso;
-			operation = "+";
-		}
-
-	 	if (idTipoMeta == 1) {
-			return this._recalcMetaQuantitativa(diffPeso, operation);
-	 	} else {
-	 		return this._recalcMetaProjeto(diffPeso, operation);
-	 	}
-	 }
-
-	 _recalcMetaQuantitativa(diffPeso, operation) {
-	 	let calc = '' + this._sumPesoMetaQuantitativa + operation + diffPeso;
-	 	let tmpPesoQuant = this._sumPesoMetaQuantitativa;
-	 	this._sumPesoMetaQuantitativa = eval(calc);
-
-	 	if (this._validateSum(0) == false) {
-	 		this._sumPesoMetaQuantitativa = tmpPesoQuant;
-	 		return false;
-	 	} else {
-	 		return true;
-	 	}
-	 }
-
-	 _recalcMetaProjeto(diffPeso, operation) {
-	 	let calc = '' + this._sumPesoMetaProjeto + operation + diffPeso;
-	 	let tmpPesoProj = this._sumPesoMetaProjeto;
-	 	this._sumPesoMetaProjeto = eval(calc);
-	 	
-	 	if (this._validateSum(0) == false) {
-	 		this._sumPesoMetaProjeto = tmpPesoProj;
-	 		return false;
-	 	} else {
-	 		return true;
-	 	}
-	 }
-
-	_sumMetaProjeto(val) {
-		if (this._validateSum(val) == false) {
-			return false;
-		}
-		
-		this._sumPesoMetaProjeto +=  val;
-
-		return true;
+	_validateForGrid() {
+		return ((this._sumPesoMetasIndividuais) <= this._bonusIndivMeta.val());
 	}
 
-	_sumMetaQuantitativa(val) {
-		if (this._validateSum(val) == false) {
-			return false;
-		}
-
-		this._sumPesoMetaQuantitativa += val;
-
-		return true;
-	}
-
-	_subtractMeta(idTipoMetaval, val) {
-		if (idTipoMetaval == 1) {
-			this._sumPesoMetaQuantitativa -= val;
-		} else {
-			this._sumPesoMetaProjeto -= val;
-		}
-	}
-
-	_validateSum(val) {
-		return ((this._sumPesoMetaProjeto + this._sumPesoMetaQuantitativa + val) <= this._bonusIndivMeta.val());
-	}
-
-	validateAndSave() {
-		if ((this._sumPesoMetaProjeto + this._sumPesoMetaQuantitativa) != this._bonusIndivMeta.val()) {
+	 _validateForVersion() {
+		if ((this._sumPesoMetasIndividuais) != this._bonusIndivMeta.val()) {
 			alert("O somatório das metas quantitativas e de projetos está diferente do valor da Meta Individual. Reveja as metas.");
-			return;
-		}
-
-		this._save();
-	}
-
-	exportar() {
-		if (this._matricula.val() == "") {
-			alert("Pesquise um colaborador primeiro, para que seja possível realizar o export.");
-			return;
+			return false;
 		} 
-		
-		if (this._historicVersion) {
-			this._historicoBusiness.exportHistorico(this._matricula.val(), this._historicVersion);
-		} else {
-			this._colaboradorBusiness.exportXls(this._matricula.val());
-		}
-	}
-
-	_save() {
-		alert('Informações salvas com sucesso.');
+		return true;
 	}
 
 	/**
 	 * CRUD METAS
 	 */
-	
-	 _insertMeta(item) {
-		this._metasBusiness.insertMeta(this._matricula.val(), item);
-	 }
 
 	 _deleteMeta(item){
 		this._metasBusiness.deleteMeta(this._matricula.val(), item);
+	 }
+	
+	 _insertMeta(item) {
+		this._metasBusiness.insertMeta(this._matricula.val(), item);
 	 }
 
 	 _updateMeta(item) {
@@ -501,13 +431,18 @@ class MetasController extends PLRController {
 	 * HISTORICO
 	 */
 
-	_findHistoricoByLoggedUser() {
+	closeDialogVersao() {
+		this._dialogVersao.dialog('close');
+	}
+	
+	criaVersao() {
 		let self = this;
-		$.when(self._historicoBusiness.findHistoricoForResponsavel(getLoggedUser()))
+		self.closeDialogVersao();
+		$.when(self._historicoBusiness.generateHistoricVersion(this._historico))
 		 .done(function(historico) {
-			if (historico && historico.length > 0) {
-				self.showHiddenElement(self._divGridHistoricoUsuarioLogado);
-				self._loadGridHistorico(self._gridHistorico ,historico);
+			if (historico) {
+				alert('Versão criada com sucesso!');
+				self._findHistoricoByLoggedUser();
 			}
 		 })
 		 .fail(function(xhr, textStatus, errorThrown) {
@@ -517,11 +452,9 @@ class MetasController extends PLRController {
 	}
 
 	openDialogVersao() {
-		this._dialogVersao.dialog('open');
-	}
-
-	closeDialogVersao() {
-		this._dialogVersao.dialog('close');
+		if (this._validateForVersion()) {
+			this._dialogVersao.dialog('open');
+		}
 	}
 
 	validateDialogVersao() {
@@ -549,36 +482,19 @@ class MetasController extends PLRController {
 		this.criaVersao();
 	}
 
-	criaVersao() {
+	_findHistoricoByLoggedUser() {
 		let self = this;
-		self.closeDialogVersao();
-		$.when(self._historicoBusiness.generateHistoricVersion(this._historico))
+		$.when(self._historicoBusiness.findHistoricoForResponsavel(getLoggedUser()))
 		 .done(function(historico) {
-			if (historico) {
-				alert('Versão criada com sucesso!');
-				self._findHistoricoByLoggedUser();
+			if (historico && historico.length > 0) {
+				self.showHiddenElement(self._divGridHistoricoUsuarioLogado);
+				self._loadGridHistorico(self._gridHistorico ,historico);
 			}
 		 })
 		 .fail(function(xhr, textStatus, errorThrown) {
 			alert('Colaborador não encontrado.');
 			self._clearInfoColaborador();
 		 });
-	}
-
-	get _historico() {
-		let situacaoFinal = 'A';
-		if ($('#idInativo').is(':checked')) {
-			situacaoFinal = 'I';
-		}
-
-		return {
-			matricula : this._matricula.val(),
-			matriculaResponsavel : getLoggedUser(),
-			inicioVigencia : $('#idInicioVigencia').val(),
-			fimVigencia : $('#idFimVigencia').val(),
-			situacao : situacaoFinal,
-			comentario : $('#idComentarioVersao').val(),
-		}
 	}
 
 	_loadGridHistorico(gridObject, historicoData) {
@@ -636,6 +552,22 @@ class MetasController extends PLRController {
 			]
 		
 		});
+	}
+
+	get _historico() {
+		let situacaoFinal = 'A';
+		if ($('#idInativo').is(':checked')) {
+			situacaoFinal = 'I';
+		}
+
+		return {
+			matricula : this._matricula.val(),
+			matriculaResponsavel : getLoggedUser(),
+			inicioVigencia : $('#idInicioVigencia').val(),
+			fimVigencia : $('#idFimVigencia').val(),
+			situacao : situacaoFinal,
+			comentario : $('#idComentarioVersao').val(),
+		}
 	}
 
 	
@@ -708,9 +640,8 @@ class MetasController extends PLRController {
 	}
 
 	saveMetasMensais() {
-		let metasMensaisData = $('#jsGridMetaMensal').jsGrid('option', 'data');
 		if (this.HAS_EDITED_METAS_MENSAIS) {
-			$.when(this._metasBusiness.saveMetasMensais(this._matricula.val(), metasMensaisData))
+			$.when(this._metasBusiness.saveMetasMensais(this._matricula.val(), this._getMetasWithDecimalReplace()))
 			 .done(function() {
 				alert('Informacoes salvas!');
 			 })
@@ -719,56 +650,6 @@ class MetasController extends PLRController {
 			 });
 		}
 		this.closeDialogMetasMensais();
-	}
-
-	_configValoresCalculados(sumPlanejado, avgPlanejado, sumRealizado, avgRealizado) {
-		$('#idMetaMensalSomaPlan').val(sumPlanejado);
-		$('#idMetaMensalMediaPlan').val(avgPlanejado);
-		$('#idMetaMensalRealizadoSoma').val(sumRealizado);
-		$('#idMetaMensalRealizadoMedia').val(avgRealizado);
-	}
-
-	_loadGridMetaMensal(gridObject, metaMensalData) {
-		let self = this;
-
-		self.HAS_EDITED_METAS_MENSAIS = false;
-		if (metaMensalData && metaMensalData.length > 0) {
-			self._calculaAgregadosMensais(metaMensalData);
-		}
-
-		gridObject.jsGrid({
-			width: "100%",
-			height: "auto",
-	 
-			inserting: false,
-			editing: self._enableGridEdition,
-			sorting: false,
-			paging: true,
-			pageSize: 6,
-			pagerFormat: 'Páginas: {first} {prev} {pages} {next} {last} &nbsp;&nbsp; {pageIndex} de {pageCount}',
-			pageNextText: 'Próxima',
-			pagePrevText: 'Anterior',
-			pageFirstText: 'Primeira',
-			pageLastText: 'Última', 
-			data: metaMensalData,
-			rowClick : function (args) {
-				return false;
-			},
-			onItemUpdating : function (args) {
-				self.HAS_EDITED_METAS_MENSAIS = true;
-			},
-			onItemUpdated : function(args) {
-				let currentData = gridObject.jsGrid('option', 'data');
-				self._calculaAgregadosMensais(currentData);
-			},
-			fields: [
-				{name : "numMes", type : "number", title : "Número Mês", visible : false},
-				{name : "mes", title : "Mês", type : "text", align : "center", width : 80, editing: false, sorting : false},
-				{name : "valorMeta", title: "Meta", type : "number", align : "center", width : 50, sorting : false},
-				{name : "valorRealizado", title: "Realizado", type : "number", align : "center", width : 50, sorting : false},
-				{type: "control", width : 30, align : "center", deleteButton : false, editButton : self._enableGridEdition}
-			]
-		});
 	}
 
 	_calculaAgregadosMensais(dadosMensais) {
@@ -800,11 +681,65 @@ class MetasController extends PLRController {
 		this._configValoresCalculados(sumPlanejado, avgPlanejado, sumRealizado, avgRealizado);
 	}
 
-	_nullSafeValNumerico(val) {
-		if (val == null || val == "" || val == "NaN") {
-			return 0;
-		} else {
-			return parseFloat(val);
+	_configValoresCalculados(sumPlanejado, avgPlanejado, sumRealizado, avgRealizado) {
+		$('#idMetaMensalSomaPlan').val(sumPlanejado);
+		$('#idMetaMensalMediaPlan').val(avgPlanejado);
+		$('#idMetaMensalRealizadoSoma').val(sumRealizado);
+		$('#idMetaMensalRealizadoMedia').val(avgRealizado);
+	}
+
+	_getMetasWithDecimalReplace() {
+		let metasMensaisData = $('#jsGridMetaMensal').jsGrid('option', 'data');
+		for (var i = 0; i < metasMensaisData.length; i ++) {
+			if (metasMensaisData[i].valorMeta) {
+				metasMensaisData[i].valorMeta = metasMensaisData[i].valorMeta.replace(',','.');
+			}
+
+			if (metasMensaisData[i].valorRealizado) {
+				metasMensaisData[i].valorRealizado = metasMensaisData[i].valorRealizado.replace(',','.');
+			}
 		}
+
+		return metasMensaisData;
+	}
+
+	_loadGridMetaMensal(gridObject, metaMensalData) {
+		let self = this;
+
+		self.HAS_EDITED_METAS_MENSAIS = false;
+		if (metaMensalData && metaMensalData.length > 0) {
+			self._calculaAgregadosMensais(metaMensalData);
+		}
+
+		gridObject.jsGrid({
+			width: "100%",
+			height: "auto",
+	 
+			inserting: false,
+			editing: self._enableGridEdition,
+			sorting: false,
+			paging: true,
+			pageSize: 6,
+			pagerFormat: 'Páginas: {first} {prev} {pages} {next} {last} &nbsp;&nbsp; {pageIndex} de {pageCount}',
+			pageNextText: 'Próxima',
+			pagePrevText: 'Anterior',
+			pageFirstText: 'Primeira',
+			pageLastText: 'Última', 
+			data: metaMensalData,
+			onItemUpdating : function (args) {
+				self.HAS_EDITED_METAS_MENSAIS = true;
+			},
+			onItemUpdated : function(args) {
+				let currentData = gridObject.jsGrid('option', 'data');
+				self._calculaAgregadosMensais(currentData);
+			},
+			fields: [
+				{name : "numMes", type : "number", title : "Número Mês", visible : false},
+				{name : "mes", title : "Mês", type : "text", align : "center", width : 80, editing: false, sorting : false},
+				{name : "valorMeta", title: "Meta", type : "decimal", align : "center", width : 50, sorting : false},
+				{name : "valorRealizado", title: "Realizado", type : "decimal", align : "center", width : 50, sorting : false},
+				{type: "control", width : 30, align : "center", deleteButton : false, editButton : self._enableGridEdition}
+			]
+		});
 	}
 }
