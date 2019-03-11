@@ -96,35 +96,35 @@ function DecimalField(config) {
   NumberField.call(this, config);
 }
 
-DecimalField.prototype = new NumberField({
+function DecimalField(config) {
+  jsGrid.fields.number.call(this, config);
+}
 
-  step: 0.01,
+DecimalField.prototype = new jsGrid.fields.number({
+
+  itemTemplate: function(value) {
+    if (value) {
+      value = value.toFixed(2).toString().replace('.',','); 
+    }
+    return value
+  },
 
   filterValue: function() {
-    return this.filterControl.val() ? parseFloat(this.filterControl.val()) : undefined;
+      return this.filterControl.val()
+          ? parseFloat(this.filterControl.val() || 0, 10)
+          : undefined;
   },
 
   insertValue: function() {
-    let value = this.insertControl.val() ? parseFloat(this.insertControl.val()) : undefined;
-    if (value) {
-      return accounting.formatMoney(value, "", 2, ".", ",");
-    } else {
-      return undefined;
-    }
+      return this.insertControl.val()
+          ? parseFloat(this.insertControl.val() || 0, 10)
+          : undefined;
   },
 
   editValue: function() {
-    let value = this.editControl.val() ? parseFloat(this.editControl.val()) : undefined;
-    if (value) {
-      return accounting.formatMoney(value, "", 2, ".", ","); 
-    } else {
-      return undefined;
-    }
-  },
-
-  _createTextBox: function() {
-    return NumberField.prototype._createTextBox.call(this)
-      .attr("step", this.step);
+      return this.editControl.val()
+          ? parseFloat(this.editControl.val() || 0, 10)
+          : undefined;
   }
 });
 

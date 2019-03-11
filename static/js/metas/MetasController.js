@@ -237,7 +237,7 @@ class MetasController extends PLRController {
 		}
 	}
 
-	_calculaPesosMetasIndividuais() {
+	_calculaPesosMetasIndividuais(newValue, previousValue) {
 		let dadosQuantitativas = this._gridMetaQuantitativa.jsGrid('option', 'data');
 		let dadosProjetos = this._gridMetaProjeto.jsGrid('option', 'data');
 		let sumQuantitativas = 0;
@@ -251,6 +251,12 @@ class MetasController extends PLRController {
 		}
 
 		this._sumPesoMetasIndividuais = sumQuantitativas + sumProjetos;
+		if (previousValue) {
+			this._sumPesoMetasIndividuais -= previousValue;
+		}
+		if (newValue) {
+			this._sumPesoMetasIndividuais += newValue;
+		}
 	}
 
 	_loadGridMetasIndividuais(gridObject, metasData, idTipoMeta) {
@@ -277,7 +283,7 @@ class MetasController extends PLRController {
 					return;
 				}
 
-				self._calculaPesosMetasIndividuais();
+				self._calculaPesosMetasIndividuais(args.item.peso);
 				if(!self._validateForGrid()) {
 					alert("O resultado das metas está excedendo o valor das Metas Individuais! Reveja os pesos das metas informadas.");
 					args.cancel = true;
@@ -290,7 +296,15 @@ class MetasController extends PLRController {
 					return;
 				}
 
-				args.item.sequencia = gridObject.jsGrid("option", "data").length + 1;
+				var maxSequencia = 0;
+				for (var i = 0; i < gridObject.jsGrid("option", "data").length; i ++) {
+					var currentSequencia = gridObject.jsGrid("option", "data")[i].sequencia;
+					if (currentSequencia > maxSequencia) {
+						maxSequencia = currentSequencia;
+					}
+				}
+
+				args.item.sequencia = maxSequencia == 0 ? 1 : (maxSequencia + 1);
 				args.item.prazo = args.item.prazo.toLocaleDateString('pt-BR');
 				args.item.responsavel = getLoggedUser();
 
@@ -301,16 +315,15 @@ class MetasController extends PLRController {
 
 			onItemUpdating : function(args) {
 				args.item.prazo = args.item.prazo.toLocaleDateString('pt-BR');
-			},
-			
-			onItemUpdated : function(args) {
-				self._calculaPesosMetasIndividuais();
+				self._calculaPesosMetasIndividuais(args.item.peso, args.previousItem.peso);
 				if(!self._validateForGrid()) {
 					alert("O resultado das metas está excedendo o valor das Metas Individuais! Reveja os pesos das metas informadas.");
 					args.cancel = true;
 					return;
 				}
-
+			},
+			
+			onItemUpdated : function(args) {
 				self._updateMeta(args.item);
 				self.getColaborador(self._matricula.val());
 			},
@@ -318,19 +331,8 @@ class MetasController extends PLRController {
 			deleteConfirm: "Deseja realmente excluir a meta selecionada?",
 			onItemDeleting : function (args) {
 				self._deleteMeta(args.item);
-				
-				args.item.sequencia = self._gridMetaQuantitativa.jsGrid("option", "data").length - 1
-		
-				self._findHistoricoByLoggedUser();
-			},
-			onItemDeleted : function (args) {
-				let i = 1;
-				let items = gridObject.jsGrid("option","data");
-				for (i = 0; i < items.length; i ++) {
-					items[i].sequencia = i + 1;
-				}
-
 				self._calculaPesosMetasIndividuais();
+				self._findHistoricoByLoggedUser();		
 			},
 			fields: [
 				{name : "id", type : "number", visible : false},
@@ -404,6 +406,7 @@ class MetasController extends PLRController {
 	}
 
 	 _validateForVersion() {
+		this._calculaPesosMetasIndividuais();
 		if ((this._sumPesoMetasIndividuais) != this._bonusIndivMeta.val()) {
 			alert("O somatório das metas quantitativas e de projetos está diferente do valor da Meta Individual. Reveja as metas.");
 			return false;
@@ -509,9 +512,6 @@ class MetasController extends PLRController {
 			paging: true,
 			pageSize: 15,
 			data: historicoData,
-			rowClick : function (args) {
-				return false;
-			},
 			onItemUpdating : function (args) {
 				self._historicoBusiness.updateHistorico(args.item);	
 			},
@@ -641,7 +641,7 @@ class MetasController extends PLRController {
 
 	saveMetasMensais() {
 		if (this.HAS_EDITED_METAS_MENSAIS) {
-			$.when(this._metasBusiness.saveMetasMensais(this._matricula.val(), this._getMetasWithDecimalReplace()))
+			$.when(this._metasBusiness.saveMetasMensais(this._matricula.val(), 	$('#jsGridMetaMensal').jsGrid('option', 'data')))
 			 .done(function() {
 				alert('Informacoes salvas!');
 			 })
@@ -686,21 +686,6 @@ class MetasController extends PLRController {
 		$('#idMetaMensalMediaPlan').val(avgPlanejado);
 		$('#idMetaMensalRealizadoSoma').val(sumRealizado);
 		$('#idMetaMensalRealizadoMedia').val(avgRealizado);
-	}
-
-	_getMetasWithDecimalReplace() {
-		let metasMensaisData = $('#jsGridMetaMensal').jsGrid('option', 'data');
-		for (var i = 0; i < metasMensaisData.length; i ++) {
-			if (metasMensaisData[i].valorMeta) {
-				metasMensaisData[i].valorMeta = metasMensaisData[i].valorMeta.replace(',','.');
-			}
-
-			if (metasMensaisData[i].valorRealizado) {
-				metasMensaisData[i].valorRealizado = metasMensaisData[i].valorRealizado.replace(',','.');
-			}
-		}
-
-		return metasMensaisData;
 	}
 
 	_loadGridMetaMensal(gridObject, metaMensalData) {
