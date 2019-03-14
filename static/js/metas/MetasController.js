@@ -25,6 +25,7 @@ class MetasController extends PLRController {
 		this._diretoria = $('#diretoriaMeta');
 		this._bonusIndivMeta = $('#bonusIndivMeta');
 		this._blocoMetaExtra = $('#blocoMetaExtra');
+		this._blocoInfoMeta = $('#blocoInfoMeta');
 		this._historicVersion = null;
 
 		this._gridMetaQuantitativa = $("#jsGridMetaQuantitativa");
@@ -41,7 +42,7 @@ class MetasController extends PLRController {
 								{id : "#obsMetaExtra", required : false}];
 
 		//Buttons
-		this._idsButtons = [{id : '#btnSave'}, {id : '#btnCancel'},{id : "#btnExport"},{id : "#btnCriarVersao"}];
+		this._idsButtons = [{id : '#btnEditar'}, {id : '#btnCancel'},{id : "#btnExport"},{id : "#btnCriarVersao"}];
 
 		//GRIDS
 		this._selectFrequenciaAvaliacao = [{frequencia : ""}, {frequencia : "Mensal"},{frequencia : "Bimestral"},{frequencia : "Trimestral"},
@@ -134,9 +135,9 @@ class MetasController extends PLRController {
 		this._idsInputsMetas.forEach(item => $(item.id).val(""));
 		this._enableGridEdition = false;
 		this._blocoMetaExtra.hide();
+		this._blocoInfoMeta.hide();
 		this._loadGridMetasIndividuais(this._gridMetaQuantitativa, [], 1);
 		this._loadGridMetasIndividuais(this._gridMetaProjeto, [], 2);
-		this._loadGridHistorico(this._gridHistorico, []);
 	}
 
 	/**
@@ -164,9 +165,12 @@ class MetasController extends PLRController {
 		if (version) {
 			self._enableGridEdition = false;
 			$('#btnCriarVersao').attr('disabled', true);
+			self._setMetaInfo(colaborador.numDoc, version);
 		} else {
 			self._enableGridEdition = true;
+			self.hideElement(self._blocoInfoMeta);
 			$('#btnCriarVersao').removeAttr('disabled');
+
 		}
 
 		if (cargo.diretoria.possuiMetaExtra == 'S') {
@@ -189,6 +193,12 @@ class MetasController extends PLRController {
 
 		self._loadGridMetasIndividuais(this._gridMetaQuantitativa, colaborador.metasQuantitativas, 1);
 		self._loadGridMetasIndividuais(this._gridMetaProjeto, colaborador.metasProjetos, 2);
+	}
+
+	_setMetaInfo(numDoc, version) {
+		this.showHiddenElement(this._blocoInfoMeta);
+		$('#idNumDoc').val('Nº: ' + numDoc);
+		$('#idNumVersao').val('V. ' + version);
 	}
 
 	_setMetaGeralDoColaborador(meta) {
@@ -512,6 +522,9 @@ class MetasController extends PLRController {
 			paging: true,
 			pageSize: 15,
 			data: historicoData,
+			rowClick : function(args) {
+				return false;
+			},
 			onItemUpdating : function (args) {
 				self._historicoBusiness.updateHistorico(args.item);	
 			},
@@ -682,10 +695,10 @@ class MetasController extends PLRController {
 	}
 
 	_configValoresCalculados(sumPlanejado, avgPlanejado, sumRealizado, avgRealizado) {
-		$('#idMetaMensalSomaPlan').val(sumPlanejado);
-		$('#idMetaMensalMediaPlan').val(avgPlanejado);
-		$('#idMetaMensalRealizadoSoma').val(sumRealizado);
-		$('#idMetaMensalRealizadoMedia').val(avgRealizado);
+		$('#idMetaMensalSomaPlan').val(sumPlanejado.toFixed(2));
+		$('#idMetaMensalMediaPlan').val(avgPlanejado.toFixed(2));
+		$('#idMetaMensalRealizadoSoma').val(sumRealizado.toFixed(2));
+		$('#idMetaMensalRealizadoMedia').val(avgRealizado.toFixed(2));
 	}
 
 	_loadGridMetaMensal(gridObject, metaMensalData) {

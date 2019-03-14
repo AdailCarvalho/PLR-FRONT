@@ -5,6 +5,24 @@
 	   <meta charset="utf-8">
 </head>
 <body>
+
+		<!-- Info Geral -->
+		<div id="blocoInfoMeta"  class="row" hidden>
+			<div class="col-md-12">
+				<div class="card border-primary bg-light">
+					<div class="card-header border-primary text-muted">Info. Meta</div>
+						<div class="form-row mt-2 ml-2">
+							<div class="form-group col-sm-2">
+								<input id="idNumDoc" type="text" disabled>
+							</div>
+							<div class="form-group col-sm-2">
+								<input id="idNumVersao" type="text" disabled>
+							</div>
+						</div>
+				</div>
+			</div>
+		</div>
+	
 		<!-- Identificação -->
 		<div class="row">
 		<div class="col-md-12 mt-2">
@@ -385,9 +403,9 @@
 
 		<div class="row">
 			<div class="col-md-12">
-					<button id="btnSave" type="button" class="btn btn-success btn-sm" title="Criar versão desta folha de meta." onclick="metasController.openDialogVersao()">Criar Versão</button>
+					<button id="btnCriarVersao" type="button" class="btn btn-success btn-sm" title="Criar versão desta folha de meta." onclick="metasController.openDialogVersao()">Criar Versão</button>
 					<button id="btnExport" type="button" class="btn btn-primary btn-sm" title="Exportar esta versão" onclick="metasController.exportar()">Exportar</button>
-					<button id="btnExport" type="button" class="btn btn-secondary btn-sm" title="Editar meta deste colaborador" onclick="metasController.editColaborador()">Editar</button>
+					<button id="btnEditar" type="button" class="btn btn-secondary btn-sm" title="Editar meta deste colaborador" onclick="metasController.editColaborador()">Editar</button>
 			</div>
 		</div>	
 </body>
