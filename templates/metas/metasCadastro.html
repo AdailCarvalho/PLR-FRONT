@@ -400,12 +400,30 @@
 			</div>
 		</div>
 
+		<div id="dialogAnexaFoto" title="Anexar Foto">
+			<div class="row">
+				<div class="col-md-auto">
+						<img id="idImageArea" src="" style="min-height: 300px; min-width: 200px" alt="Anexo" hidden>
+				</div>
+			</div>
+			<hr>
+			<div class="row">
+				<div class="col-md-auto">
+						<label id="idLabelAnexo" for="btnAnexo" class="btn btn-primary btn-sm mt-2" title="Escolher Imagem">Escolher</label>
+						<input id="btnAnexo" type="file" accept="image/*" style="display: none" onchange="metasController.anexaImagem(this)"/>
+						<button id="btnSubmit" type="button" class="btn btn-success btn-sm" title="Salvar" onclick="metasController.salvaImagem()">Salvar</button>
+					    <!--	<button id="btnImprimir" type="button" class="btn btn-info btn-sm" title="Imprimir" onclick="metasController.printAnexo()">Imprimir</button> -->
+						<button id="btnSairAnexo" type="button" class="btn btn-info btn-sm" title="Fechar" onclick="metasController.closeDialogAnexo()">Fechar</button>
+				</div>
+			</div>
+		</div>
 
 		<div class="row">
 			<div class="col-md-12">
 					<button id="btnCriarVersao" type="button" class="btn btn-success btn-sm" title="Criar versão desta folha de meta." onclick="metasController.openDialogVersao()">Criar Versão</button>
 					<button id="btnExport" type="button" class="btn btn-primary btn-sm" title="Exportar esta versão" onclick="metasController.exportar()">Exportar</button>
 					<button id="btnEditar" type="button" class="btn btn-secondary btn-sm" title="Editar meta deste colaborador" onclick="metasController.editColaborador()">Editar</button>
+					<button id="btnAnexarFoto" type="button" class="btn btn-info btn-sm" title="Anexo" onclick="metasController.openDialogAnexo()">Anexo</button>
 			</div>
 		</div>	
 </body>

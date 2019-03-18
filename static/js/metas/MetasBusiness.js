@@ -66,4 +66,12 @@ class MetasBusiness extends PLRBusiness {
             async : false
         });
     }
+
+    uploadImage(matricula, foto) {
+        $.ajax({
+            url : this._API_BASE_URI + '/metaEspecifica/colaborador/' + matricula + '/anexaFoto?foto=' + foto,
+            type : "POST",
+            async : false
+        });
+    }
 }

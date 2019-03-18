@@ -10,6 +10,7 @@ class MetasController extends PLRController {
 		this._dialogVersao = $('#dialogVersao');
 		this._dialogMetaMensal = $('#dialogMetaMensal');
 		this._dialogCancelaMetaMensal = $('#dialogMetaMensalCancelar');
+		this._dialogAnexo = $('#dialogAnexaFoto');
 		this.MAX_METAS_ESPECIFICAS = 7;
 		this.HAS_EDITED_METAS_MENSAIS = false;
 		
@@ -23,6 +24,14 @@ class MetasController extends PLRController {
 		this._nome = $('#nomeMeta');
 		this._cargo = $('#cargoMeta');
 		this._diretoria = $('#diretoriaMeta');
+		
+		//Anexo
+		this._imageArea = $('#idImageArea');
+		this._imageLoaded = document.getElementById('idImageArea');
+		this._image = null;
+
+		this._btnSairAnexo = $('#btnSairAnexo');
+
 		this._bonusIndivMeta = $('#bonusIndivMeta');
 		this._blocoMetaExtra = $('#blocoMetaExtra');
 		this._blocoInfoMeta = $('#blocoInfoMeta');
@@ -42,7 +51,8 @@ class MetasController extends PLRController {
 								{id : "#obsMetaExtra", required : false}];
 
 		//Buttons
-		this._idsButtons = [{id : '#btnEditar'}, {id : '#btnCancel'},{id : "#btnExport"},{id : "#btnCriarVersao"}];
+		this._idsButtons = [{id : '#btnEditar'}, {id : '#btnCancel'},{id : "#btnExport"},{id : "#btnCriarVersao"},{id : "#btnAnexarFoto"},
+							{id : '#btnImprimir'}];
 
 		//GRIDS
 		this._selectFrequenciaAvaliacao = [{frequencia : ""}, {frequencia : "Mensal"},{frequencia : "Bimestral"},{frequencia : "Trimestral"},
@@ -74,6 +84,8 @@ class MetasController extends PLRController {
 		this._loadGridHistorico(this._gridHistorico, []);
 		this.enableDisableElements(this._idsButtons, true);
 
+		this._formAnexo = $('#formAnexaImagem');
+
 		this._dialogVersao.dialog({
 			resizable: false,
 			height: "auto",
@@ -100,11 +112,21 @@ class MetasController extends PLRController {
 			autoOpen: false,
 			closeOnEscape: true
 		});
+
+		this._dialogAnexo.dialog({
+			resizable: false,
+			height: "auto",
+			width: 600,
+			modal: true,
+			autoOpen: false,
+			closeOnEscape: true
+		});
 	}
 
 	/**
 	 * Info Colaborador 
 	 */
+
 
 	editColaborador() {
 		if (this._matricula.val() != "" && this._historicVersion) {
@@ -131,13 +153,79 @@ class MetasController extends PLRController {
 		 });
 	}
 
+
+	anexaImagem(photo) {
+		let self = this;
+		
+		var file    = photo.files[0]; 
+		var reader  = new FileReader();
+		
+		if (file.size > 1000000) {
+			alert('Tamanho máximo permitido da imagem : 1 MB');
+			return;
+		}
+ 
+		reader.onloadend = function () {
+			self._imageLoaded.src = reader.result;
+			self._image = reader.result;
+
+			self.showHiddenElement(self._imageArea);
+		}
+ 
+		if (file) {
+			reader.readAsDataURL(file); //reads the data as a URL
+		} else {
+			self._imageLoaded.src = "";
+		}
+	}
+
+	openDialogAnexo() {
+		this._dialogAnexo.dialog('open');
+	}
+
+	closeDialogAnexo() {
+		this._dialogAnexo.dialog('close');
+	}
+	
+	printAnexo() {
+		if (this._image) {
+			window.open(this._image);
+			window.print();
+		} else {
+			alert('Anexe uma imagem.');
+		}
+	}
+
+	salvaImagem() {
+		let self = this;
+		if (self._image) {
+			$.when(self._colaboradorBusiness.uploadAnexo(self._matricula.val(), self._image))
+			 .done(function () {
+				alert('Anexo salvo.');
+			 })
+			 .fail(function (xhr, errorThrown, textStatus) {
+				alert('Erro ao salvar anexo!');
+			 }) ;
+		}
+	}
+
 	_clearInfoColaborador() {
 		this._idsInputsMetas.forEach(item => $(item.id).val(""));
 		this._enableGridEdition = false;
+		this._imageLoaded.src = "";
 		this._blocoMetaExtra.hide();
 		this._blocoInfoMeta.hide();
 		this._loadGridMetasIndividuais(this._gridMetaQuantitativa, [], 1);
 		this._loadGridMetasIndividuais(this._gridMetaProjeto, [], 2);
+	}
+
+	_initAnexoListener() {
+		let self = this;
+		self._formAnexo.submit(function (event) {
+			event.preventDefault();
+			
+			self._metasBusiness(new FormData(this));
+		});
 	}
 
 	/**
@@ -164,12 +252,18 @@ class MetasController extends PLRController {
 
 		if (version) {
 			self._enableGridEdition = false;
+			self._btn
 			$('#btnCriarVersao').attr('disabled', true);
+			self.hideElement($('#btnAnexo'));
+			self.hideElement($('#btnSubmit'));
+			self.hideElement($('#idLabelAnexo'));
 			self._setMetaInfo(colaborador.numDoc, version);
 		} else {
 			self._enableGridEdition = true;
 			self.hideElement(self._blocoInfoMeta);
 			$('#btnCriarVersao').removeAttr('disabled');
+			self.showHiddenElement($('#btnSubmit'));
+			self.showHiddenElement($('#idLabelAnexo'));
 
 		}
 
@@ -177,6 +271,15 @@ class MetasController extends PLRController {
 			self.showHiddenElement(self._blocoMetaExtra);
 		} else {
 			self.hideElement(self._blocoMetaExtra);
+		}
+
+		if (colaborador.base64Img) {
+			self._image = colaborador.base64Img;
+			self.showHiddenElement(self._imageArea);
+			self._imageLoaded.src = colaborador.base64Img;
+		} else {
+			self._imageLoaded.src = "";
+			self.hideElement(self._imageArea);
 		}
 
 		if (metasGerais.length > 0) {
@@ -579,6 +682,7 @@ class MetasController extends PLRController {
 			inicioVigencia : $('#idInicioVigencia').val(),
 			fimVigencia : $('#idFimVigencia').val(),
 			situacao : situacaoFinal,
+			base64Img : this._image,
 			comentario : $('#idComentarioVersao').val(),
 		}
 	}
