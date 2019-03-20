@@ -403,17 +403,17 @@
 		<div id="dialogAnexaFoto" title="Anexar Foto">
 			<div class="row">
 				<div class="col-md-auto">
-						<img id="idImageArea" src="" style="min-height: 300px; min-width: 200px" alt="Anexo" hidden>
+						<img id="idImageArea" src="" style="height: auto; width: 100%;" alt="Anexo" hidden>
 				</div>
 			</div>
 			<hr>
 			<div class="row">
-				<div class="col-md-auto">
-						<label id="idLabelAnexo" for="btnAnexo" class="btn btn-primary btn-sm mt-2" title="Escolher Imagem">Escolher</label>
+				<div class="col-md-auto" style="color: #003cbe">
+						<label id="idLabelAnexo" for="btnAnexo" class="btn btn-sm mt-2" title="Escolher Anexo"><a style="color : #003cbe>"<i class="fas fa-file-upload"></i></a></label>
 						<input id="btnAnexo" type="file" accept="image/*" style="display: none" onchange="metasController.anexaImagem(this)"/>
-						<button id="btnSubmit" type="button" class="btn btn-success btn-sm" title="Salvar" onclick="metasController.salvaImagem()">Salvar</button>
-					    <!--	<button id="btnImprimir" type="button" class="btn btn-info btn-sm" title="Imprimir" onclick="metasController.printAnexo()">Imprimir</button> -->
-						<button id="btnSairAnexo" type="button" class="btn btn-info btn-sm" title="Fechar" onclick="metasController.closeDialogAnexo()">Fechar</button>
+						<button id="btnDownloadImagem" type="button" class="btn btn-sm" title="Baixar Anexo" onclick="metasController.downloadImagem()"><i class="fas fa-file-download" style="color : #003cbe"></i></button>
+						<button id="btnPrinImagem" type="button" class="btn btn-sm" title="Imprimir Anexo" onclick="metasController.printImagem()"><i class="fas fa-print" style="color : #003cbe"></i></button>
+						<button id="btnSairAnexo" type="button" class="btn btn-sm" title="Fechar" onclick="metasController.closeDialogAnexo()"><i class="fas fa-times" style="color : red"></i></button>
 				</div>
 			</div>
 		</div>

@@ -52,7 +52,7 @@ class MetasController extends PLRController {
 
 		//Buttons
 		this._idsButtons = [{id : '#btnEditar'}, {id : '#btnCancel'},{id : "#btnExport"},{id : "#btnCriarVersao"},{id : "#btnAnexarFoto"},
-							{id : '#btnImprimir'}];
+							{id : '#btnImprimir'}, {id : '#btnDownloadImagem'}];
 
 		//GRIDS
 		this._selectFrequenciaAvaliacao = [{frequencia : ""}, {frequencia : "Mensal"},{frequencia : "Bimestral"},{frequencia : "Trimestral"},
@@ -84,8 +84,6 @@ class MetasController extends PLRController {
 		this._loadGridHistorico(this._gridHistorico, []);
 		this.enableDisableElements(this._idsButtons, true);
 
-		this._formAnexo = $('#formAnexaImagem');
-
 		this._dialogVersao.dialog({
 			resizable: false,
 			height: "auto",
@@ -115,7 +113,7 @@ class MetasController extends PLRController {
 
 		this._dialogAnexo.dialog({
 			resizable: false,
-			height: "auto",
+			height: 500,
 			width: 600,
 			modal: true,
 			autoOpen: false,
@@ -153,7 +151,6 @@ class MetasController extends PLRController {
 		 });
 	}
 
-
 	anexaImagem(photo) {
 		let self = this;
 		
@@ -177,6 +174,22 @@ class MetasController extends PLRController {
 		} else {
 			self._imageLoaded.src = "";
 		}
+
+		self._salvaImagem();
+	}
+
+	downloadImagem() {
+		if (this._image) {
+			var url = this._image.replace(/^data:image\/[^;]+/, 'data:application/octet-stream');
+			window.open(url);
+		}
+	}
+
+	printImagem() {
+		let self = this;
+		if (self._image) {
+			self._imageArea.printThis();
+		}
 	}
 
 	openDialogAnexo() {
@@ -187,16 +200,7 @@ class MetasController extends PLRController {
 		this._dialogAnexo.dialog('close');
 	}
 	
-	printAnexo() {
-		if (this._image) {
-			window.open(this._image);
-			window.print();
-		} else {
-			alert('Anexe uma imagem.');
-		}
-	}
-
-	salvaImagem() {
+	_salvaImagem() {
 		let self = this;
 		if (self._image) {
 			$.when(self._colaboradorBusiness.uploadAnexo(self._matricula.val(), self._image))
@@ -217,15 +221,6 @@ class MetasController extends PLRController {
 		this._blocoInfoMeta.hide();
 		this._loadGridMetasIndividuais(this._gridMetaQuantitativa, [], 1);
 		this._loadGridMetasIndividuais(this._gridMetaProjeto, [], 2);
-	}
-
-	_initAnexoListener() {
-		let self = this;
-		self._formAnexo.submit(function (event) {
-			event.preventDefault();
-			
-			self._metasBusiness(new FormData(this));
-		});
 	}
 
 	/**
@@ -496,7 +491,7 @@ class MetasController extends PLRController {
 
 							var $result = this.__proto__.itemTemplate.call(this, value, item);
 							
-							var $calendario = $("<a style='color: green'><i class='fas fa-calendar-alt' " +
+							var $calendario = $("<a style='color: #003cbe'><i class='fas fa-calendar-alt' " +
 							" title='Metas Mensais' style= 'margin-left: 7px;'></i></a>")
 										   .click(function() {
 												self.loadMetasMensais(item);
@@ -645,7 +640,7 @@ class MetasController extends PLRController {
 						itemTemplate: function(value, item) {
 							var $result = this.__proto__.itemTemplate.call(this, value, item);
 							
-							var $view = $("<a style='color: green'><i class='fas fa-eye fa-lg' " +
+							var $view = $("<a style='color: #003cbe'><i class='fas fa-eye fa-lg' " +
 							" title='Visualizar Meta' style= 'margin-left: 7px;'></i></a>")
 										   .click(function() {
 												$('.nav a[href="#' + 'metas' + '"]').tab('show');
@@ -654,7 +649,7 @@ class MetasController extends PLRController {
 
 							$result = $result.add($view);
 
-							var $download = $("<a style='color: green'><i class='fas fa-file-download fa-lg' " +
+							var $download = $("<a style='color: #003cbe'><i class='fas fa-file-download fa-lg' " +
 								  " title='Baixar Versão de Meta' style= 'margin-left: 7px;'></i></a>")
 								  		.click(function() { 
 											self._historicoBusiness.exportHistorico(item.matricula, item.versao);
