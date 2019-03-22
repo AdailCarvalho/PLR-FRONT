@@ -193,16 +193,16 @@ function removeSession() {
 
 //Properties
 app_properties = {
-  profile : 'tomcat'
+  profile : 'standalone'
 }
 
 app_standalone_properties = {
-    app_base_uri : 'http://localhost:8080/plr',
+    app_base_uri : 'http://localhost:8080/planometas',
     api_base_uri : 'http://localhost:8040'
 }
 
 app_tomcat_properties = {
-    app_base_uri : 'http://localhost:8080/plr',
+    app_base_uri : 'http://localhost:8080/planometas',
     api_base_uri : 'http://localhost:8080/plr-api'
 }
 
