@@ -468,7 +468,7 @@ class MetasController extends PLRController {
 						}
 					}
 				},
-				{name: "meta", title : "Meta", type: "text", width: 150 , align : "center"},
+				{name: "valMeta", title : "Meta", type : "decimal", width: 70 , align : "center"},
 				{name: "observacao", title : "Observações", type: "text", width: 120 , align : "center"},
 				{name: "prazo", title : "Prazos", type : "date", align : "center", width : 90, 
 					validate: {
@@ -481,7 +481,7 @@ class MetasController extends PLRController {
 				{name : "frequenciaMedicao", title : "Freq. Medição", type : "select", items : self._selectFrequenciaAvaliacao, 
 				 align : "center", valueField : "frequencia", textField : "frequencia", validate : "required", width : 90},
 				{name : "tipoMeta", title : "Tipo", type : "select", items : self._selectTipoMetas, 
-				 align : "center", valueField : "tipoMeta", textField : "tipoMeta", validate : "required", width : 90},
+				 align : "center", valueField : "tipoMeta", textField : "tipoMeta", validate : "required", width : 125},
 				{type: "control", width : 70, align : "center", inserting : self._enableGridEdition,
 						deleteButton : self._enableGridEdition, editButton : self._enableGridEdition, 
 						itemTemplate: function(value, item) {
@@ -618,8 +618,14 @@ class MetasController extends PLRController {
 			editing: true,
 			sorting: true,
 			paging: true,
-			pageSize: 15,
+			pageSize: 10,
 			data: historicoData,
+			pagerFormat: 'Páginas: {first} {prev} {pages} {next} {last} &nbsp;&nbsp; {pageIndex} de {pageCount}',
+			pageNextText: 'Próxima',
+			pagePrevText: 'Anterior',
+			pageFirstText: 'Primeira',
+			pageLastText: 'Última', 
+			
 			rowClick : function(args) {
 				return false;
 			},

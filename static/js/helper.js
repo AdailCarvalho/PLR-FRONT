@@ -157,8 +157,8 @@ function isPrimeiroAcesso() {
   return localStorage.getItem("plrIsFirstAccess") == 'S';
 }
 
-//Session (half hour as default = 1800s)
-var MAX_SESSION_TIME = 1800;
+//Session (hour as default = 1800s)
+var MAX_SESSION_TIME = 3600;
 function registerBrowserSession(matricula) {
   let localDateTime = new Date().toISOString();
   localStorage.setItem(matricula, localDateTime);
