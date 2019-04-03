@@ -262,7 +262,7 @@ class MetasController extends PLRController {
 
 		}
 
-		if (cargo.diretoria.possuiMetaExtra == 'S') {
+		if (colaborador.possuiMetaExtra == 'S') {
 			self.showHiddenElement(self._blocoMetaExtra);
 		} else {
 			self.hideElement(self._blocoMetaExtra);
@@ -322,6 +322,20 @@ class MetasController extends PLRController {
 			case 5:
 				self.setFieldValue("bonusMetaExtra", meta.bonus);
 				self.setFieldValue("obsMetaExtra", meta.observacao);
+				break;
+			case 6:
+				self.setFieldValue("bonusCustoGlobal", meta.bonus);
+				self.setFieldValue("valMetaGeralCustoGlobal", meta.valor);
+				self.setFieldValue("obsBonusCustoGlobal", meta.observacao);
+				break;
+			case 7:
+				self.setFieldValue("bonusMargemDerivados", meta.bonus);
+				self.setFieldValue("valMetaGeralMargemDerivados", meta.valor);
+				self.setFieldValue("obsBonusMargemDerivados", meta.observacao);
+				break;
+			case 8:
+				self.setFieldValue("bonusYorgut", meta.bonus);
+				self.setFieldValue("obsBonusYorgut", meta.observacao);
 				break;
 			default:
 				break;

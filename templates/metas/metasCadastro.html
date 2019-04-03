@@ -105,7 +105,119 @@
 								</div>
 							</div>	
 						</form>
-							
+						
+						<div class="form-row">
+							<h6 class="card-subtitle text-muted">Custo Fixo Global</h6>
+							<hr>
+						</div>
+
+						<!-- Custo Fixo Global -->
+						<form>
+							<div class="form-row">
+								<div class="col-2">
+									<div class="input-group">
+										<div class="input-group-prepend">
+												<span class="input-group-text" id="money-addon">R$</span>
+										</div>
+										<input type="number" 
+												id="valMetaGeralCustoGlobal"
+												min="0.00" 
+												readonly
+												class="form-control" 
+												placeholder="Valor" 
+												aria-describedby="money-addon"/>	
+									</div>
+								</div>
+								<div class="col-2">
+									<div class="input-group">
+										<input type="number" id="bonusCustoGlobal" 
+											class="form-control" placeholder="Bônus" min="0" max="100"
+											aria-describedby="percent-addon"
+											readonly />
+										  <div class="input-group-prepend">
+												  <span class="input-group-text" id="percent-addon">%</span>
+										  </div>
+									</div>
+								</div>
+								<div class="col-8">
+									<div class="form-group">
+										<textarea id="obsBonusCustoGlobal" class="form-control" 
+										maxlength="1024" rows="1" placeholder="Observações" readonly></textarea>
+									</div>	
+								</div>
+							</div>	
+						</form>
+
+						<!-- Margem de Derivados -->
+						<div class="form-row">
+							<h6 class="card-subtitle text-muted">Margem de Derivados</h6>
+							<hr>
+						</div>
+
+						<form>
+							<div class="form-row">
+								<div class="col-2">
+									<div class="input-group">
+										<div class="input-group-prepend">
+												<span class="input-group-text" id="money-addon">R$</span>
+										</div>
+										<input type="number" 
+												id="valMetaGeralMargemDerivados"
+												min="0.00" 
+												readonly
+												class="form-control" 
+												placeholder="Valor" 
+												aria-describedby="money-addon"/>	
+									</div>
+								</div>
+								<div class="col-2">
+									<div class="input-group">
+										<input type="number" id="bonusMargemDerivados" 
+											class="form-control" placeholder="Bônus" min="0" max="100"
+											aria-describedby="percent-addon"
+											readonly />
+										  <div class="input-group-prepend">
+												  <span class="input-group-text" id="percent-addon">%</span>
+										  </div>
+									</div>
+								</div>
+								<div class="col-8">
+									<div class="form-group">
+										<textarea id="obsBonusMargemDerivados" class="form-control" 
+										maxlength="1024" rows="1" placeholder="Observações" readonly></textarea>
+									</div>	
+								</div>
+							</div>	
+						</form>	
+
+						<!-- Crescimento Iogurte -->
+						<div class="form-row">
+							<h6 class="card-subtitle text-muted">Crescimento Iogurte</h6>
+							<hr>
+						</div>
+
+						<form>
+							<div class="form-row">
+								<div class="col-2">
+									<div class="input-group">
+										<input type="number" id="bonusYorgut" 
+											class="form-control" placeholder="Bônus" min="0" max="100"
+											aria-describedby="percent-addon"
+											readonly />
+										  <div class="input-group-prepend">
+												  <span class="input-group-text" id="percent-addon">%</span>
+										  </div>
+									</div>
+								</div>
+								<div class="col-10">
+									<div class="form-group">
+										<textarea id="obsBonusYorgut" class="form-control" 
+										maxlength="1024" rows="1" placeholder="Observações" readonly></textarea>
+									</div>	
+								</div>
+							</div>	
+						</form>
+
 						<!-- Metas Individuais -->
 						<div class="form-row">
 							<h6 class="card-subtitle text-muted">Metas Individuais</h6>
