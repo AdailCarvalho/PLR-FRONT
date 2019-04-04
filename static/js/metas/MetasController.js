@@ -334,8 +334,12 @@ class MetasController extends PLRController {
 				self.setFieldValue("obsBonusMargemDerivados", meta.observacao);
 				break;
 			case 8:
-				self.setFieldValue("bonusYorgut", meta.bonus);
-				self.setFieldValue("obsBonusYorgut", meta.observacao);
+				self.setFieldValue("bonusIogurte", meta.bonus);
+				self.setFieldValue("obsBonusIogurte", meta.observacao);
+				break;
+			case 9:
+				self.setFieldValue("bonusPDI", meta.bonus);
+				self.setFieldValue("obsBonusPDI", meta.observacao);
 				break;
 			default:
 				break;
