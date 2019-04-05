@@ -304,7 +304,7 @@ class MetasController extends PLRController {
 		switch(meta.id) {
 			case 1: 
 				self.setFieldValue("bonusEbitdaMeta", meta.bonus);
-				self.setFieldValue("valMetaGeralMeta", meta.valor);
+				self.setFieldValue("valMetaGeralMeta", accounting.formatMoney(meta.valor, "", 2, ".", ","));
 				self.setFieldValue("obsBonusEbitdaMeta", meta.observacao);
 				break;
 			case 2:
@@ -325,12 +325,12 @@ class MetasController extends PLRController {
 				break;
 			case 6:
 				self.setFieldValue("bonusCustoGlobal", meta.bonus);
-				self.setFieldValue("valMetaGeralCustoGlobal", meta.valor);
+				self.setFieldValue("valMetaGeralCustoGlobal", accounting.formatMoney(meta.valor, "", 2, ".", ","));
 				self.setFieldValue("obsBonusCustoGlobal", meta.observacao);
 				break;
 			case 7:
 				self.setFieldValue("bonusMargemDerivados", meta.bonus);
-				self.setFieldValue("valMetaGeralMargemDerivados", meta.valor);
+				self.setFieldValue("valMetaGeralMargemDerivados", accounting.formatMoney(meta.valor, "", 2, ".", ","));
 				self.setFieldValue("obsBonusMargemDerivados", meta.observacao);
 				break;
 			case 8:
