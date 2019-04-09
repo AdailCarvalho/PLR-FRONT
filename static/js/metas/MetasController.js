@@ -11,7 +11,7 @@ class MetasController extends PLRController {
 		this._dialogMetaMensal = $('#dialogMetaMensal');
 		this._dialogCancelaMetaMensal = $('#dialogMetaMensalCancelar');
 		this._dialogAnexo = $('#dialogAnexaFoto');
-		this.MAX_METAS_ESPECIFICAS = 7;
+		this.MAX_METAS_ESPECIFICAS = 14;
 		this.HAS_EDITED_METAS_MENSAIS = false;
 		
 		this._initFields();
