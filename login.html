@@ -2,8 +2,15 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">       
-    <link rel="import" href="../planometas/head.html">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="../planometas/static/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../planometas/static/css/plr.css" />
+    <link rel="stylesheet" href="../planometas/static/css/jquery-ui.css">
+    <link rel="stylesheet" href="../planometas/static/css/all.css" />
+    <link type="text/css" rel="stylesheet" href="../planometas/static/css/jsgrid.min.css" />
+    <link type="text/css" rel="stylesheet" href="../planometas/static/css/jsgrid-theme.min.css" />
+    <link rel="stylesheet" href="../planometas/static/css/jquery-ui.css">
+    <link rel="stylesheet" href="../planometas/static/css/all.css" />       
     <title>Login</title>
 </head>
 <body>
@@ -51,21 +58,32 @@
 			 </div>
 		  </div>
         </div>
-
 	</div>
 
 
     <!--FOOTER-->
-    <div w3-include-html="footer.html"></div>
+    <div class="row">
+        <div class="col-md-12 plr-footer">
+            <p>© Copyright : Focus Quality|v1.5.4-SNAPSHOT|2019</p>
+        </div>
+    </div>
 
-    
+    <script type="text/javascript" src="../planometas/static/js/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="../planometas/static/js/jsgrid.min.js"></script>
+    <script type="text/javascript" src="../planometas/static/js/jquery-ui.js"></script>
+    <script type="text/javascript" src="../planometas/static/js/crypto-js.js"></script>
+
+    <script type="text/javascript" src="../planometas/static/js/PLRController.js"></script>
+    <script type="text/javascript" src="../planometas/static/js/PLRBusiness.js"></script>
+    <script type="text/javascript" src="../planometas/static/js/auth/AuthController.js"></script>
+    <script type="text/javascript" src="../planometas/static/js/auth/AuthBusiness.js"></script>
+    <script type="text/javascript" src="../planometas/static/js/helper.js"></script>
+
     <script type="text/javascript">
         var authController = new AuthController();
         if(!authController.checkActiveSession()) {
             authController.redirectToHome();
         }
-
-        w3.includeHTML();
 
     </script>
 
