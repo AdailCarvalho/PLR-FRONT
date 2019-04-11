@@ -337,10 +337,6 @@ class MetasController extends PLRController {
 				self.setFieldValue("bonusIogurte", meta.bonus);
 				self.setFieldValue("obsBonusIogurte", meta.observacao);
 				break;
-			case 9:
-				self.setFieldValue("bonusPDI", meta.bonus);
-				self.setFieldValue("obsBonusPDI", meta.observacao);
-				break;
 			default:
 				break;
 		}
@@ -462,7 +458,7 @@ class MetasController extends PLRController {
 			},
 			fields: [
 				{name : "id", type : "number", visible : false},
-				{ name: "sequencia", title : "Seq.", type: "number", width: 60, align : "center",
+				{ name: "sequencia", title : "Seq.", type: "number", width: 40, align : "center",
 						insertTemplate : function(value, item) {
 							var $numberSequencia = jsGrid.fields.number.prototype.insertTemplate.apply(this, arguments);
 							$numberSequencia.prop('disabled', 'true');
@@ -478,7 +474,7 @@ class MetasController extends PLRController {
 
 				},
 				{ name: "descricao", title : "Descrição", type: "text", width: 120 , align : "center"},
-				{ name: "peso", title : "Peso (%)", type: "number", width: 70, align : "center",
+				{ name: "peso", title : "Peso (%)", type: "number", width: 40, align : "center",
 					validate : {
 						message : "Informe um peso válido (>=0)",
 						validator : function (value) {
@@ -487,7 +483,7 @@ class MetasController extends PLRController {
 					}
 				},
 				{name: "valMeta", title : "Meta", type : "decimal", width: 70 , align : "center"},
-				{name: "observacao", title : "Observações", type: "text", width: 120 , align : "center"},
+				{name: "observacao", title : "Observações", type: "text", width: 170 , align : "center"},
 				{name: "prazo", title : "Prazos", type : "date", align : "center", width : 90, 
 					validate: {
 						message : "Informe um prazo",
@@ -499,7 +495,7 @@ class MetasController extends PLRController {
 				{name : "frequenciaMedicao", title : "Freq. Medição", type : "select", items : self._selectFrequenciaAvaliacao, 
 				 align : "center", valueField : "frequencia", textField : "frequencia", validate : "required", width : 90},
 				{name : "tipoMeta", title : "Tipo", type : "select", items : self._selectTipoMetas, 
-				 align : "center", valueField : "tipoMeta", textField : "tipoMeta", validate : "required", width : 125},
+				 align : "center", valueField : "tipoMeta", textField : "tipoMeta", validate : "required", width : 120},
 				{type: "control", width : 70, align : "center", inserting : self._enableGridEdition,
 						deleteButton : self._enableGridEdition, editButton : self._enableGridEdition, 
 						itemTemplate: function(value, item) {
