@@ -429,6 +429,7 @@ class MetasController extends PLRController {
 				args.item.sequencia = maxSequencia == 0 ? 1 : (maxSequencia + 1);
 				args.item.prazo = args.item.prazo.toLocaleDateString('pt-BR');
 				args.item.responsavel = getLoggedUser();
+				args.item.valMeta = formatDecimalToBigDecimal(args.item.valMeta);
 
 				self._insertMeta(args.item);
 				self.getColaborador(self._matricula.val());
@@ -436,7 +437,6 @@ class MetasController extends PLRController {
 			},
 
 			onItemUpdating : function(args) {
-				args.item.prazo = args.item.prazo.toLocaleDateString('pt-BR');
 				self._calculaPesosMetasIndividuais(args.item.peso, args.previousItem.peso);
 				if(!self._validateForGrid()) {
 					alert("O resultado das metas está excedendo o valor das Metas Individuais! Reveja os pesos das metas informadas.");
@@ -446,6 +446,7 @@ class MetasController extends PLRController {
 			},
 			
 			onItemUpdated : function(args) {
+				args.item.valMeta = formatDecimalToBigDecimal(args.item.valMeta);
 				self._updateMeta(args.item);
 				self.getColaborador(self._matricula.val());
 			},
@@ -474,7 +475,7 @@ class MetasController extends PLRController {
 
 				},
 				{ name: "descricao", title : "Descrição", type: "text", width: 120 , align : "center"},
-				{ name: "peso", title : "Peso (%)", type: "number", width: 40, align : "center",
+				{ name: "peso", title : "Peso (%)", type: "number", width: 60, align : "center",
 					validate : {
 						message : "Informe um peso válido (>=0)",
 						validator : function (value) {
@@ -772,8 +773,14 @@ class MetasController extends PLRController {
 	}
 
 	saveMetasMensais() {
+		let dadosMetasMensais = $('#jsGridMetaMensal').jsGrid('option', 'data');
+		dadosMetasMensais.forEach(item => {
+			item.valorMeta = formatDecimalToBigDecimal(item.valorMeta);
+			item.valorRealizado = formatDecimalToBigDecimal(item.valorRealizado);
+		});
+
 		if (this.HAS_EDITED_METAS_MENSAIS) {
-			$.when(this._metasBusiness.saveMetasMensais(this._matricula.val(), 	$('#jsGridMetaMensal').jsGrid('option', 'data')))
+			$.when(this._metasBusiness.saveMetasMensais(this._matricula.val(), 	dadosMetasMensais))
 			 .done(function() {
 				alert('Informacoes salvas!');
 			 })
@@ -794,11 +801,11 @@ class MetasController extends PLRController {
 		
 		for (var i = 0; i < dadosMensais.length; i ++) {
 			if (dadosMensais[i].valorMeta != "" && dadosMensais[i].valorMeta != null) {
-				sumPlanejado += parseFloat(dadosMensais[i].valorMeta);
+				sumPlanejado += parseFloat(formatDecimalToBigDecimal(dadosMensais[i].valorMeta));
 				totLinhasPreenchidasMeta++
 			}
 			if (dadosMensais[i].valorRealizado != "" && dadosMensais[i].valorRealizado != null) {
-				sumRealizado += parseFloat(dadosMensais[i].valorRealizado);
+				sumRealizado += parseFloat(formatDecimalToBigDecimal(dadosMensais[i].valorRealizado));
 				totLinhasPreenchidasReal++;
 			}
 		}
@@ -814,10 +821,10 @@ class MetasController extends PLRController {
 	}
 
 	_configValoresCalculados(sumPlanejado, avgPlanejado, sumRealizado, avgRealizado) {
-		$('#idMetaMensalSomaPlan').val(sumPlanejado.toFixed(2));
-		$('#idMetaMensalMediaPlan').val(avgPlanejado.toFixed(2));
-		$('#idMetaMensalRealizadoSoma').val(sumRealizado.toFixed(2));
-		$('#idMetaMensalRealizadoMedia').val(avgRealizado.toFixed(2));
+		$('#idMetaMensalSomaPlan').val(accounting.formatMoney(sumPlanejado, "", 2, ".", ","));
+		$('#idMetaMensalMediaPlan').val(accounting.formatMoney(avgPlanejado, "", 2, ".", ","));
+		$('#idMetaMensalRealizadoSoma').val(accounting.formatMoney(sumRealizado, "", 2, ".", ","));
+		$('#idMetaMensalRealizadoMedia').val(accounting.formatMoney(avgRealizado, "", 2, ".", ","));
 	}
 
 	_loadGridMetaMensal(gridObject, metaMensalData) {

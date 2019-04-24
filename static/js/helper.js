@@ -42,20 +42,19 @@ CustomDateField.prototype = new jsGrid.Field({
     },
  
     editTemplate: function(value) {
-      var result = this._editPicker = $("<input>").datepicker(portugueseCalendar).datepicker("setDate", new Date(value).toLocaleDateString(dateLocale, formatDateOptions));
-      return result;
+        return this._editPicker = $("<input>").datepicker(portugueseCalendar).datepicker("setDate", new Date(value));
     },
  
     insertValue: function() {
         var dateValue = this._insertPicker.datepicker("getDate");
-        var strDateValue = $.datepicker.formatDate(portugueseCalendar.dateFormat, dateValue)
+        var strDateValue = $.datepicker.formatDate(portugueseCalendar.dateFormat, dateValue);
         return strDateValue.toDate(portugueseCalendar.dateFormat);
     },
  
     editValue: function() {
         var dateValue = this._editPicker.datepicker("getDate");
-        var strDateValue = $.datepicker.formatDate(portugueseCalendar.dateFormat, dateValue)
-        return strDateValue.toDate(portugueseCalendar.dateFormat);
+        var strDateValue = $.datepicker.formatDate(portugueseCalendar.dateFormat, dateValue);
+        return strDateValue;
     }
 });
 
@@ -103,32 +102,47 @@ function DecimalField(config) {
 DecimalField.prototype = new jsGrid.fields.number({
 
   itemTemplate: function(value) {
-    if (value) {
-      value = value.toFixed(2).toString().replace('.',','); 
-    }
-    return value
+    let parsedValue = formatDecimalToBigDecimal(value);
+    return accounting.formatMoney(parsedValue, "", 2, ".", ",");
   },
 
-  filterValue: function() {
-      return this.filterControl.val()
-          ? parseFloat(this.filterControl.val() || 0, 10)
-          : undefined;
+  insertTemplate: function(value) {
+    let parsedValue = formatDecimalToBigDecimal(value);
+    return this._insertPicker = $("<input>").val(accounting.formatMoney(parsedValue, "", 2, ".", ","));
+  },
+
+  editTemplate: function(value) {
+    let parsedValue = formatDecimalToBigDecimal(value);
+    return this._editPicker = $("<input>").val(accounting.formatMoney(parsedValue, "", 2, ".", ","));
   },
 
   insertValue: function() {
-      return this.insertControl.val()
-          ? parseFloat(this.insertControl.val() || 0, 10)
-          : undefined;
+      //return accounting.formatMoney(this._insertPicker.val());
+      return this._insertPicker.val(); 
+     
   },
 
   editValue: function() {
-      return this.editControl.val()
-          ? parseFloat(this.editControl.val() || 0, 10)
-          : undefined;
+    //return accounting.formatMoney(this._editPicker.val());
+    return this._editPicker.val(); 
   }
 });
 
 jsGrid.fields.decimal = jsGrid.DecimalField = DecimalField;
+
+function formatDecimalToBigDecimal(value) {
+  if (!value) {
+    return 0;
+  } else if (/^((\d)+(\.\d+)?)$/.test(value)) {
+    return value;
+  } else  {
+    let formattedNumber = value.toString();
+    formattedNumber = formattedNumber.replace(/\./g,"");
+    formattedNumber = formattedNumber.replace(/,/g,".");
+  
+    return formattedNumber;
+  }
+}
 
 //Logged user
 function setLoggedUser(user) {
@@ -193,7 +207,7 @@ function removeSession() {
 
 //Properties
 app_properties = {
-  profile : 'standalone'
+  profile : 'tomcat'
 }
 
 app_standalone_properties = {
