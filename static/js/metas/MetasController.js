@@ -162,20 +162,20 @@ class MetasController extends PLRController {
 			return;
 		}
  
-		reader.onloadend = function () {
-			self._imageLoaded.src = reader.result;
-			self._image = reader.result;
-
-			self.showHiddenElement(self._imageArea);
-		}
- 
 		if (file) {
 			reader.readAsDataURL(file); //reads the data as a URL
 		} else {
 			self._imageLoaded.src = "";
 		}
 
-		self._salvaImagem();
+		reader.onloadend = function () {
+			self._imageLoaded.src = reader.result;
+			self._image = reader.result;
+
+			self.showHiddenElement(self._imageArea);
+			self._salvaImagem();
+		}
+
 	}
 
 	downloadImagem() {
