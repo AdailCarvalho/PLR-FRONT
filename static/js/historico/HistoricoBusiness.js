@@ -8,6 +8,11 @@ class HistoricoBusiness extends PLRBusiness {
 		window.open(uriExport, '_blank');
     }
 
+
+    findHistoricoForColaborador(matricula) {
+        return $.ajax({url: this._API_BASE_URI + '/historico/colaborador?matricula=' + matricula, type : 'GET'});
+    }
+
     findHistoricoForResponsavel(matriculaResponsavel) {
         return $.ajax({url : this._API_BASE_URI + '/historico/responsavel?matriculaResponsavel=' + matriculaResponsavel, type : 'GET'});
     }
@@ -24,10 +29,6 @@ class HistoricoBusiness extends PLRBusiness {
         );
     }
 
-    listHistoricoForColaborador(matricula) {
-        return $.ajax({url: this._API_BASE_URI + '/historico/colaborador?matricula=' + matricula, type : 'GET'});
-    }
-
     updateHistorico(historico) {
          return $.ajax(
             {
@@ -38,5 +39,16 @@ class HistoricoBusiness extends PLRBusiness {
                 async : false
             }
         );
+    }
+
+    uploadAnexo(mat, version, image) {
+        let colaboradorHistorico = {matricula : mat, base64Img : image, versao : version};
+        $.ajax({
+            url : this._API_BASE_URI + '/historico/' + mat + '/anexaFoto',
+            data : JSON.stringify(colaboradorHistorico),
+            type : "POST",
+            contentType : "application/json; charset=utf-8",
+            async : false,
+        });
     }
 }

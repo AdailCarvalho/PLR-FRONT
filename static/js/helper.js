@@ -147,9 +147,13 @@ function formatDecimalToBigDecimal(value) {
 //Logged user
 function setLoggedUser(user) {
   let userName = user.nome.split(" ");
-  let finalName = userName[0] + ' ' + userName[1];
+  if (userName.length > 1) {
+    localStorage.setItem("plrLoggedName", userName[0] + ' ' + userName[1]);    
+  } else {
+    localStorage.setItem("plrLoggedName", userName[0]);    
+  }
+
   localStorage.setItem("plrLoggedUser",user.matricula);
-  localStorage.setItem("plrLoggedName", finalName);
   localStorage.setItem("plrLoggedPhrase", user.phrase);
   localStorage.setItem("plrIsFirstAccess", user.inPrimeiroAcesso);
   registerBrowserSession(user.matricula);

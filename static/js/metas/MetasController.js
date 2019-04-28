@@ -15,11 +15,13 @@ class MetasController extends PLRController {
 		this.HAS_EDITED_METAS_MENSAIS = false;
 		
 		this._initFields();
-		this._findHistoricoByLoggedUser();
+		this._findHistoricoOwnedByLoggedUser();
+		this._findHistoricoRegisteredByLoggedUser();
 
 	}
 	
 	_initFields() {
+		//Info geral
 		this._matricula = $('#matriculaMeta');
 		this._nome = $('#nomeMeta');
 		this._cargo = $('#cargoMeta');
@@ -30,17 +32,25 @@ class MetasController extends PLRController {
 		this._imageLoaded = document.getElementById('idImageArea');
 		this._image = null;
 
-		this._btnSairAnexo = $('#btnSairAnexo');
-
+		//Valida somatorio de individuais a este valor
 		this._bonusIndivMeta = $('#bonusIndivMeta');
+
+		//Adicionais
 		this._blocoMetaExtra = $('#blocoMetaExtra');
 		this._blocoInfoMeta = $('#blocoInfoMeta');
-		this._historicVersion = null;
 
+		//Grids metas individuais
 		this._gridMetaQuantitativa = $("#jsGridMetaQuantitativa");
 		this._gridMetaProjeto = $("#jsGridMetaProjeto");
-		this._divGridHistoricoUsuarioLogado = $('#idJsGridHistorico');
-		this._gridHistorico = $('#jsGridHistorico');
+		
+		//historico
+		this._gridHistoricoRegistrado = $('#jsGridHistoricoRegistrado');
+		this._gridHistoricoPertencente = $('#jsGridHistoricoPertencente');
+		this._numeroDoc = $('#idNumDoc');
+		this._numeroVersao = $('#idNumVersao');
+		this._historicVersion = null;
+		this._historicVersionSelecionado = null;
+		this._matriculaSelecionadaHistorico = null;
 
 		this._idsInputsMetas = [{id : '#matriculaMeta', required : true},{id: '#nomeMeta', required : true},{id: '#cargoMeta', required : true},
 								{id: '#diretoriaMeta',required : true},{id : '#bonusEbitdaMeta', required : true},{id : '#valMetaGeralMeta', required : true},
@@ -51,10 +61,12 @@ class MetasController extends PLRController {
 								{id : "#obsMetaExtra", required : false}];
 
 		//Buttons
-		this._idsButtons = [{id : '#btnEditar'}, {id : '#btnCancel'},{id : "#btnExport"},{id : "#btnCriarVersao"},{id : "#btnAnexarFoto"},
-							{id : '#btnImprimir'}, {id : '#btnDownloadImagem'}];
+		this._btnCriarVersao = $('#btnCriarVersao');
+		this._btnLabelAnexo = $('#idLabelAnexo');
 
-		//GRIDS
+		this._idsButtons = [{id : '#btnEditar'}, {id : '#btnCancel'},{id : "#btnExport"},{id : "#btnCriarVersao"}];
+
+		//Select grids
 		this._selectFrequenciaAvaliacao = [{frequencia : ""}, {frequencia : "Mensal"},{frequencia : "Bimestral"},{frequencia : "Trimestral"},
 										   {frequencia : "Semestral"},{frequencia : "Anual"},{frequencia : "Data Específica"}];
 		this._selectTipoMetas = [{tipoMeta : ""},{tipoMeta : "Quanto Maior, Melhor"},{tipoMeta : "Quanto Menor, Melhor"},{tipoMeta : "Cumpriu/Não Cumpriu"}];										   
@@ -81,7 +93,8 @@ class MetasController extends PLRController {
 
 		this._loadGridMetasIndividuais(this._gridMetaQuantitativa,[], 1);
 		this._loadGridMetasIndividuais(this._gridMetaProjeto,[], 2);
-		this._loadGridHistorico(this._gridHistorico, []);
+		this._loadGridHistorico(this._gridHistoricoRegistrado, []);
+		this._loadGridHistorico(this._gridHistoricoPertencente, []);
 		this.enableDisableElements(this._idsButtons, true);
 
 		this._dialogVersao.dialog({
@@ -124,12 +137,23 @@ class MetasController extends PLRController {
 	/**
 	 * Info Colaborador 
 	 */
-
-
 	editColaborador() {
 		if (this._matricula.val() != "" && this._historicVersion) {
 			this._historicVersion = null;
 			this.getColaborador(this._matricula.val());
+		}
+	}
+
+	exportar() {
+		if (this._matricula.val() == "") {
+			alert("Pesquise um colaborador primeiro, para que seja possível realizar o export.");
+			return;
+		} 
+		
+		if (this._historicVersion) {
+			this._historicoBusiness.exportHistorico(this._matricula.val(), this._historicVersion);
+		} else {
+			this._colaboradorBusiness.exportXls(this._matricula.val());
 		}
 	}
 
@@ -151,81 +175,6 @@ class MetasController extends PLRController {
 		 });
 	}
 
-	anexaImagem(photo) {
-		let self = this;
-		
-		var file    = photo.files[0]; 
-		var reader  = new FileReader();
-		
-		if (file.size > 1000000) {
-			alert('Tamanho máximo permitido da imagem : 1 MB');
-			return;
-		}
- 
-		if (file) {
-			reader.readAsDataURL(file); //reads the data as a URL
-		} else {
-			self._imageLoaded.src = "";
-		}
-
-		reader.onloadend = function () {
-			self._imageLoaded.src = reader.result;
-			self._image = reader.result;
-
-			self.showHiddenElement(self._imageArea);
-			self._salvaImagem();
-		}
-
-	}
-
-	downloadImagem() {
-		if (this._image) {
-			var url = this._image.replace(/^data:image\/[^;]+/, 'data:application/octet-stream');
-			window.open(url);
-		}
-	}
-
-	printImagem() {
-		let self = this;
-		if (self._image) {
-			self._imageArea.printThis();
-		}
-	}
-
-	openDialogAnexo() {
-		this._dialogAnexo.dialog('open');
-	}
-
-	closeDialogAnexo() {
-		this._dialogAnexo.dialog('close');
-	}
-	
-	_salvaImagem() {
-		let self = this;
-		if (self._image) {
-			$.when(self._colaboradorBusiness.uploadAnexo(self._matricula.val(), self._image))
-			 .done(function () {
-				alert('Anexo salvo.');
-			 })
-			 .fail(function (xhr, errorThrown, textStatus) {
-				alert('Erro ao salvar anexo!');
-			 }) ;
-		}
-	}
-
-	_clearInfoColaborador() {
-		this._idsInputsMetas.forEach(item => $(item.id).val(""));
-		this._enableGridEdition = false;
-		this._imageLoaded.src = "";
-		this._blocoMetaExtra.hide();
-		this._blocoInfoMeta.hide();
-		this._loadGridMetasIndividuais(this._gridMetaQuantitativa, [], 1);
-		this._loadGridMetasIndividuais(this._gridMetaProjeto, [], 2);
-	}
-
-	/**
-	 * CADASTRO
-	 */
 	_setColaborador(colaborador, version){
 		let self = this;
 		if (colaborador.matricula == undefined) {
@@ -247,19 +196,16 @@ class MetasController extends PLRController {
 
 		if (version) {
 			self._enableGridEdition = false;
-			self._btn
-			$('#btnCriarVersao').attr('disabled', true);
-			self.hideElement($('#btnAnexo'));
-			self.hideElement($('#btnSubmit'));
-			self.hideElement($('#idLabelAnexo'));
+			self._btnCriarVersao.attr('disabled', true);
+
+			self.hideElement(self._btnLabelAnexo);
 			self._setMetaInfo(colaborador.numDoc, version);
 		} else {
 			self._enableGridEdition = true;
-			self.hideElement(self._blocoInfoMeta);
-			$('#btnCriarVersao').removeAttr('disabled');
-			self.showHiddenElement($('#btnSubmit'));
-			self.showHiddenElement($('#idLabelAnexo'));
+			self._btnCriarVersao.removeAttr('disabled');
 
+			self.hideElement(self._blocoInfoMeta);
+			self.showHiddenElement(this._btnLabelAnexo);
 		}
 
 		if (colaborador.possuiMetaExtra == 'S') {
@@ -268,14 +214,7 @@ class MetasController extends PLRController {
 			self.hideElement(self._blocoMetaExtra);
 		}
 
-		if (colaborador.base64Img) {
-			self._image = colaborador.base64Img;
-			self.showHiddenElement(self._imageArea);
-			self._imageLoaded.src = colaborador.base64Img;
-		} else {
-			self._imageLoaded.src = "";
-			self.hideElement(self._imageArea);
-		}
+		self._exibeImagem(colaborador.base64Img);
 
 		if (metasGerais.length > 0) {
 			metasGerais.forEach(element => self._setMetaGeralDoColaborador(element));
@@ -295,8 +234,9 @@ class MetasController extends PLRController {
 
 	_setMetaInfo(numDoc, version) {
 		this.showHiddenElement(this._blocoInfoMeta);
-		$('#idNumDoc').val('Nº: ' + numDoc);
-		$('#idNumVersao').val('V. ' + version);
+		
+		this._numeroDoc.val('Nº: ' + numDoc);
+		this._numeroVersao.val('V. ' + version);
 	}
 
 	_setMetaGeralDoColaborador(meta) {
@@ -342,44 +282,100 @@ class MetasController extends PLRController {
 		}
 	}
 
+	_clearInfoColaborador() {
+		this._idsInputsMetas.forEach(item => $(item.id).val(""));
+		this._enableGridEdition = false;
+		this._imageLoaded.src = "";
+		this._blocoMetaExtra.hide();
+		this._blocoInfoMeta.hide();
+		this._loadGridMetasIndividuais(this._gridMetaQuantitativa, [], 1);
+		this._loadGridMetasIndividuais(this._gridMetaProjeto, [], 2);
+	}
+
+
 	/** 
-	 * GRIDS
-	*/
+	 * Anexos de Imagem
+	 */
 
-	exportar() {
-		if (this._matricula.val() == "") {
-			alert("Pesquise um colaborador primeiro, para que seja possível realizar o export.");
-			return;
-		} 
+	anexaImagem(photo) {
+		let self = this;
 		
-		if (this._historicVersion) {
-			this._historicoBusiness.exportHistorico(this._matricula.val(), this._historicVersion);
+		var file    = photo.files[0]; 
+		var reader  = new FileReader();
+		
+		if (file.size > 1000000) {
+			alert('Tamanho máximo permitido da imagem : 1 MB');
+			return;
+		}
+ 
+		if (file) {
+			reader.readAsDataURL(file); //reads the data as a URL
 		} else {
-			this._colaboradorBusiness.exportXls(this._matricula.val());
+			self._imageLoaded.src = "";
+		}
+
+		reader.onloadend = function () {
+			self._imageLoaded.src = reader.result;
+			self._image = reader.result;
+
+			self.showHiddenElement(self._imageArea);
+			self._salvaImagem();
 		}
 	}
 
-	_calculaPesosMetasIndividuais(newValue, previousValue) {
-		let dadosQuantitativas = this._gridMetaQuantitativa.jsGrid('option', 'data');
-		let dadosProjetos = this._gridMetaProjeto.jsGrid('option', 'data');
-		let sumQuantitativas = 0;
-		let sumProjetos = 0;
-		for (var i = 0; i < dadosQuantitativas.length; i ++) {
-			sumQuantitativas += dadosQuantitativas[i].peso;
-		}
-
-		for (var i = 0; i < dadosProjetos.length; i ++) {
-			sumProjetos += dadosProjetos[i].peso;
-		}
-
-		this._sumPesoMetasIndividuais = sumQuantitativas + sumProjetos;
-		if (previousValue) {
-			this._sumPesoMetasIndividuais -= previousValue;
-		}
-		if (newValue) {
-			this._sumPesoMetasIndividuais += newValue;
+	downloadImagem() {
+		if (this._image) {
+			var url = this._image.replace(/^data:image\/[^;]+/, 'data:application/octet-stream');
+			window.open(url);
 		}
 	}
+
+	printImagem() {
+		let self = this;
+		if (self._image) {
+			self._imageArea.printThis();
+		}
+	}
+
+	openDialogAnexo(base64Img) {
+		this._dialogAnexo.dialog('open');
+		if (base64Img) {
+			this._exibeImagem(base64Img);
+		}
+	}
+
+	closeDialogAnexo() {
+		this._dialogAnexo.dialog('close');
+	}
+
+	_exibeImagem(base64Img) {
+		let self = this;
+		if (base64Img) {
+			self._image = base64Img;
+			self.showHiddenElement(self._imageArea);
+			self._imageLoaded.src = base64Img;
+		} else {
+			self._imageLoaded.src = "";
+			self.hideElement(self._imageArea);
+		}
+	}
+	_salvaImagem() {
+		let self = this;
+		let mat = self._matricula.val() == "" ? self._matriculaSelecionadaHistorico : self.matricula.val();
+		if (self._image) {
+			$.when(self._historicoBusiness.uploadAnexo(mat, self._historicVersionSelecionado, self._image))
+			 .done(function () {
+				alert('Anexo salvo.');
+			 })
+			 .fail(function (xhr, errorThrown, textStatus) {
+				alert('Erro ao salvar anexo!');
+			 }) ;
+		}
+	}
+
+	/** 
+	 * Metas Individuais
+	*/
 
 	_loadGridMetasIndividuais(gridObject, metasData, idTipoMeta) {
 		let self = this;
@@ -433,7 +429,7 @@ class MetasController extends PLRController {
 
 				self._insertMeta(args.item);
 				self.getColaborador(self._matricula.val());
-				self._findHistoricoByLoggedUser();
+				//self._findHistoricoRegisteredByLoggedUser();
 			},
 
 			onItemUpdating : function(args) {
@@ -455,7 +451,7 @@ class MetasController extends PLRController {
 			onItemDeleting : function (args) {
 				self._deleteMeta(args.item);
 				self._calculaPesosMetasIndividuais();
-				self._findHistoricoByLoggedUser();		
+				//self._findHistoricoRegisteredByLoggedUser();		
 			},
 			fields: [
 				{name : "id", type : "number", visible : false},
@@ -524,6 +520,28 @@ class MetasController extends PLRController {
 	 * Validações
 	 */
 
+	_calculaPesosMetasIndividuais(newValue, previousValue) {
+		let dadosQuantitativas = this._gridMetaQuantitativa.jsGrid('option', 'data');
+		let dadosProjetos = this._gridMetaProjeto.jsGrid('option', 'data');
+		let sumQuantitativas = 0;
+		let sumProjetos = 0;
+		for (var i = 0; i < dadosQuantitativas.length; i ++) {
+			sumQuantitativas += dadosQuantitativas[i].peso;
+		}
+
+		for (var i = 0; i < dadosProjetos.length; i ++) {
+			sumProjetos += dadosProjetos[i].peso;
+		}
+
+		this._sumPesoMetasIndividuais = sumQuantitativas + sumProjetos;
+		if (previousValue) {
+			this._sumPesoMetasIndividuais -= previousValue;
+		}
+		if (newValue) {
+			this._sumPesoMetasIndividuais += newValue;
+		}
+	}
+
 	_validateForGrid() {
 		return ((this._sumPesoMetasIndividuais) <= this._bonusIndivMeta.val());
 	}
@@ -536,10 +554,6 @@ class MetasController extends PLRController {
 		} 
 		return true;
 	}
-
-	/**
-	 * CRUD METAS
-	 */
 
 	 _deleteMeta(item){
 		this._metasBusiness.deleteMeta(this._matricula.val(), item);
@@ -568,7 +582,8 @@ class MetasController extends PLRController {
 		 .done(function(historico) {
 			if (historico) {
 				alert('Versão criada com sucesso!');
-				self._findHistoricoByLoggedUser();
+				self._findHistoricoRegisteredByLoggedUser();
+				self._findHistoricoOwnedByLoggedUser();
 			}
 		 })
 		 .fail(function(xhr, textStatus, errorThrown) {
@@ -608,13 +623,26 @@ class MetasController extends PLRController {
 		this.criaVersao();
 	}
 
-	_findHistoricoByLoggedUser() {
+	_findHistoricoRegisteredByLoggedUser() {
 		let self = this;
 		$.when(self._historicoBusiness.findHistoricoForResponsavel(getLoggedUser()))
 		 .done(function(historico) {
 			if (historico && historico.length > 0) {
-				self.showHiddenElement(self._divGridHistoricoUsuarioLogado);
-				self._loadGridHistorico(self._gridHistorico ,historico);
+				self._loadGridHistorico(self._gridHistoricoRegistrado ,historico);
+			}
+		 })
+		 .fail(function(xhr, textStatus, errorThrown) {
+			alert('Colaborador não encontrado.');
+			self._clearInfoColaborador();
+		 });
+	}
+
+	_findHistoricoOwnedByLoggedUser() {
+		let self = this;
+		$.when(self._historicoBusiness.findHistoricoForColaborador(getLoggedUser()))
+		 .done(function(historico) {
+			if (historico && historico.length > 0) {
+				self._loadGridHistorico(self._gridHistoricoPertencente ,historico);
 			}
 		 })
 		 .fail(function(xhr, textStatus, errorThrown) {
@@ -626,7 +654,7 @@ class MetasController extends PLRController {
 	_loadGridHistorico(gridObject, historicoData) {
 		let self = this;
 		gridObject.jsGrid({
-			width: "100%",
+			width: "1280px",
 			height: "auto",
 	 
 			inserting: false,
@@ -677,12 +705,21 @@ class MetasController extends PLRController {
 								  		});
 
 							$result = $result.add($download);
+							
+							var $anexo = $("<a style='color : #003cbe'><i class='fas fa-image fa-lg' " + 
+								 " title='Anexar Imagem' style= 'margin-left : 7px;'></i></a>")
+										  .click(function() {
+												self._matriculaSelecionadaHistorico = item.matricula;
+												self._historicVersionSelecionado = item.versao;
+												self.openDialogAnexo(item.base64Img);
+										  });
+							
+							$result = $result.add($anexo);
 
 							return $result;
 					}
 				 }
 			]
-		
 		});
 	}
 
