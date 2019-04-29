@@ -3,11 +3,18 @@ class HistoricoBusiness extends PLRBusiness {
         super();
     }
 
+    deleteHistorico(id, matricula) {
+        $.ajax({
+            url : this._API_BASE_URI  + '/historico/'  + id + '/colaborador/' + matricula,
+            type : "DELETE",
+            async : false
+        });
+    }
+
     exportHistorico(matricula, versao) {
     	let uriExport = this._API_BASE_URI + '/historico/' + matricula + '/export?version=' + versao;
 		window.open(uriExport, '_blank');
     }
-
 
     findHistoricoForColaborador(matricula) {
         return $.ajax({url: this._API_BASE_URI + '/historico/colaborador?matricula=' + matricula, type : 'GET'});

@@ -6,6 +6,7 @@ class MetasController extends PLRController {
 		this._metasBusiness = new MetasBusiness();
 		this._colaboradorBusiness = new ColaboradorBusiness();
 		this._historicoBusiness = new HistoricoBusiness();
+		this._perfilController = new PerfilController();
 
 		this._dialogVersao = $('#dialogVersao');
 		this._dialogMetaMensal = $('#dialogMetaMensal');
@@ -15,9 +16,7 @@ class MetasController extends PLRController {
 		this.HAS_EDITED_METAS_MENSAIS = false;
 		
 		this._initFields();
-		this._findHistoricoOwnedByLoggedUser();
-		this._findHistoricoRegisteredByLoggedUser();
-
+		this._findHistorico();
 	}
 	
 	_initFields() {
@@ -64,7 +63,7 @@ class MetasController extends PLRController {
 		this._btnCriarVersao = $('#btnCriarVersao');
 		this._btnLabelAnexo = $('#idLabelAnexo');
 
-		this._idsButtons = [{id : '#btnEditar'}, {id : '#btnCancel'},{id : "#btnExport"},{id : "#btnCriarVersao"}];
+		this._idsButtons = [{id : '#btnEditar'}, {id : '#btnCancel'},{id : "#btnExport"},{id : "#btnCriarVersao"}, {id : "#btnAnexarFoto"}];
 
 		//Select grids
 		this._selectFrequenciaAvaliacao = [{frequencia : ""}, {frequencia : "Mensal"},{frequencia : "Bimestral"},{frequencia : "Trimestral"},
@@ -95,7 +94,12 @@ class MetasController extends PLRController {
 		this._loadGridMetasIndividuais(this._gridMetaProjeto,[], 2);
 		this._loadGridHistorico(this._gridHistoricoRegistrado, []);
 		this._loadGridHistorico(this._gridHistoricoPertencente, []);
+
+		this._adminHTMLAreasToHide = ['#meusCadastrosTab', '#idLabelAnexo', '#btnAnexo', '#btnCriarVersao', '#btnEditar'];
+		this._adminHTMLAreasToBlock = [{id : '#matriculaMeta'}];
+
 		this.enableDisableElements(this._idsButtons, true);
+		this.applyConstraintsOnFields(this._adminHTMLAreasToHide, this._adminHTMLAreasToBlock, this._perfilController.isEditable());
 
 		this._dialogVersao.dialog({
 			resizable: false,
@@ -157,6 +161,10 @@ class MetasController extends PLRController {
 		}
 	}
 
+	getPerfilUsuarioLogado() {
+		this._pefil
+	}
+
 	getColaborador(matricula, version) {
 		let self = this;
 		
@@ -198,20 +206,19 @@ class MetasController extends PLRController {
 			self._enableGridEdition = false;
 			self._btnCriarVersao.attr('disabled', true);
 
-			self.hideElement(self._btnLabelAnexo);
 			self._setMetaInfo(colaborador.numDoc, version);
 		} else {
 			self._enableGridEdition = true;
 			self._btnCriarVersao.removeAttr('disabled');
 
-			self.hideElement(self._blocoInfoMeta);
+			self.hideElements([self._blocoInfoMeta]);
 			self.showHiddenElement(this._btnLabelAnexo);
 		}
 
 		if (colaborador.possuiMetaExtra == 'S') {
 			self.showHiddenElement(self._blocoMetaExtra);
 		} else {
-			self.hideElement(self._blocoMetaExtra);
+			self.hideElements([self._blocoMetaExtra]);
 		}
 
 		self._exibeImagem(colaborador.base64Img);
@@ -337,11 +344,14 @@ class MetasController extends PLRController {
 		}
 	}
 
-	openDialogAnexo(base64Img) {
+	openDialogAnexoViaEditor() {
+		this._exibeImagem(this._image);
 		this._dialogAnexo.dialog('open');
-		if (base64Img) {
-			this._exibeImagem(base64Img);
-		}
+	}
+
+	openDialogAnexoViaHistorico(base64Img) {
+		this._exibeImagem(base64Img);
+		this._dialogAnexo.dialog('open');
 	}
 
 	closeDialogAnexo() {
@@ -356,16 +366,18 @@ class MetasController extends PLRController {
 			self._imageLoaded.src = base64Img;
 		} else {
 			self._imageLoaded.src = "";
-			self.hideElement(self._imageArea);
+			self.hideElements([self._imageArea]);
 		}
 	}
 	_salvaImagem() {
 		let self = this;
-		let mat = self._matricula.val() == "" ? self._matriculaSelecionadaHistorico : self.matricula.val();
+		let matricula = self._matricula ? self._matricula.val() : "";
+		let mat = matricula == "" ? self._matriculaSelecionadaHistorico : matricula;
 		if (self._image) {
 			$.when(self._historicoBusiness.uploadAnexo(mat, self._historicVersionSelecionado, self._image))
 			 .done(function () {
 				alert('Anexo salvo.');
+				self._findHistorico();
 			 })
 			 .fail(function (xhr, errorThrown, textStatus) {
 				alert('Erro ao salvar anexo!');
@@ -429,7 +441,6 @@ class MetasController extends PLRController {
 
 				self._insertMeta(args.item);
 				self.getColaborador(self._matricula.val());
-				//self._findHistoricoRegisteredByLoggedUser();
 			},
 
 			onItemUpdating : function(args) {
@@ -451,7 +462,6 @@ class MetasController extends PLRController {
 			onItemDeleting : function (args) {
 				self._deleteMeta(args.item);
 				self._calculaPesosMetasIndividuais();
-				//self._findHistoricoRegisteredByLoggedUser();		
 			},
 			fields: [
 				{name : "id", type : "number", visible : false},
@@ -582,8 +592,7 @@ class MetasController extends PLRController {
 		 .done(function(historico) {
 			if (historico) {
 				alert('Versão criada com sucesso!');
-				self._findHistoricoRegisteredByLoggedUser();
-				self._findHistoricoOwnedByLoggedUser();
+				self._findHistorico();
 			}
 		 })
 		 .fail(function(xhr, textStatus, errorThrown) {
@@ -621,6 +630,14 @@ class MetasController extends PLRController {
 		}
 
 		this.criaVersao();
+	}
+
+	_findHistorico() {
+		let self = this;
+		self._findHistoricoOwnedByLoggedUser();
+		if (self._perfilController.isEditable()) {
+			self._findHistoricoRegisteredByLoggedUser();
+		}
 	}
 
 	_findHistoricoRegisteredByLoggedUser() {
@@ -668,13 +685,25 @@ class MetasController extends PLRController {
 			pagePrevText: 'Anterior',
 			pageFirstText: 'Primeira',
 			pageLastText: 'Última', 
+			deleteConfirm: "Deseja realmente excluir a versão de meta selecionada?",
 			
 			rowClick : function(args) {
 				return false;
 			},
+			
 			onItemUpdating : function (args) {
 				self._historicoBusiness.updateHistorico(args.item);	
 			},
+
+			onItemDeleting : function (args) {
+				self._historicoBusiness.deleteHistorico(args.item.id, args.item.matricula);
+			},
+
+			onItemDeleted : function (args) {
+				alert('Versão excluída com sucesso. ');
+				self._findHistorico();
+			},
+
 			fields: [
 				{name : "id", title : "Nº Doc.", type : "number", align : "center", width : 30, editing: false},
 				{name : "versao", title: "Versão", type : "number", align : "center", width : 30, editing: false},
@@ -685,7 +714,8 @@ class MetasController extends PLRController {
 				{name : "comentario", title : "Comentário", type : "text", align : "left", width : 120},
 				{name : "inicioVigencia", title : "Ini. Vigência", type : "text", align : "center", width : 45, editing: false},
 				{name : "fimVigencia", title : "Fim Vigência", type : "text", align : "center", width : 45, editing: false},
-				{type: "control", width : 50, align : "center", deleteButton : false, inserting : false,
+				{type: "control", width : 50, align : "center", deleteButton : self._perfilController.isEditable(), inserting : false, 
+						editButton : self._perfilController.isEditable(), 
 						itemTemplate: function(value, item) {
 							var $result = this.__proto__.itemTemplate.call(this, value, item);
 							
@@ -711,7 +741,7 @@ class MetasController extends PLRController {
 										  .click(function() {
 												self._matriculaSelecionadaHistorico = item.matricula;
 												self._historicVersionSelecionado = item.versao;
-												self.openDialogAnexo(item.base64Img);
+												self.openDialogAnexoViaHistorico(item.base64Img);
 										  });
 							
 							$result = $result.add($anexo);

@@ -2,13 +2,20 @@ class PLRController {
     constructor() {
 
     }
-    
+ 
+    applyConstraintsOnFields(fieldsToHide, fieldsToBlock, isProfileEditable) {
+        if (!isProfileEditable) {
+            this.enableDisableElements(fieldsToBlock, true);
+            this.hideElements(fieldsToHide);
+        }
+    }
+
 	enableDisableElements(elems, stat) {
 		elems.forEach(elm => $(elm.id).prop('disabled', stat));
     }
     
-    hideElement(field) {
-        field.hide();
+    hideElements(fields) {
+        fields.forEach(field => $(field).hide());
     }
     
     setFieldValue(field, value) {
