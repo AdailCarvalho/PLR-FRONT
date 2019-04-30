@@ -705,13 +705,13 @@ class MetasController extends PLRController {
 			},
 
 			fields: [
-				{name : "id", title : "Nº Doc.", type : "number", align : "center", width : 30, editing: false},
-				{name : "versao", title: "Versão", type : "number", align : "center", width : 30, editing: false},
+				{name : "id", title : "Nº Doc.", type : "number", align : "center", width : 20, editing: false},
+				{name : "versao", title: "V.", type : "number", align : "center", width : 15, editing: false},
 				{name : "dataInclusao", title: "Criação", type : "text", align : "center", width : 40, editing: false},
 				{name : "situacao", title : "Status", type : "select", items : self._selectSituacao, valueField : "situacao", 
-						textField : "descSituacao", align : "center", width : 40},
+						textField : "descSituacao", align : "center", width : 20},
 				{name : "nomeColaborador", title : "Colaborador", type : "text", align : "center", width : 60, editing: false},
-				{name : "comentario", title : "Comentário", type : "text", align : "left", width : 120},
+				{name : "comentario", title : "Comentário", type : "text", align : "left", width : 100},
 				{name : "inicioVigencia", title : "Ini. Vigência", type : "text", align : "center", width : 45, editing: false},
 				{name : "fimVigencia", title : "Fim Vigência", type : "text", align : "center", width : 45, editing: false},
 				{type: "control", width : 50, align : "center", deleteButton : self._perfilController.isEditable(), inserting : false, 
@@ -765,7 +765,6 @@ class MetasController extends PLRController {
 			inicioVigencia : $('#idInicioVigencia').val(),
 			fimVigencia : $('#idFimVigencia').val(),
 			situacao : situacaoFinal,
-			base64Img : this._image,
 			comentario : $('#idComentarioVersao').val(),
 		}
 	}
