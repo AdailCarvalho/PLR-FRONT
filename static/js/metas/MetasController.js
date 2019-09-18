@@ -41,6 +41,8 @@ class MetasController extends PLRController {
 		//Grids metas individuais
 		this._gridMetaQuantitativa = $("#jsGridMetaQuantitativa");
 		this._gridMetaProjeto = $("#jsGridMetaProjeto");
+
+		this._gridFolhaMetas = $("#jsGridFolhaMetas");
 		
 		//historico
 		this._gridHistoricoRegistrado = $('#jsGridHistoricoRegistrado');
@@ -136,6 +138,63 @@ class MetasController extends PLRController {
 			autoOpen: false,
 			closeOnEscape: true
 		});
+
+		//Exemplo Novo Grid Folha Mensal
+		this._folhaMetasData = [
+			{numero : 1, tipoMeta : "G", descricao : "Meta Ebtida", prazo : "31/12/2019".toDate(portugueseCalendar.dateFormat), tipoMedicao : "Ano",
+			 metasMensais : [
+				{tipoMeta : "Meta", janeiro : "4536640.96", fevereiro : "3655116.75", marco : "4722137.01", abril :  "5714448.99",
+				 maio :  "5939256.19", junho : "6650272.02", julho :  "6701215.25", agosto : "0", setembro :"0", outubro : "0", novembro : "0", dezembro : "0",
+				 meta :  "37919087.17" 
+				 },
+				 {tipoMeta : "Real", janeiro : "2291467.81", fevereiro : "942439.30", marco : "5552327.00", abril : "4038275.75",
+				 maio :  "6067298.38", junho :  "4668852.30", julho :  "8541413.34", agosto : "0", setembro : "0", outubro : "0", 
+				 novembro : "0", dezembro : "0",
+				 meta :   "32102073.91"
+			 	}
+			 ],
+			 desempenho : "84.6",
+			 escala : "-20.0" ,
+			 peso : "30.0",
+			 pontuacao:"-6"
+			},
+			{numero : 2, tipoMeta : "C", descricao : "Crescimento do Iogurte", prazo : "01/01/0001".toDate(portugueseCalendar.dateFormat), tipoMedicao : "-",
+			 metasMensais : [
+				{tipoMeta : "Meta", janeiro : "0", fevereiro : "0", marco : "0", abril :  "0",
+				 maio :  "0", junho : "0", julho :  "0", agosto : "0", setembro :"0", outubro : "0", novembro : "0", dezembro : "0",
+				 meta :  "0" 
+				 },
+				 {tipoMeta : "Real", janeiro : "0", fevereiro : "0", marco : "0", abril : "0",
+				 maio :  "0", junho :  "0", julho :  "0", agosto : "0", setembro : "0", outubro : "0", 
+				 novembro : "0", dezembro : "0",
+				 meta :   "0"
+			 	}
+			 ],
+			 desempenho : "0",
+			 escala : "0" ,
+			 peso : "0",
+			 pontuacao:"0"
+			},
+			{numero : 3, tipoMeta : "C", descricao : "Despesa Fixa Global", prazo : "31/12/2019".toDate(portugueseCalendar.dateFormat), tipoMedicao : "Ano",
+			 metasMensais : [
+				{tipoMeta : "Meta", janeiro : "16608853.88", fevereiro : "15718943.31", marco : "15831248.24", abril :  "15896086.14",
+				 maio :  "15577844.27", junho : "14602085.81", julho :  "15179066.74", agosto : "0", setembro :"0", outubro : "0", novembro : "0", dezembro : "0",
+				 meta :  "109414128.39" 
+				 },
+				 {tipoMeta : "Real", janeiro : "15657330.27", fevereiro : "15188020.55", marco : "16060487.1", abril : "15586705.3",
+				 maio :  "17365019.99", junho :  "15691920.61", julho :  "14415977.69", agosto : "0", setembro : "0", outubro : "0", 
+				 novembro : "0", dezembro : "0",
+				 meta :   "32102073.91"
+			 	}
+			 ],
+			 desempenho : "100.50",
+			 escala : "100" ,
+			 peso : "10.0",
+			 pontuacao:"10.0"
+			}
+		];
+
+		this._loadGridFolhaMetas(this._folhaMetasData);
 	}
 
 	/**
@@ -930,6 +989,106 @@ class MetasController extends PLRController {
 				{name : "valorRealizado", title: "Realizado", type : "decimal", align : "center", width : 50, sorting : false},
 				{type: "control", width : 30, align : "center", deleteButton : false, editButton : self._enableGridEdition}
 			]
+		});
+	}
+
+	_loadGridFolhaMetas(folhaMetasData) {
+		let self = this;
+
+		self._gridFolhaMetas.jsGrid({
+		width: "2780px",
+		height: "auto",
+		inserting: false,
+		editing: true,
+		sorting: true,
+		paging: true,
+		pageSize: 9,
+		pagerFormat: 'Páginas: {first} {prev} {pages} {next} {last} &nbsp;&nbsp; {pageIndex} de {pageCount}',
+		pageNextText: 'Próxima',
+		pagePrevText: 'Anterior',
+		pageFirstText: 'Primeira',
+		pageLastText: 'Última', 
+		deleteConfirm : "Deseja realmente excluir o item selecionado?",
+		data: folhaMetasData,
+
+		fields: [
+			//600
+			{type: 	"control", width : 50, align : "center", deleteButton : false},
+			{name : "numero", title : "Nº", type : "number", width : 60, align : "center", editing : false},
+			{name : "tipoMeta", title : "Tipo", type : "text", align : "center", width : 50, readonly : true},
+			{name : "descricao", title : "Descrição", type : "text", align : "center", width : 220, readonly : true},
+			{name : "prazo", title: "Prazo", type : "date", align : "center", width : 120, readonly : true},
+			{name : "tipoMedicao", title: "Medição", type : "text", align : "center", width : 100, readonly : true},
+			{width : 1670  , align : "center", //Mensal
+			 headerTemplate : function () {
+				var headerContainer = "<div class='row mt-2 ml-2'>";
+				var headerContent = "<div>";
+				var $headerAninhado = $(headerContainer)
+					.append($(headerContent).text("Tipo").width(100))
+					.append($(headerContent).text("Jan").width(120))
+					.append($(headerContent).text("Fev").width(120))
+					.append($(headerContent).text("Mar").width(120))
+					.append($(headerContent).text("Abr").width(120))
+					.append($(headerContent).text("Mai").width(120))
+					.append($(headerContent).text("Jun").width(120))
+					.append($(headerContent).text("Jul").width(120))
+					.append($(headerContent).text("Ago").width(120))
+					.append($(headerContent).text("Set").width(120))
+					.append($(headerContent).text("Out").width(120))
+					.append($(headerContent).text("Nov").width(120))
+					.append($(headerContent).text("Dez").width(120))
+					.append($(headerContent).text("Meta").width(100));
+				
+				return $headerAninhado;
+			 },
+
+			 itemTemplate : function (value, mainItem) {
+				var $nestedGridMes = $("<div>");         
+				$nestedGridMes.click(function(e) {
+					e.stopPropagation();
+				});
+
+				$nestedGridMes.jsGrid({
+					width: "1670px",
+					height: "auto",
+					editing : false,
+				  	inserting: false,
+				  	heading : false,
+					data: mainItem.metasMensais,
+					rowClick: function(args) {
+						if(self.editing) {
+							self.editItem($(args.event.target).closest("tr"));
+							args.event.stopPropagation();
+						}
+					},
+
+					fields : [
+						{name : "tipoMeta", type : "text", align : "center", width : 100, readonly :true},
+						{name : "janeiro",  type : "decimal", align : "center", width : 120, readonly : true},
+						{name : "fevereiro", type : "decimal", align : "center", width : 120, readonly : true},
+						{name : "marco",  type : "decimal", align : "center", width : 120, readonly : true},
+						{name : "abril",  type : "decimal", align : "center", width : 120, readonly : true},
+						{name : "maio",  type : "decimal", align : "center", width : 120, readonly : true},
+						{name : "junho", type : "decimal", align : "center", width : 120, readonly : true},
+						{name : "julho",  type : "decimal", align : "center", width : 120, readonly : true},
+						{name : "agosto", type : "decimal", align : "center", width : 120, readonly : true},
+						{name : "setembro",  type : "decimal", align : "center", width : 120, readonly : true},
+						{name : "outubro",  type : "decimal", align : "center", width : 120, readonly : true},
+						{name : "novembro",  type : "decimal", align : "center", width : 120, readonly : true},
+						{name : "dezembro",  type : "decimal", align : "center", width : 120, readonly : true},
+						{name : "valMeta",  type : "decimal", align : "center", width : 100, readonly : true},
+
+					] ,
+				});
+
+				return $nestedGridMes;
+			 },
+			},
+			{name : "desempenho", title : "Desempenho %",  type : "number", align : "center", editing : false, width : 140,},
+			{name : "escala",  title : "Escala %", type : "number", align : "center", width : 100, editing : false},
+			{name : "peso",  title : "Peso %", type : "number", align : "center", width : 100, editing : false},
+			{name : "pontuacao",  title : "Pontuação %", type : "number", align : "center", width : 120, editing : false}	
+		  ]
 		});
 	}
 }
