@@ -730,7 +730,7 @@ class MetasController extends PLRController {
 	_loadGridHistorico(gridObject, historicoData) {
 		let self = this;
 		gridObject.jsGrid({
-			width: "1280px",
+			width: "auto",
 			height: "auto",
 	 
 			inserting: false,
@@ -996,7 +996,7 @@ class MetasController extends PLRController {
 		let self = this;
 
 		self._gridFolhaMetas.jsGrid({
-		width: "2780px",
+		width: "2820px",
 		height: "auto",
 		inserting: false,
 		editing: true,
@@ -1015,8 +1015,8 @@ class MetasController extends PLRController {
 			//600
 			{type: 	"control", width : 50, align : "center", deleteButton : false},
 			{name : "numero", title : "Nº", type : "number", width : 60, align : "center", editing : false},
-			{name : "tipoMeta", title : "Tipo", type : "text", align : "center", width : 50, readonly : true},
-			{name : "descricao", title : "Descrição", type : "text", align : "center", width : 220, readonly : true},
+			{name : "tipoMeta", title : "Tipo", type : "text", align : "center", width : 70, readonly : true},
+			{name : "descricao", title : "Descrição", type : "text", align : "center", width : 200, readonly : true},
 			{name : "prazo", title: "Prazo", type : "date", align : "center", width : 120, readonly : true},
 			{name : "tipoMedicao", title: "Medição", type : "text", align : "center", width : 100, readonly : true},
 			{width : 1670  , align : "center", //Mensal
@@ -1043,13 +1043,13 @@ class MetasController extends PLRController {
 			 },
 
 			 itemTemplate : function (value, mainItem) {
-				var $nestedGridMes = $("<div>");         
-				$nestedGridMes.click(function(e) {
+				var $nestedGridMensal = $("<div style='overflow : auto'>");         
+				$nestedGridMensal.click(function(e) {
 					e.stopPropagation();
 				});
 
-				$nestedGridMes.jsGrid({
-					width: "1670px",
+				$nestedGridMensal.jsGrid({
+					width: "1710px",
 					height: "auto",
 					editing : false,
 				  	inserting: false,
@@ -1081,13 +1081,13 @@ class MetasController extends PLRController {
 					] ,
 				});
 
-				return $nestedGridMes;
+				return $nestedGridMensal;
 			 },
 			},
-			{name : "desempenho", title : "Desempenho %",  type : "number", align : "center", editing : false, width : 140,},
-			{name : "escala",  title : "Escala %", type : "number", align : "center", width : 100, editing : false},
-			{name : "peso",  title : "Peso %", type : "number", align : "center", width : 100, editing : false},
-			{name : "pontuacao",  title : "Pontuação %", type : "number", align : "center", width : 120, editing : false}	
+			{name : "desempenho", title : "Desempenho %",  type : "decimal", align : "center", width : 140, editing : false},
+			{name : "avaliacao",  title : "Avaliação %", type : "decimal", align : "center", width : 120, editing : false},
+			{name : "peso",  title : "Peso %", type : "decimal", align : "center", width : 100, editing : false},
+			{name : "pontuacao",  title : "Pontuação %", type : "decimal", align : "center", width : 120, editing : false}	
 		  ]
 		});
 	}
