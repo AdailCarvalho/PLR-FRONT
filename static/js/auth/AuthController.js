@@ -53,13 +53,13 @@ class AuthController extends PLRController {
                 self._phrase = userDTO.phrase;
                 self._hash = userDTO.hash;
                 setLoggedUser(userDTO);
-                if (userDTO.inPrimeiroAcesso == 'S') {
-                    self.redirectToHome();
-                } else {
-                    if(self._validateAuth()) {
-                        self.redirectToHome();
-                    }
-                }
+                //if (userDTO.inPrimeiroAcesso == 'S') {
+                 //   self.redirectToHome();
+                //} else {
+                    //if(self._validateAuth()) {
+                self.redirectToHome();
+                    //}
+                //}
             })
             .fail(function(xhr, textStatus, errorThrown) {
                 alert('Login inválido!');
