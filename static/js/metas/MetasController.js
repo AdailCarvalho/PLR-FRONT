@@ -23,6 +23,7 @@ class MetasController extends PLRController {
 		this._diretoria = $('#diretoriaMeta');
 		
 		this._gridFolhaMetas = $("#jsGridFolhaMetas");
+		this._gridFolhaMetasArea = $('#idGridFolhaMetasArea');
 		
 		//historico
 		this._gridMetasRegistrado = $('#jsGridMetasRegistrado');
@@ -52,13 +53,6 @@ class MetasController extends PLRController {
 		});
 
 		this._loadGridFolhaMetas(this._folhaMetasData);
-
-		$('.jsgrid-grid-body').scroll(function (item) {
-            var element = '#' + $(item.target).parent().attr('id');
-            if (element === "#jsGridFolhaMetas") {
-                updateColPos(6, element);
-            }
-        });
 	}
 
 	getColaborador(idFolhaMeta, status, matricula) {
@@ -134,7 +128,7 @@ class MetasController extends PLRController {
 	_loadGridMetas(gridObject, itemsMetas) {
 		let self = this;
 		gridObject.jsGrid({
-			width: "1200px",
+			width: "100%",
 			height: "auto",
 	 
 			inserting: false,
@@ -184,13 +178,13 @@ class MetasController extends PLRController {
 		let self = this;
 
 		self._gridFolhaMetas.jsGrid({
-		width: "3320px",
+		width: "3200px",
 		height: "auto",
 		inserting: false,
 		editing: false,
 		sorting: true,
 		paging: true,
-		pageSize: 9,
+		pageSize: 5,
 		pagerFormat: 'Páginas: {first} {prev} {pages} {next} {last} &nbsp;&nbsp; {pageIndex} de {pageCount}',
 		pageNextText: 'Próxima',
 		pagePrevText: 'Anterior',
@@ -273,9 +267,8 @@ class MetasController extends PLRController {
 			 },
 			},
 			{name : "desempenho", title : "Desempenho %",  type : "decimal", align : "center", width : 140, editing : false},
-			{name : "avaliacao",  title : "Avaliação %", type : "decimal", align : "center", width : 120, editing : false},
-			{name : "peso",  title : "Peso %", type : "decimal", align : "center", width : 100, editing : false},
-			{name : "pontuacao",  title : "Pontuação %", type : "decimal", align : "center", width : 120, editing : false}	
+			{name : "peso",  title : "Peso", type : "decimal", align : "center", width : 100, editing : false},
+			{name : "pontuacao",  title : "Pontuação", type : "decimal", align : "center", width : 120, editing : false}	
 		  ]
 		});
 	}
