@@ -12,6 +12,12 @@ class AuthController extends PLRController {
         this._confirmPassword = $('#idConfirmNewPassword');
         this._passwordRegex =/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/i;
 
+        let $body = $("body");
+		$(document).on({
+			ajaxStart: function() { $body.addClass("loading");    },
+			ajaxStop: function() { $body.removeClass("loading"); }
+		});
+
         this._init();
 	}
 
@@ -62,7 +68,7 @@ class AuthController extends PLRController {
                 //}
             })
             .fail(function(xhr, textStatus, errorThrown) {
-                alert('Login inválido!');
+                    MessageView.showSimpleErrorMessage('Login inválido! ');
             });
         }
     }
@@ -98,14 +104,14 @@ class AuthController extends PLRController {
           
             $.when(self._business.updateUserInfo(user))
              .done(function(userDTO) {
-                alert('Informações atualizadas com sucesso!');
+                MessageView.showSuccessMessage('Informações atualizadas com sucesso!');
                 removeSessionItens(["plrIsFirstAccess", "plrLoggedPhrase"]);
                 
                 self._dialogPrimeiroAcesso.close();
                 location.reload();
              })
              .fail(function(xhr, textStatus, errorThrown) {
-                alert("Erro ao atualizar informações do usuário.");
+                MessageView.showSimpleErrorMessage("Erro ao atualizar informações do usuário.");
                 self.logout();
              });
         }
@@ -114,7 +120,7 @@ class AuthController extends PLRController {
     _validateAuth() {
         let decryptedPhrase = CryptoJS.AES.decrypt(this._hash, this._password.val());
         if (decryptedPhrase.toString(CryptoJS.enc.Utf8) != this._phrase) {
-            alert('Senha inválida.');
+            MessageView.showSimpleErrorMessage('Senha inválida.');
             this._password.focus();
             return false;
         } else {
@@ -124,11 +130,11 @@ class AuthController extends PLRController {
 
     _validateForm() { 
         if (this._matricula.val() == '') {
-            alert('Informar matrícula');
+            MessageView.showWarningMessage('Informar matrícula');
             this._matricula.focus();
             return false;
         } else if (this._password.val() == '') {
-            alert('Informar senha');
+            MessageView.showWarningMessage('Informar senha');
             this._password.focus();
             return false;
         }
@@ -140,22 +146,22 @@ class AuthController extends PLRController {
         this._newPassword = $('#idNewPassword')
         this._confirmPassword = $('#idConfirmNewPassword');
         if (this._newPassword.val() == "") {
-            alert('Informe a nova senha');
+            MessageView.showWarningMessage('Informe a nova senha');
             this._newPassword.focus();
             return false;
         } else if (this._confirmPassword.val() == "") {
-            alert('Confirme a nova senha');
+            MessageView.showWarningMessage('Confirme a nova senha');
             this._confirmPassword.focus();
             return false;
         }
 
         if (this._newPassword.val() == this._confirmPassword.val()) {
             if(this._newPassword.val().match(this._passwordRegex) == null) {
-                alert('A senha deve possuir 6 caracteres, e possuir ao menos um número.');
+                MessageView.showWarningMessage('A senha deve possuir 6 caracteres, e possuir ao menos um número.');
                 return false;
             }
         } else {
-            alert('As senhas não estão iguais.');
+            MessageView.showWarningMessage('As senhas não estão iguais.');
             return false;
         }
         return true;

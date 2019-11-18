@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+	   <title>PLR</title>
+       <meta charset="utf-8">
+</head>
+<body>
+    
+    <div class="row">
+        <div class="col-md-auto mt-2">
+            <div class="nav nav-pills plr-navside" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <a class="nav-link active" id="colaboradoresTab" data-toggle="pill" href="#cadastroColaborador" role="tab" aria-controls="cadastroColaborador" aria-selected="true">Colaboradores</a>
+                <a class="nav-link" id="metasTab" data-toggle="pill" href="#cadastroMeta" role="tab" aria-controls="cadastroMeta" aria-selected="false">Itens de Metas</a>
+            </div>
+        </div>
+        
+        <div class="col-md-12 mt-2">
+            <div class="tab-content" id="v-pills-tabContent">
+                <div class="tab-pane fade show active" id="cadastroColaborador" role="tabpanel" aria-labelledby="colaboradoresTab">
+                    
+                    <!-- Inicia Pesquisa -->
+		            <div class="row">
+                        <div class="col-md-12">
+                                <div class="form-row">
+                                    <div class="form-group col-md-1">
+                                        <label class="plr-bold" for="matricula" title="Matrícula">Matrícula: </label>
+                                        <input type="text" id="matricula" maxlength="8" class="form-control" placeholder="Mat."/>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label class="plr-bold" for="colaborador" title="Colaborador">Colaborador: </label>
+                                        <input type="text" id="colaborador" maxlength="32" class="form-control" placeholder="Nome"/>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label class="plr-bold" for="cargo" title="Cargo">Cargo: </label>
+                                        <input type="text" id="cargo" maxlength="32" class="form-control" placeholder="Cargo"/>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label class="plr-bold" for="diretoria" title="Diretoria">Diretoria: </label>
+                                        <input type="text" id="diretoria" maxlength="32" class="form-control" placeholder="Diretoria"/>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label class="plr-bold" for="time" title="Time">Time: </label>
+                                        <input type="text" id="time" maxlength="32" class="form-control" placeholder="Time"/>
+                                    </div>
+                                    <div class="form-group col-md-1">
+                                        <label class="plr-bold" for="situacao" title="Situação">Status: </label>
+                                        <select id="situacao" maxlength="8" class="form-control">
+                                                <option value=""></option>
+                                                <option value="A">Ativo</option>
+                                                <option value="I">Inativo</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                            <a type="button" id="btnPesquisar" class="btn btn-sm plr-search-btn mt-4" title="Pesquisar" onclick="colaboradorController.pesquisarColaborador()">
+                                                <i class="fas fa-search"></i>
+                                            </a>
+                                            <a type="button" id="btnNovo" class="btn btn-sm plr-search-btn mt-4 ml-2" title="Novo" onclick="">
+                                                <i class="fas fa-plus"></i>
+                                            </a>
+                                    </div>
+                                </div>
+                     </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-12 mt-2">
+                        <div class="card border-primary bg-light mb-2">
+                            <div class="card-header border-primary text-muted">Colaboradores</div>
+                                <div class="card-body">
+                                    <div id="jsGridPesquisaColaborador"></div>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div> <!--Fecha Tab.Pane Colabo -->
+
+            <div class="tab-pane fade" id="cadastroMeta" role="tabpanel" aria-labelledby="metasTab">
+                <h3>Tela de Pesquisa Metas</h3>
+            </div>
+
+        </div>
+    </div>
+
+  </div>
+    <div class="modalLoading">
+		<h5 style="text-align: center;vertical-align: middle; margin-top: 23%; font-weight: bold;">Processando a solicitação...</h5>
+    </div>
+</body>
+</html>

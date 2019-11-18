@@ -11,6 +11,12 @@ class MetasController extends PLRController {
 		
 		this._initFields();
 		this._findMetas();
+
+		let $body = $("body");
+		$(document).on({
+			ajaxStart: function() { $body.addClass("loading");    },
+			ajaxStop: function() { $body.removeClass("loading"); }
+		});
 	}
 	
 	_initFields() {
@@ -63,7 +69,7 @@ class MetasController extends PLRController {
 			self._fillColaboradorInfo(serverData, idFolhaMeta, status);
 		 })
 		 .fail(function (xhr, textStatus, errorThrown) {
-			alert('Informações do Colaborador não encontradas.');
+			MessageView.showWarningMessage('Informações do Colaborador não encontradas.');
 			self._clearInfoColaborador();
 		 });
 	}
@@ -73,8 +79,8 @@ class MetasController extends PLRController {
 		this._status.val(status);
 		this._matricula.val(dadosColaborador.matricula);
 		this._nome.val(dadosColaborador.nome);
-		this._cargo.val(dadosColaborador.cargo);
-		this._diretoria.val(dadosColaborador.diretoria);
+		this._cargo.val(dadosColaborador.cargo.nome);
+		this._diretoria.val(dadosColaborador.diretoria.nome);
 	}
 
 	_findMetas() {
@@ -94,7 +100,7 @@ class MetasController extends PLRController {
 			}
 		 })
 		 .fail(function(xhr, textStatus, errorThrown) {
-			alert('Erro ao carregar metas do Usuário logado. ');
+			MessageView.showSimpleErrorMessage('Erro ao carregar metas do Usuário logado. ');
 		 });
 	}
 
@@ -107,7 +113,7 @@ class MetasController extends PLRController {
 			}
 		 })
 		 .fail(function(xhr, textStatus, errorThrown) {
-			alert('Erro ao carregar metas registradas pelo Usuário. ');
+			MessageView.showSimpleErrorMessage('Erro ao carregar metas registradas pelo Usuário. ');
 		 });
 	}
 
@@ -121,7 +127,7 @@ class MetasController extends PLRController {
 			}
 		 })
 		 .fail(function(xhr, textStatus, errorThrown) {
-			alert('Erro ao carregar os valores de metas para a folha informada. ');
+			MessageView.showSimpleErrorMessage('Erro ao carregar os valores de metas para a folha informada. ');
 		 });
 	}
 

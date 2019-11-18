@@ -209,6 +209,8 @@ function removeSession() {
   localStorage.removeItem("plrLoggedName");
 }
 
+var maxTimeMessage = 15000;
+
 //Properties
 app_properties = {
   profile : 'standalone'
