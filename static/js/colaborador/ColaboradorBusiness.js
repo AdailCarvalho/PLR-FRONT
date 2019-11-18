@@ -3,6 +3,19 @@ class ColaboradorBusiness extends PLRBusiness  {
         super();
     }
 
+    exportXls(matricula) {
+    	let uriExport = this._API_BASE_URI + '/colaboradores/' + matricula + '/export';
+		window.open(uriExport, '_blank');
+    }
+
+    getLista(urlDestino) {
+        return $.ajax({
+            url : this._API_BASE_URI + urlDestino,
+            type : "GET",
+            async: false
+        });
+    }
+
     findByFilter(matricula, nome, situacao, cargo, diretoria, time) {
         return $.ajax({
             url : this._API_BASE_URI + '/colaboradores/filter?matricula=' + matricula + '&nome=' + nome + '&situacao=' + situacao + 
@@ -16,8 +29,15 @@ class ColaboradorBusiness extends PLRBusiness  {
     	return $.ajax({url : this._API_BASE_URI + '/colaboradores/' + matricula, type : "GET"});
     }
 
-    exportXls(matricula) {
-    	let uriExport = this._API_BASE_URI + '/colaboradores/' + matricula + '/export';
-		window.open(uriExport, '_blank');
+    salvarColaborador(colaborador) {
+        return $.ajax({
+            url : this._API_BASE_URI + '/colaboradores/',
+            data : JSON.stringify(colaborador),
+            dataType : "json",
+            type : "POST",
+            contentType : "application/json; charset=utf-8",
+            async : false
+        });
+
     }
 }

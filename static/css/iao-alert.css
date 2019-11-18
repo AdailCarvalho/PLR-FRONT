@@ -41,6 +41,7 @@ iao-alert {
 	box-sizing: border-box;
 	box-shadow: 0 3px 5px #aaa;
 	letter-spacing: 1px;
+	zoom : 130% !important;
 }
 
 iao-alert:before, iao-alert:after {

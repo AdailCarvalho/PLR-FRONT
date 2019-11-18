@@ -54,7 +54,7 @@
                                             <a type="button" id="btnPesquisar" class="btn btn-sm plr-search-btn mt-4" title="Pesquisar" onclick="colaboradorController.pesquisarColaborador()">
                                                 <i class="fas fa-search"></i>
                                             </a>
-                                            <a type="button" id="btnNovo" class="btn btn-sm plr-search-btn mt-4 ml-2" title="Novo" onclick="">
+                                            <a type="button" id="btnNovo" class="btn btn-sm plr-search-btn mt-4 ml-2" title="Novo" onclick="colaboradorController.cadastrarColaborador()">
                                                 <i class="fas fa-plus"></i>
                                             </a>
                                     </div>
@@ -74,14 +74,90 @@
                 </div>
             </div> <!--Fecha Tab.Pane Colabo -->
 
-            <div class="tab-pane fade" id="cadastroMeta" role="tabpanel" aria-labelledby="metasTab">
-                <h3>Tela de Pesquisa Metas</h3>
+                <div class="tab-pane fade" id="cadastroMeta" role="tabpanel" aria-labelledby="metasTab">
+                    <h3>Tela de Pesquisa Metas</h3>
+                </div>
             </div>
-
         </div>
-    </div>
 
-  </div>
+    </div>
+    
+    <div id="modalCadastroColaborador"  title="Cadastro de Colaborador">
+        <div class="container" style="margin-top: 0">
+            <div class="row" style="margin-top: 5px;">
+                <div class="form-group col-md-2">
+                    <label for="cadastoMatricula" class="plr-bold" title="Matrícula">Matrícula:</label>
+                    <input type="text" id="cadastroMatricula" maxlength="32" class="form-control" style="font-size: 14px;"/>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="cadastroNome" class="plr-bold" title="Nome do Colaborador">Nome:
+                    </label>
+                    <input type="text" id="cadastroNome" class="form-control"
+                           maxlength="128" style="font-size: 14px;"/>
+                </div>
+                <div class="form-group col-md-2">
+                        <label for="cadastroElegivel" class="plr-bold" title="Elegível">Elegível:</label>
+                        <select id="cadastroElegivel" class="form-control" style="font-size: 14px;">
+                            <option value=""></option>
+                            <option value="1">Sim</option>
+                            <option value="0">Não</option>
+                        </select>
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="cadastroSituacao" class="plr-bold">Status: </label>
+                    <select id="cadastroSituacao" class="form-control" style="font-size: 14px;">
+                        <option></option>
+                        <option value="A">Ativo</option>
+                        <option value="I">Inativo</option>
+                    </select>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label for="cadastroCargo" class="plr-bold">Cargo: </label>
+                    <select id="cadastroCargo" class="form-control" style="font-size: 14px;">                      
+                    </select>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="cadastroDiretoria" class="plr-bold">Diretoria: </label>
+                    <select id="cadastroDiretoria" class="form-control" style="font-size: 14px;">
+                    </select>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="cadastroTime" class="plr-bold">Time: </label>
+                    <select id="cadastroTime" class="form-control" style="font-size: 14px;">
+                    </select>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="form-group col-md-3">
+                    <label for="cadastroFilial" class="plr-bold">Filial: </label>
+                    <select id="cadastroFilial" class="form-control" style="font-size: 14px;">
+                    </select>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="cadastroAdmissao" class="plr-bold" title="Data de Admissão">Admissão:</label>
+                    <input type="text" id="cadastroDtAdmissao" pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="dd/mm/yyyy"  maxlength="32" class="form-control"/>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="cadastroDemissao" class="plr-bold" title="Data de Demissão">Demissão:</label>
+                    <input type="text" id="cadastroDtDemissao" pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="dd/mm/yyyy"  maxlength="32" class="form-control"/>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="form-group col-md-auto">
+                    <input type="button" value="Salvar" id="salvarCadastro" title="Salvar"  class="btn btn-sm btn-success" onclick="colaboradorController.salvarColaborador()" />
+                </div>
+                <div class="form-group col-md-auto">
+                    <input type="button" value="Cancelar" id="cancelarCadastro" title="Cancelar" class="btn btn-sm btn-danger" style="margin-left : -18px;" onclick="colaboradorController.cancelarCadastroColaborador()" />
+                </div>
+            </div>
+        </div>
+    </div> <!--Cadastro Colaborador -->
+
     <div class="modalLoading">
 		<h5 style="text-align: center;vertical-align: middle; margin-top: 23%; font-weight: bold;">Processando a solicitação...</h5>
     </div>
