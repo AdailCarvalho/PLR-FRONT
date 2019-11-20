@@ -161,6 +161,7 @@ class ColaboradorController extends PLRController {
 		let self = this;
 		let colaborador = self._colaboradorDataPesquisa;
 		if (!self._validatePesquisa()) {
+			self._loadGridPesquisaColaboradores([]);
 			return;
 		}
 

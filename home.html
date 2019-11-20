@@ -123,20 +123,21 @@
     <script type="text/javascript" src="../planometas/static/js/PLRController.js"></script>
     <script type="text/javascript" src="../planometas/static/js/PLRBusiness.js"></script>
     <script type="text/javascript" src="../planometas/static/js/colaborador/ColaboradorController.js"></script>
+    <script type="text/javascript" src="../planometas/static/js/cardapioMetas/CardapioMetasController.js"></script>
     <script type="text/javascript" src="../planometas/static/js/metas/MetasController.js"></script>
     <script type="text/javascript" src="../planometas/static/js/perfil/PerfilController.js"></script>
     <script type="text/javascript" src="../planometas/static/js/auth/AuthController.js"></script>
-    <script type="text/javascript" src="../planometas/static/js/historico/HistoricoController.js"></script>
     <script type="text/javascript" src="../planometas/static/js/colaborador/ColaboradorBusiness.js"></script>
+    <script type="text/javascript" src="../planometas/static/js/cardapioMetas/CardapioMetasBusiness.js"></script>
     <script type="text/javascript" src="../planometas/static/js/perfil/PerfilBusiness.js"></script>
     <script type="text/javascript" src="../planometas/static/js/metas/MetasBusiness.js"></script>
     <script type="text/javascript" src="../planometas/static/js/auth/AuthBusiness.js"></script>
-    <script type="text/javascript" src="../planometas/static/js/historico/HistoricoBusiness.js"></script>
     <script type="text/javascript" src="../planometas/static/js/helper.js"></script>
   
     <script type="text/javascript">
         var metasController;
         var colaboradorController;
+        var cardaioMetasController;
         var plrController = new PLRController();
         var authController = new  AuthController();
         if (authController.checkActiveSession()) {
@@ -148,6 +149,7 @@
                 
         function initJSContext () {
             metasController = new MetasController();
+            cardapioMetasController = new CardapioMetasController();
             colaboradorController = new ColaboradorController();
         }
 

@@ -130,11 +130,11 @@ class AuthController extends PLRController {
 
     _validateForm() { 
         if (this._matricula.val() == '') {
-            MessageView.showWarningMessage('Informar matrícula');
+            MessageView.showWarningMessage('Informe a matrícula');
             this._matricula.focus();
             return false;
         } else if (this._password.val() == '') {
-            MessageView.showWarningMessage('Informar senha');
+            MessageView.showWarningMessage('Informe a senha');
             this._password.focus();
             return false;
         }

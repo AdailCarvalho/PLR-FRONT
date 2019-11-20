@@ -82,7 +82,8 @@ body {
 }
 
 .plr-search-btn {
-    border-radius: 60px;
+    border-radius: 50px;
+    color :  #ccccff;
 }
 
 /* Start by setting display:none to make this hidden.

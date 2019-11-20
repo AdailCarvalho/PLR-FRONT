@@ -10,7 +10,7 @@
         <div class="col-md-auto mt-2">
             <div class="nav nav-pills plr-navside" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                 <a class="nav-link active" id="colaboradoresTab" data-toggle="pill" href="#cadastroColaborador" role="tab" aria-controls="cadastroColaborador" aria-selected="true">Colaboradores</a>
-                <a class="nav-link" id="metasTab" data-toggle="pill" href="#cadastroMeta" role="tab" aria-controls="cadastroMeta" aria-selected="false">Itens de Metas</a>
+                <a class="nav-link" id="metasTab" data-toggle="pill" href="#cadastroMeta" role="tab" aria-controls="cadastroMeta" aria-selected="false">Cardápio de Metas</a>
             </div>
         </div>
         
@@ -18,7 +18,7 @@
             <div class="tab-content" id="v-pills-tabContent">
                 <div class="tab-pane fade show active" id="cadastroColaborador" role="tabpanel" aria-labelledby="colaboradoresTab">
                     
-                    <!-- Inicia Pesquisa -->
+                    <!-- Inicia Pesquisa Colaborador -->
 		            <div class="row">
                         <div class="col-md-12">
                                 <div class="form-row">
@@ -51,11 +51,11 @@
                                         </select>
                                     </div>
                                     <div class="form-group col-md-2">
-                                            <a type="button" id="btnPesquisar" class="btn btn-sm plr-search-btn mt-4" title="Pesquisar" onclick="colaboradorController.pesquisarColaborador()">
-                                                <i class="fas fa-search"></i>
+                                            <a type="button" id="btnPesquisar" class="btn btn-sm  btn-sm mt-4" title="Pesquisar" onclick="colaboradorController.pesquisarColaborador()">
+                                                <i class="fas fa-search plr-search-button"></i>
                                             </a>
-                                            <a type="button" id="btnNovo" class="btn btn-sm plr-search-btn mt-4 ml-2" title="Novo" onclick="colaboradorController.cadastrarColaborador()">
-                                                <i class="fas fa-plus"></i>
+                                            <a type="button" id="btnNovo" class="btn btn-sm mt-4 ml-2" title="Novo" onclick="colaboradorController.cadastrarColaborador()">
+                                                <i class="fas fa-plus plr-search-button"></i>
                                             </a>
                                     </div>
                                 </div>
@@ -74,13 +74,68 @@
                 </div>
             </div> <!--Fecha Tab.Pane Colabo -->
 
-                <div class="tab-pane fade" id="cadastroMeta" role="tabpanel" aria-labelledby="metasTab">
-                    <h3>Tela de Pesquisa Metas</h3>
+            <div class="tab-pane fade" id="cadastroMeta" role="tabpanel" aria-labelledby="metasTab">
+                   
+                <!-- Inicia Pesquisa Metas -->
+		        <div class="row">
+                        <div class="col-md-12">
+                                <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                        <label class="plr-bold" for="nomeMeta" title="Matrícula">Descrição da Meta: </label>
+                                        <input type="text" id="nomeMeta" maxlength="8" class="form-control" placeholder="Nome"/>
+                                    </div>
+                                    <div class="form-group col-md-1">
+                                        <label class="plr-bold" for="tipoMeta" title="Tipo de Meta">Tipo de Meta: </label>
+                                        <input type="text" id="tipoMeta" maxlength="32" class="form-control" placeholder="Tipo"/>
+                                    </div>
+                                    <div class="form-group col-md-1">
+                                        <label class="plr-bold" for="frequenciaMedicao" title="Frequência de Medição">Frequência: </label>
+                                        <input type="text" id="frequenciaMedicao" maxlength="32" class="form-control" placeholder="Frequência"/>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label class="plr-bold" for="tipoMedicao" title="Tipo de Medição">Tipo de Medição: </label>
+                                        <input type="text" id="tipoMedicao" maxlength="32" class="form-control" placeholder="Tipo"/>
+                                    </div>
+                                    <div class="form-group col-md-1">
+                                        <label class="plr-bold" for="formulaMeta" title="Formula">Fórmula: </label>
+                                        <input type="text" id="formulaMeta" maxlength="32" class="form-control" placeholder="Formula"/>
+                                    </div>
+                                    <div class="form-group col-md-1">
+                                        <label class="plr-bold" for="situacaoMeta" title="Situação">Status: </label>
+                                        <select id="situacaoMeta" maxlength="8" class="form-control">
+                                                <option value=""></option>
+                                                <option value="A">Ativo</option>
+                                                <option value="I">Inativo</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                            <a type="button" id="btnPesquisarMeta" class="btn btn-sm plr-search-button mt-4" title="Pesquisar" onclick="cardapioMetasController.pesquisarMetas()">
+                                                <i class="fas fa-search"></i>
+                                            </a>
+                                            <a type="button" id="btnNovaMeta" class="btn btn-sm mt-4 plr-search-button ml-2" title="Novo" onclick="">
+                                                <i class="fas fa-plus"></i>
+                                            </a>
+                                    </div>
+                                </div>
+                     </div>
                 </div>
+
+                <div class="row">
+                        <div class="col-md-12 mt-2">
+                            <div class="card border-primary bg-light mb-2">
+                                <div class="card-header border-primary text-muted">Metas</div>
+                                    <div class="card-body">
+                                        <div id="jsGridPesquisaMetas"></div>
+                                    </div>
+                                </div>
+                        </div>
+                </div>
+
             </div>
         </div>
-
-    </div>
+     </div>
+   
+    </div> <!--ROW CONTAINER -->
     
     <div id="modalCadastroColaborador"  title="Cadastro de Colaborador">
         <div class="container" style="margin-top: 0">
@@ -132,7 +187,7 @@
             </div>
             <hr>
             <div class="row">
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-6">
                     <label for="cadastroFilial" class="plr-bold">Filial: </label>
                     <select id="cadastroFilial" class="form-control" style="font-size: 14px;">
                     </select>
@@ -152,7 +207,7 @@
                     <input type="button" value="Salvar" id="salvarCadastro" title="Salvar"  class="btn btn-sm btn-success" onclick="colaboradorController.salvarColaborador()" />
                 </div>
                 <div class="form-group col-md-auto">
-                    <input type="button" value="Cancelar" id="cancelarCadastro" title="Cancelar" class="btn btn-sm btn-danger" style="margin-left : -18px;" onclick="colaboradorController.cancelarCadastroColaborador()" />
+                    <input type="button" value="Voltar" id="cancelarCadastro" title="Voltar" class="btn btn-sm btn-info" style="margin-left : -18px;" onclick="colaboradorController.cancelarCadastroColaborador()" />
                 </div>
             </div>
         </div>
