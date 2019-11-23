@@ -8,14 +8,6 @@ class ColaboradorBusiness extends PLRBusiness  {
 		window.open(uriExport, '_blank');
     }
 
-    getLista(urlDestino) {
-        return $.ajax({
-            url : this._API_BASE_URI + urlDestino,
-            type : "GET",
-            async: false
-        });
-    }
-
     findByFilter(matricula, nome, situacao, cargo, diretoria, time) {
         return $.ajax({
             url : this._API_BASE_URI + '/colaboradores/filter?matricula=' + matricula + '&nome=' + nome + '&situacao=' + situacao + 

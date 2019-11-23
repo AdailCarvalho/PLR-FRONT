@@ -87,7 +87,8 @@ class ColaboradorController extends PLRController {
 		this._modalCadastroColaboradores.dialog({
 			autoOpen: false,
 			resizable: false,
-			width: 1000,
+			draggable : false,
+			width: 1024,
 			show: {effect: "fade", duration: 200},
 			hide: {effect: "explode", duration: 200},
 			position: {my: "center", at: "center", of: window}

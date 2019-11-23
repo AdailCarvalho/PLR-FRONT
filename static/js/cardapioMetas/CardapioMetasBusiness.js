@@ -12,4 +12,15 @@ class CardapioMetasBusiness extends PLRBusiness {
             async : false
         });
     }
+
+    salvarMeta(meta)  {
+        return $.ajax({
+            url : this._API_BASE_URI + '/metas/',
+            data : JSON.stringify(meta),
+            dataType : "json",
+            type : "POST",
+            contentType : "application/json; charset=utf-8",
+            async : false
+        });
+    }
 }
