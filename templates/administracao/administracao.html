@@ -11,6 +11,7 @@
             <div class="nav nav-pills plr-navside" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                 <a class="nav-link active" id="colaboradoresTab" data-toggle="pill" href="#cadastroColaborador" role="tab" aria-controls="cadastroColaborador" aria-selected="true">Colaboradores</a>
                 <a class="nav-link" id="metasTab" data-toggle="pill" href="#cadastroMeta" role="tab" aria-controls="cadastroMeta" aria-selected="false">Cardápio de Metas</a>
+                <a class="nav-link" id="itemMetasTab" data-toggle="pill" href="#cadastroItemMeta" role="tab" aria-controls="cadastroItemMeta" aria-selected="false">Itens de Metas</a>
             </div>
         </div>
         
@@ -132,12 +133,68 @@
                 </div>
 
             </div>
+
+            <div class="tab-pane fade" id="cadastroItemMeta" role="tabpanel" aria-labelledby="itemMetasTab">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-row">
+                                <div class="form-group col-md-1">
+                                    <label class="plr-bold" for="matriculaItemPesquisa" title="Matrícula">Matrícula: </label>
+                                    <input type="text" id="matriculaItemPesquisa" maxlength="8" class="form-control" placeholder="Mat."/>
+                                </div>
+                                <div class="form-group col-md-2">
+                                        <label class="plr-bold" for="colaboradorItemPesquisa" title="Colaborador">Colaborador: </label>
+                                        <input type="text" id="colaboradorItemPesquisa" maxlength="32" class="form-control" placeholder="Nome"/>
+                                </div>
+                                <div class="form-group col-md-2">
+                                        <label class="plr-bold" for="responsavelItemPesquisa" title="Responsável">Responsável: </label>
+                                        <input type="text" id="responsavelItemPesquisa" maxlength="32" class="form-control" placeholder="Nome"/>
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <label for="inicioVigenciaItemPesquisa" class="plr-bold" title="Início Vigência">Início da Vigência:</label>
+                                    <input type="text" id="inicioVigenciaItemPesquisa" pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="dd/mm/yyyy"  maxlength="32" class="form-control"/>
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <label for="fimVigenciaItemPesquisa" class="plr-bold" title="Fim Vigência">Fim da Vigência:</label>
+                                    <input type="text" id="fimVigenciaItemPesquisa" pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="dd/mm/yyyy"  maxlength="32" class="form-control"/>
+                                </div>
+                                <div class="form-group col-md-1">
+                                        <label class="plr-bold" for="situacaoMetaItemPesquisa" title="Situação">Status: </label>
+                                        <select id="situacaoMetaItemPesquisa" class="form-control">
+                                                <option value=""></option>
+                                                <option value="A">Ativo</option>
+                                                <option value="I">Inativo</option>
+                                        </select>
+                                </div>
+                                <div class="form-group col-md-2">
+                                        <a type="button" id="btnPesquisarItemMeta" class="btn btn-sm plr-search-button mt-4" title="Pesquisar" onclick="itemMetasController.pesquisarItemMeta()">
+                                            <i class="fas fa-search"></i>
+                                        </a>
+                                        <a type="button" id="btnNovoItemMeta" class="btn btn-sm mt-4 plr-search-button ml-2" title="Novo" onclick="">
+                                            <i class="fas fa-plus"></i>
+                                        </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 mt-2">
+                            <div class="card border-primary bg-light mb-2">
+                                <div class="card-header border-primary text-muted">Item de Metas</div>
+                                    <div class="card-body">
+                                        <div id="jsGridPesquisaItemMetas"></div>
+                                     </div>
+                            </div>    
+                        </div>
+                    </div>
+            </div>
+
         </div>
      </div>
    
     </div> <!--ROW CONTAINER -->
 
-    
     <!-- Cadastro Colaborador -->
     <div id="modalCadastroColaborador"  title="Cadastro de Colaboradores"> 
         <div class="container" style="margin-top: 0">

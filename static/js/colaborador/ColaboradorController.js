@@ -88,7 +88,7 @@ class ColaboradorController extends PLRController {
 			autoOpen: false,
 			resizable: false,
 			draggable : false,
-			width: 1024,
+			width: 1280,
 			show: {effect: "fade", duration: 200},
 			hide: {effect: "explode", duration: 200},
 			position: {my: "center", at: "center", of: window}

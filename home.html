@@ -129,6 +129,8 @@
     <script type="text/javascript" src="../planometas/static/js/auth/AuthController.js"></script>
     <script type="text/javascript" src="../planometas/static/js/colaborador/ColaboradorBusiness.js"></script>
     <script type="text/javascript" src="../planometas/static/js/cardapioMetas/CardapioMetasBusiness.js"></script>
+    <script type="text/javascript" src="../planometas/static/js/itemMetas/ItemMetasController.js"></script>
+    <script type="text/javascript" src="../planometas/static/js/itemMetas/ItemMetasBusiness.js"></script>
     <script type="text/javascript" src="../planometas/static/js/perfil/PerfilBusiness.js"></script>
     <script type="text/javascript" src="../planometas/static/js/metas/MetasBusiness.js"></script>
     <script type="text/javascript" src="../planometas/static/js/auth/AuthBusiness.js"></script>
@@ -137,7 +139,9 @@
     <script type="text/javascript">
         var metasController;
         var colaboradorController;
-        var cardaioMetasController;
+        var cardapioMetasController;
+        var itemMetasController;
+
         var plrController = new PLRController();
         var authController = new  AuthController();
         if (authController.checkActiveSession()) {
@@ -151,6 +155,7 @@
             metasController = new MetasController();
             cardapioMetasController = new CardapioMetasController();
             colaboradorController = new ColaboradorController();
+            itemMetasController = new ItemMetasController();
         }
 
         function logout() {

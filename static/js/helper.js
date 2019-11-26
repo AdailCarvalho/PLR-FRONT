@@ -209,6 +209,22 @@ function removeSession() {
   localStorage.removeItem("plrLoggedName");
 }
 
+function showTemporalMessage(type,message) {
+	$.iaoAlert({type: type,               //'notification','success', 'error', 'warning'
+				mode: "light", 		      // "light" ou "dark"
+				autoHide: true,
+				fadeTime: "500", 
+				alertTime: maxTimeMessage,// timeout in milliseconds
+				closeButton: true,
+				closeOnClick: false,
+				position: 'top-right',    //or top-left, bottom-right, bottom-left
+				fadeOnHover: true,
+				zIndex: '999',
+				alertClass: '',           // additional CSS class(es)
+				msg: message});
+}
+
+
 var maxTimeMessage = 15000;
 
 //Properties
