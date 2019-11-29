@@ -23,12 +23,15 @@ class ColaboradorController extends PLRController {
 	/** Inicializar */
 
 	_initFieldsPesquisa() {
-		this._matricula = $("#matricula");
-		this._colaborador = $("#colaborador");
-		this._cargo = $("#cargo");
-		this._diretoria = $("#diretoria");
-		this._time = $("#time");
-		this._situacao = $("#situacao");
+		var key = document.getElementById("cadastroColaborador");
+		key.addEventListener("keydown", e => {if (e.keyCode === 13) this.pesquisarMeta();});
+
+		this._matricula = $("#matriculaPesquisa");
+		this._colaborador = $("#colaboradorPesquisa");
+		this._cargo = $("#cargoPesquisa");
+		this._diretoria = $("#diretoriaPesquisa");
+		this._time = $("#timePesquisa");
+		this._situacao = $("#situacaoPesquisa");
 
 		this._gridPesquisaColaboradores = $('#jsGridPesquisaColaborador');
 
@@ -89,6 +92,7 @@ class ColaboradorController extends PLRController {
 			resizable: false,
 			draggable : false,
 			width: 1280,
+			minHeight : 500,
 			show: {effect: "fade", duration: 200},
 			hide: {effect: "explode", duration: 200},
 			position: {my: "center", at: "center", of: window}
@@ -157,6 +161,15 @@ class ColaboradorController extends PLRController {
 			MessageView.showSimpleErrorMessage(("Erro ao pesquisar lista de Times! Erro : "  + xhr.responseText)));
 	}
 
+	limparPesquisaColaborador() {
+		this._matricula.val("");
+		this._colaborador.val("");
+		this._cargo.val("");
+		this._diretoria.val("");
+		this._time.val("");
+		this._situacao.val("");
+		this._loadGridPesquisaColaboradores([]);
+	}
 
 	pesquisarColaborador() {
 		let self = this;
@@ -256,7 +269,7 @@ class ColaboradorController extends PLRController {
 
 			fields : [
 				{name : "matricula", title : "Matrícula", type : "text", align : "center", width : 50, editing : false},
-				{name : "nome", title : "Colaborador", type : "text", align : "center", width : 100, editing: false},
+				{name : "nome", title : "Colaborador", type : "text", align : "left", width : 100, editing: false},
 				{name : "cargo.nome", title: "Cargo", type : "text", align : "center", width : 100, editing: false},
 				{name : "diretoria.nome", title : "Diretoria", type : "text", align : "center", width : 100, editing: false},
 				{name : "time.nome", title : "Time", type : "text", align : "center", width : 100},

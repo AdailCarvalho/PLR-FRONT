@@ -20,6 +20,9 @@ class CardapioMetasController extends PLRController {
     }
 
     _initFieldsPesquisa() {
+		var key = document.getElementById("cadastroMeta");
+		key.addEventListener("keydown", e => {if (e.keyCode === 13) this.pesquisarMeta();});
+
         this._nomeMeta = $('#nomeMeta');
         this._tipoMeta = $("#tipoMeta");
         this._frequenciaMedicao = $("#frequenciaMedicao");
@@ -39,18 +42,27 @@ class CardapioMetasController extends PLRController {
 		this._fieldTipoMedicao = $("#cadastroTipoMedicao");
 		this._fieldFormula = $("#cadastroFormula");
 		this._fieldQualidade = $("#cadastroQualidade");
-		this._fieldValorMeta = $("#cadastroValorMeta");
-		this._fieldPrazo = $("#cadastroPrazo");
+		//this._fieldPrazo = $("#cadastroPrazo");
 		this._fieldSituacaoMeta = $("#cadastroSituacaoMeta");
 		this._fieldObservacaoMeta = $("#cadastroObservacaoMeta");
+		this._fieldCodigoMeta = $("#cadastroIdMeta");
+
+
+		this._fieldNumeradorMetaArea = $("#cadastroNumeradorMetaArea");
+		this._fieldDenominadorMetaArea = $("#cadastroDenominadorMetaArea");
+		this._fieldNumeradorMeta = $("#cadastroMetaNumerador");
+		this._fieldDenominadorMeta = $("#cadastroMetaDenominador");
+
+
 		this._idMeta = null;
 		this._isNewMeta = true;
 
 		this._fieldsCadastroMetasList = [this._fieldNomeMeta, this._fieldTipoMeta, this._fieldFrequenciaMedicao, this._fieldTipoMedicao, this._fieldFormula, this._fieldQualidade, 
-			this._fieldValorMeta, this._fieldPrazo, this._fieldSituacaoMeta, this._fieldObservacaoMeta];
+				this._fieldSituacaoMeta, this._fieldObservacaoMeta];
 
 		this._modalCadastroCardapioMeta = $("#modalCadastroMetas");
 
+		/*
 		this._fieldPrazo.datepicker({
 			numberOfMonths: 3,
 			dateFormat: 'dd/mm/yy',
@@ -59,18 +71,20 @@ class CardapioMetasController extends PLRController {
 			dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
 			monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
 			monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']
-		});
+		});*/
 
 		this.carregarListaFrequenciaMedicao();
 		this.carregarListaFormula();
 		this.carregarListaTipoMedicao();
 		this.carregarListaTipoMetas();
+		this.carregarListaMetas();
 		
 		this._modalCadastroCardapioMeta.dialog({
 			autoOpen: false,
 			resizable: false,
 			draggable : false,
-			width: 1280,
+			width: 1200,
+			minHeight : 500, 
 			show: {effect: "fade", duration: 200},
 			hide: {effect: "explode", duration: 200},
 			position: {my: "center", at: "center", of: window}
@@ -109,6 +123,22 @@ class CardapioMetasController extends PLRController {
 			MessageView.showSimpleErrorMessage(("Erro ao pesquisar lista de Fórmulas! Erro : " + xhr.responseText)));
 	}
 
+	carregarListaMetas() {
+		let self = this;
+		$.when(self._business.getLista("/metas"))
+		.done(function (serverData) {
+			serverData.forEach(item => {
+				item.value = item.id;
+				item.text = item.descricao;
+			});
+
+			serverData.unshift({});
+			self.buildSelectOptions(self._fieldNumeradorMeta, serverData);
+			self.buildSelectOptions(self._fieldDenominadorMeta, serverData);
+		}).fail((xhr, textStatus, errorThrown) =>
+			MessageView.showSimpleErrorMessage(("Erro ao pesquisar lista de Indicadores! Erro : " + xhr.responseText)));
+	}
+
 	carregarListaTipoMedicao() {
 		let self = this;
 		$.when(self._business.getLista("/tiposmedicao"))
@@ -140,7 +170,18 @@ class CardapioMetasController extends PLRController {
 	}
 
 
+
 	/** PESQUISA */
+
+	limparPesquisaMeta() {
+		this._nomeMeta.val("");
+        this._tipoMeta.val("");
+        this._frequenciaMedicao.val("");
+        this._tipoMedicao.val("");
+        this._formulaMeta.val("");
+		this._situacaoMeta.val("");
+		this._loadGridPesquisaMetas([]);
+	}
     
     pesquisarMeta() {
         let self = this;
@@ -159,6 +200,16 @@ class CardapioMetasController extends PLRController {
 	}
 
 	/** CADASTRO */
+
+	avaliarMetaPonderada() {
+		let self = this;
+		if (self._fieldFormula.children('option:selected').text() == "MEDIA" && self._fieldFrequenciaMedicao.children('option:selected').text() == "MÊS") {
+			self.showHiddenElement(self._fieldDenominadorMetaArea);
+			self.showHiddenElement(self._fieldNumeradorMetaArea);
+		} else {
+			self.hideElements([self._fieldDenominadorMetaArea, self._fieldNumeradorMetaArea]);
+		}
+	}
 
 	cadastrarMeta(metaItem) {
 		let self = this;
@@ -203,14 +254,14 @@ class CardapioMetasController extends PLRController {
 
 	_preencheFormCadastroMeta(metaItem) {
 		this._idMeta = metaItem.id;
+		this._fieldCodigoMeta.val(metaItem.id);
 		this._fieldNomeMeta.val(metaItem.descricao);
 		this._fieldTipoMeta.val(metaItem.tipoMeta.id);
 		this._fieldFrequenciaMedicao.val(metaItem.frequenciaMedicao.id);
 		this._fieldTipoMedicao.val(metaItem.tipoMedicao.id);
 		this._fieldFormula.val(metaItem.formula.id);
 		this._fieldQualidade.val(metaItem.isQuantitativa);
-		this._fieldValorMeta.val(metaItem.valor);
-		this._fieldPrazo.val(metaItem.prazo);
+		//this._fieldPrazo.val(metaItem.prazo);
 		this._fieldSituacaoMeta.val(metaItem.situacao);
 		this._fieldObservacaoMeta.val(metaItem.observacao);
 	}
@@ -258,8 +309,7 @@ class CardapioMetasController extends PLRController {
 			descricao : this._fieldNomeMeta.val(),
 			situacao : this._fieldSituacaoMeta.val(),
 			observacao : this._fieldObservacaoMeta.val(),
-			prazo : this._fieldPrazo.val(),
-			valor : this._fieldValorMeta.val(),
+			prazo : -1,
 			tipoMeta : {id : this._fieldTipoMeta.val()},
 			tipoMedicao : {id : this._fieldTipoMedicao.val()},
 			frequenciaMedicao : {id : this._fieldFrequenciaMedicao.val()},
@@ -322,13 +372,10 @@ class CardapioMetasController extends PLRController {
 					this._fieldQualidade.val(), 'Quantitativa / Qualitativa', 
 					[Validation.types.NOT_EMPTY]));
 		
+				/*
 		validationFieldsArray.push(this.getFieldValidation(
 					this._fieldPrazo.val(), 'Prazo', 
-					[Validation.types.NOT_EMPTY]));
-						
-		validationFieldsArray.push(this.getFieldValidation(
-					this._fieldValorMeta.val(), 'Valor', 
-					[Validation.types.NOT_EMPTY]));
+					[Validation.types.NOT_EMPTY]));*/
 
 		validationFieldsArray.push(this.getFieldValidation(
 					this._fieldSituacaoMeta.val(), 'Situação', 

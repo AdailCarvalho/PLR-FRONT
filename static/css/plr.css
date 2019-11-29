@@ -27,6 +27,7 @@ body {
 
 .plr-bold {
     font-weight: bold;
+    font-size : 14px;
 }
 
 .plr-tab {
@@ -118,6 +119,7 @@ body.loading .modalLoading {
 	display: block;
 }
 
-.ui-dialog, .ui-corner-all, .ui-widget, .ui-widget-content, .ui-front {
-    zoom : 120% !important;
-}
+/*
+.ui-dialog, .ui-corner-all, .ui-widget, .ui-widget-content, .ui-front:not(.jsgrid) {
+    zoom : 110% !important;
+}*/

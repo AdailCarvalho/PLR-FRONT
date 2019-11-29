@@ -84,47 +84,59 @@ String.prototype.toDate = function(format)
   return new Date(year,month,day);
 };
 
+function FloatNumberField(config) {
+  jsGrid.NumberField.call(this, config);
+ }
 
-/**
- * JS Grid custom decimal
- */
+ FloatNumberField.prototype = new jsGrid.fields.number({
+  filterValue : function () {
+    return parseFloat(this.filterControl.val());
+  },
 
-var NumberField = jsGrid.NumberField;
+  itemTemplate : function (value) {
+    return value.toFixed(2);
+  },
+
+  insertValue : function () {
+    return parseFloat(this.insertControl.val());
+  },
+
+  editValue : function () {
+    return parseFloat(this.editControl.val());
+  }
+ });
+
+ jsGrid.fields.floatNumber = FloatNumberField;
 
 function DecimalField(config) {
-  NumberField.call(this, config);
+  jsGrid.Field.call(this, config);
 }
 
-function DecimalField(config) {
-  jsGrid.fields.number.call(this, config);
-}
-
-DecimalField.prototype = new jsGrid.fields.number({
+ 
+DecimalField.prototype = new jsGrid.Field({
 
   itemTemplate: function(value) {
-    let parsedValue = formatDecimalToBigDecimal(value);
-    return accounting.formatMoney(parsedValue, "", 2, ".", ",");
+   //let parsedValue = formatDecimalToBigDecimal(value);
+    return accounting.formatMoney(value, "", 2, ".", ",");
   },
 
   insertTemplate: function(value) {
-    let parsedValue = formatDecimalToBigDecimal(value);
-    return this._insertPicker = $("<input>").val(accounting.formatMoney(parsedValue, "", 2, ".", ","));
+    return this.insertControl = $("<input>").val(accounting.formatMoney(value, "", 2, ".", ","));
   },
 
   editTemplate: function(value) {
-    let parsedValue = formatDecimalToBigDecimal(value);
-    return this._editPicker = $("<input>").val(accounting.formatMoney(parsedValue, "", 2, ".", ","));
+    return this.editControl = $("<input>").val(accounting.formatMoney(value, "", 2, ".", ","));
   },
 
   insertValue: function() {
       //return accounting.formatMoney(this._insertPicker.val());
-      return this._insertPicker.val(); 
+      return this.insertControl.val(); 
      
   },
 
   editValue: function() {
     //return accounting.formatMoney(this._editPicker.val());
-    return this._editPicker.val(); 
+    return this.editControl.val(); 
   }
 });
 

@@ -184,7 +184,7 @@ class MetasController extends PLRController {
 		let self = this;
 
 		self._gridFolhaMetas.jsGrid({
-		width: "800px",
+		width: "3200px",
 		height: "auto",
 		inserting: false,
 		editing: false,
