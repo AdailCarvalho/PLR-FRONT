@@ -10,8 +10,9 @@
         <div class="col-md-auto mt-2">
             <div class="nav nav-pills plr-navside" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                 <a class="nav-link active" id="colaboradoresTab" data-toggle="pill" href="#cadastroColaborador" role="tab" aria-controls="cadastroColaborador" aria-selected="true">Colaboradores</a>
-                <a class="nav-link" id="metasTab" data-toggle="pill" href="#cadastroMeta" role="tab" aria-controls="cadastroMeta" aria-selected="false">Cardápio de Metas</a>
-                <a class="nav-link" id="itemMetasTab" data-toggle="pill" href="#cadastroItemMeta" role="tab" aria-controls="cadastroItemMeta" aria-selected="false">Itens de Metas</a>
+                <a class="nav-link" id="metasTab" data-toggle="pill" href="#cadastroMeta" role="tab" aria-controls="cadastroMeta" aria-selected="false">Cardápio de Indicadores</a>
+                <a class="nav-link" id="metasMensaisTab" data-toggle="pill" href="#cadastroMetaMensal" role="tab" aria-controls="cadastroMetaMensal" aria-selected="false">Metas Mensais</a>
+                <a class="nav-link" id="itemMetasTab" data-toggle="pill" href="#cadastroItemMeta" role="tab" aria-controls="cadastroItemMeta" aria-selected="false">Folha de Metas</a>
             </div>
         </div>
         
@@ -47,8 +48,8 @@
                                         <label class="plr-bold" for="situacaoPesquisa" title="Situação">Status: </label>
                                         <select id="situacaoPesquisa" maxlength="8" class="form-control">
                                                 <option value=""></option>
-                                                <option value="A">Ativo</option>
-                                                <option value="I">Inativo</option>
+                                                <option value="A">ATIVO</option>
+                                                <option value="I">INATIVO</option>
                                         </select>
                                     </div>
                                     <div class="form-group col-md-2">
@@ -59,7 +60,7 @@
                                                 <i class="fas fa-plus plr-search-button"></i>
                                             </a>
                                             <a type="button" id="btnLimparPesquisaColaborador" class="btn btn-sm mt-4 ml-1" title="Limpar Filtro" onclick="colaboradorController.limparPesquisaColaborador()">
-                                                <i class="fas fa-broom plr-search-button"></i>
+                                                <i class="fas fa-eraser plr-search-button"></i>
                                             </a>
                                     </div>
                                 </div>
@@ -84,32 +85,36 @@
 		        <div class="row">
                         <div class="col-md-12">
                                 <div class="form-row">
-                                    <div class="form-group col-md-4">
-                                        <label class="plr-bold" for="nomeMeta" title="Matrícula">Descrição da Meta: </label>
+                                    <div class="form-group col-md-1">
+                                        <label class="plr-bold" for="codigoMetaPesquisa" title="Código da Meta">Cod.:</label> 
+                                        <input type="number" id="codigoMetaPesquisa" class="form-control" placeholder="Código" />
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label class="plr-bold" for="nomeMeta" title="Descrição do Indicador">Descrição do Indicador: </label>
                                         <input type="text" id="nomeMeta" maxlength="256" class="form-control" placeholder="Nome"/>
                                     </div>
                                     <div class="form-group col-md-1">
-                                        <label class="plr-bold" for="tipoMeta" title="Tipo de Meta">Tipo de Meta: </label>
-                                        <input type="text" id="tipoMeta" maxlength="32" class="form-control" placeholder="Tipo"/>
+                                        <label class="plr-bold" for="tipoMeta" title="Tipo de Indicador">Tipo de Indicador: </label>
+                                        <select id="tipoMeta" class="form-control" style="font-size: 14px;"></select>                      
                                     </div>
                                     <div class="form-group col-md-1">
                                         <label class="plr-bold" for="frequenciaMedicao" title="Pontuação">Pontuação: </label>
-                                        <input type="text" id="frequenciaMedicao" maxlength="32" class="form-control" placeholder="Pontuação"/>
+                                        <select id="frequenciaMedicao" class="form-control" style="font-size: 14px;"></select>                      
                                     </div>
                                     <div class="form-group col-md-2">
                                         <label class="plr-bold" for="tipoMedicao" title="Tipo de Medição">Tipo de Medição: </label>
-                                        <input type="text" id="tipoMedicao" maxlength="32" class="form-control" placeholder="Tipo"/>
+                                        <select id="tipoMedicao" class="form-control" style="font-size: 14px;"></select>                      
                                     </div>
                                     <div class="form-group col-md-1">
                                         <label class="plr-bold" for="formulaMeta" title="Formula">Fórmula: </label>
-                                        <input type="text" id="formulaMeta" maxlength="32" class="form-control" placeholder="Formula"/>
+                                        <select id="formulaMeta" class="form-control" style="font-size: 14px;"></select>                      
                                     </div>
                                     <div class="form-group col-md-1">
                                         <label class="plr-bold" for="situacaoMeta" title="Situação">Status: </label>
                                         <select id="situacaoMeta" class="form-control">
                                                 <option value=""></option>
-                                                <option value="A">Ativo</option>
-                                                <option value="I">Inativo</option>
+                                                <option value="A">ATIVO</option>
+                                                <option value="I">INATIVO</option>
                                         </select>
                                     </div>
                                     <div class="form-group col-md-2">
@@ -120,7 +125,7 @@
                                                 <i class="fas fa-plus"></i>
                                             </a>
                                             <a type="button" id="btnLimpaPesquisaMeta" class="btn btn-sm mt-4 plr-search-broom ml-1" title="Limpar Filtro" onclick="cardapioMetasController.limparPesquisaMeta()">
-                                                <i class="fas fa-broom"></i>
+                                                <i class="fas fa-eraser"></i>
                                             </a>
                                     </div>
                                 </div>
@@ -140,11 +145,73 @@
 
             </div>
 
+            <div class="tab-pane fade" id="cadastroMetaMensal" role="tabpanel" aria-labelledby="metasMensaisTab">
+                    
+                <!-- Inicia Pesquisa Metas Mensais -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-row">
+                            <div class="form-group col-md-1">
+                                <label class="plr-bold" for="codigoMetaMensal" title="Código do Indicador">Cod.: </label>
+                                <input type="text" id="codigoMetaMensal" maxlength="256" class="form-control" placeholder="Código" readonly/>
+                            </div>
+                            <div class="form-group col-md-3">
+                                    <label class="plr-bold" for="selectIndicadorMensal" title="Indicador">Indicador: </label>
+                                    <select id="selectIndicadorMensal" class="form-control" onchange="metaMensalController.preencheCampos()">
+                                    </select>
+                            </div>
+                            <div class="form-group col-md-1">
+                                <label class="plr-bold" for="tipoIndicadorMensal" title="Tipo de Indicador">Tipo: </label>
+                                <input type="text" id="tipoIndicadorMensal" maxlength="32" class="form-control" placeholder="Tipo" readonly/>
+                            </div>
+                            <div class="form-group col-md-1">
+                                <label class="plr-bold" for="pontuacaoMensal" title="Pontuação">Pontuação: </label>
+                                <input type="text" id="pontuacaoMensal" maxlength="32" class="form-control" placeholder="Pontuação" readonly/>
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label class="plr-bold" for="tipoMedicaoMensal" title="Tipo de Medição">Medição: </label>
+                                <input type="text" id="tipoMedicaoMensal" maxlength="32" class="form-control" placeholder="Tipo" readonly/>
+                            </div>
+                            <div class="form-group col-md-1">
+                                <label class="plr-bold" for="formulaIndicadorMensal" title="Fórmula">Fórmula: </label>
+                                <input type="text" id="formulaIndicadorMensal" maxlength="32" class="form-control" placeholder="Formula" readonly/>
+                            </div>
+                            <div class="form-group col-md-1">
+                                <label class="plr-bold" for="situacaoMetaMensal" title="Situação">Status: </label>
+                                <select id="situacaoMetaMensal" class="form-control" disabled>
+                                        <option value="A">ATIVO</option>
+                                        <option value="I">INATIVO</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-2">
+                                    <a type="button" id="btnPesquisarMetaMensal" class="btn btn-sm plr-search-button mt-4" title="Pesquisar" onclick="metaMensalController.pesquisarMeta()">
+                                        <i class="fas fa-search"></i>
+                                    </a>
+                                    <a type="button" id="btnLimpaPesquisaMetaMensal" class="btn btn-sm mt-4 plr-search-broom ml-1" title="Limpar Filtro" onclick="metaMensalController.limparPesquisaMeta()">
+                                        <i class="fas fa-eraser"></i>
+                                    </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                        <div class="col-md-12 mt-2">
+                            <div class="card border-primary bg-light mb-2">
+                                <div class="card-header border-primary text-muted">Metas Mensais:</div>
+                                    <div class="card-body" style="overflow : auto;">
+                                        <div id="jsGridCadastroMetasMensais"></div>
+                                    </div>
+                                </div>
+                        </div>
+                </div>
+            </div>
+
             <div class="tab-pane fade" id="cadastroItemMeta" role="tabpanel" aria-labelledby="itemMetasTab">
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-row">
-                                <div class="form-group col-md-1">
+                                <div class="form-group col-md-2">
                                     <label class="plr-bold" for="matriculaItemPesquisa" title="Matrícula">Matrícula: </label>
                                     <input type="text" id="matriculaItemPesquisa" maxlength="8" class="form-control" placeholder="Mat."/>
                                 </div>
@@ -164,14 +231,6 @@
                                     <label for="fimVigenciaItemPesquisa" class="plr-bold" title="Fim Vigência">Fim da Vigência:</label>
                                     <input type="text" id="fimVigenciaItemPesquisa" pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="dd/mm/yyyy"  maxlength="32" class="form-control"/>
                                 </div>
-                                <div class="form-group col-md-1">
-                                        <label class="plr-bold" for="situacaoMetaItemPesquisa" title="Situação">Status: </label>
-                                        <select id="situacaoMetaItemPesquisa" class="form-control">
-                                                <option value=""></option>
-                                                <option value="A">Ativo</option>
-                                                <option value="I">Inativo</option>
-                                        </select>
-                                </div>
                                 <div class="form-group col-md-2">
                                         <a type="button" id="btnPesquisarItemMeta" class="btn btn-sm plr-search-button mt-4" title="Pesquisar" onclick="itemMetasController.pesquisarItemMeta()">
                                             <i class="fas fa-search"></i>
@@ -180,7 +239,7 @@
                                             <i class="fas fa-plus"></i>
                                         </a>
                                         <a type="button" id="btnLimpaPesquisaItemMeta" class="btn btn-sm mt-4 plr-search-broom ml-2" title="Limpar Filtro" onclick="itemMetasController.limparPesquisaItemMeta()">
-                                            <i class="fas fa-broom"></i>
+                                            <i class="fas fa-eraser"></i>
                                         </a>
                                 </div>
                             </div>
@@ -212,14 +271,14 @@
                     <label for="cadastoMatricula" class="plr-bold" title="Matrícula">Matrícula:</label>
                     <input type="text" id="cadastroMatricula" maxlength="32" class="form-control" style="font-size: 14px;"/>
                 </div>
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-5">
                     <label for="cadastroNome" class="plr-bold" title="Nome do Colaborador">Nome:
                     </label>
                     <input type="text" id="cadastroNome" class="form-control"
                            maxlength="128" style="font-size: 14px;"/>
                 </div>
-                <div class="form-group col-md-2">
-                        <label for="cadastroElegivel" class="plr-bold" title="Elegível">Elegível:</label>
+                <div class="form-group col-md-3">
+                        <label for="cadastroElegivel" class="plr-bold" title="Elegível">Elegível Individual:</label>
                         <select id="cadastroElegivel" class="form-control" style="font-size: 14px;">
                             <option value=""></option>
                             <option value="1">Sim</option>
@@ -379,11 +438,15 @@
                     <div class="tab-content" id="v-pills-tabContent">
                         <div class="tab-pane fade show active" id="dadosFolhaMeta" role="tabpanel" aria-labelledby="folhaMetaTab">
                                 <div class="row" style="margin-top: 5px;">
+                                        <div class="form-group col-md-1">
+                                            <label class="plr-bold" for="numeroFolhaMeta" title="Número da Folha">Número: </label>
+                                            <input type="number" id="numeroFolhaMeta" style="font-size: 14px;" maxlength="8" class="form-control" placeholder="Num." readonly/>
+                                        </div>
                                         <div class="form-group col-md-2">
                                             <label class="plr-bold" for="matriculaItemCadastro" title="Matrícula">Matrícula: </label>
                                             <input type="text" id="matriculaItemCadastro" style="font-size: 14px;" maxlength="8" class="form-control" placeholder="Mat."/>
                                         </div>
-                                        <div class="form-group col-md-4">
+                                        <div class="form-group col-md-5">
                                                 <label class="plr-bold" for="colaboradorItemCadastro" title="Colaborador">Colaborador: </label>
                                                 <input type="text" id="colaboradorItemCadastro" style="font-size: 14px;" maxlength="64" class="form-control" placeholder="Nome"/>
                                         </div>
@@ -394,13 +457,6 @@
                                         <div class="form-group col-md-2">
                                             <label for="fimVigenciaItemCadastro" class="plr-bold" title="Fim Vigência">Fim da Vigência:</label>
                                             <input type="text" id="fimVigenciaItemCadastro" pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="dd/mm/yyyy"  maxlength="32" class="form-control"/>
-                                        </div>
-                                        <div class="form-group col-md-2">
-                                            <label class="plr-bold" for="cadastroSituacaoItemMeta" title="Situação">Status: </label>
-                                            <select id="cadastroSituacaoItemMeta" class="form-control" style="font-size: 14px;">
-                                                <option value="A">ATIVO</option>
-                                                <option value="I">INATIVO</option>
-                                            </select>
                                         </div>
                                  </div>
                                  <div id="divExtraPesquisaColaboradorSimples" hidden>
@@ -413,7 +469,7 @@
                                            </a>
                                            <a type="button" id="btnLimpaPesquisaSimplesColaborador" class="btn btn-sm mt-1 plr-search-broom ml-2" title="Limpar Filtro" 
                                                     onclick="itemMetasController.limparPesquisaItemMetaSimples()">
-                                               <i class="fas fa-broom"></i>
+                                               <i class="fas fa-eraser"></i>
                                            </a>
                                        </div>
                                     </div>

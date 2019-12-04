@@ -1,10 +1,9 @@
 class PLRController {
     constructor() {
-
     }
  
-    applyConstraintsOnFields(fieldsToHide, fieldsToBlock, isProfileEditable) {
-        if (!isProfileEditable) {
+    applyConstraintsOnFields(fieldsToHide, fieldsToBlock, hasPermission) {
+        if (!hasPermission) {
             this.enableDisableElements(fieldsToBlock, true);
             this.hideElements(fieldsToHide);
         }

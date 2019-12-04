@@ -7,12 +7,16 @@ class MetasBusiness extends PLRBusiness {
     /**
      * Query
      */
-    findMetasCadastradasUsuarioLogado() {
-        return $.ajax({url : this._API_BASE_URI + '/folhametas/colaborador/' + getLoggedUser(), type : "GET"});
+    findMetasCadastradasUsuarioLogado(periodoPLR) {
+        return $.ajax({url : this._API_BASE_URI + '/folhametas/colaborador/' + getLoggedUser() + '/periodo/' + periodoPLR, type : "GET"});
     }
 
-    findMetasPertencentesUsuarioLogado() {
-        return $.ajax({url : this._API_BASE_URI + '/folhametas/responsavel/' + getLoggedUser(), type : "GET"});
+    findMetasPertencentesUsuarioLogado(periodoPLR) {
+        return $.ajax({url : this._API_BASE_URI + '/folhametas/responsavel/' + getLoggedUser() + '/periodo/' + periodoPLR, type : "GET"});
+    }
+
+    findMetasPendentesUsuarioLogado(periodoPLR) {
+        return $.ajax({url : this._API_BASE_URI + '/folhametas/pendentes/colaborador/' + getLoggedUser() + '/periodo/' + periodoPLR, type : "GET"});
     }
 
     findValoresMetasForFolhaMeta(idFolhaMeta) {

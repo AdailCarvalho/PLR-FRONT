@@ -4,11 +4,14 @@ class MetasController extends PLRController {
 		super();
 
 		this._metasBusiness = new MetasBusiness();
-		this._colaboradorBusiness = new ColaboradorBusiness();
 		this._perfilController = new PerfilController();
+		this._colaboradorBusiness = new ColaboradorBusiness();
 
 		this._dialogVersao = $('#dialogVersao');
 		
+		this.applyConstraintsOnFields(['#meusCadastrosTab',], [], this._perfilController.hasPermissionToArea(2));
+		this.applyConstraintsOnFields(['#cadastros-tab'], [], this._perfilController.hasPermissionToArea(8));
+
 		this._initFields();
 		this._findMetas();
 
@@ -34,6 +37,7 @@ class MetasController extends PLRController {
 		//historico
 		this._gridMetasRegistrado = $('#jsGridMetasRegistrado');
 		this._gridMetasPertencente = $('#jsGridMetasPertencente');
+		this._gridmetasPendentes = $('#jsGridMetasPendentes');
 
 		//Buttons
 		this._btnCriarVersao = $('#btnCriarVersao');
@@ -46,8 +50,6 @@ class MetasController extends PLRController {
 										   {frequencia : "Semestral"},{frequencia : "Anual"},{frequencia : "Data Específica"}];
 		this._selectTipoMetas = [{tipoMeta : ""},{tipoMeta : "Quanto Maior, Melhor"},{tipoMeta : "Quanto Menor, Melhor"},{tipoMeta : "Cumpriu/Não Cumpriu"}];										   
 		this._selectSituacao = [{situacao : "A", descSituacao : "Ativo"}, {situacao : "I", descSituacao : "Inativo"}];
-
-		this.applyConstraintsOnFields(['#meusCadastrosTab'], [], this._perfilController.isEditable());
 
 		this._dialogVersao.dialog({
 			resizable: false,
@@ -86,6 +88,7 @@ class MetasController extends PLRController {
 	_findMetas() {
 		let self = this;
 		self._findMetasCadastradasUsuarioLogado();
+		self._findMetasPendentesUsuarioLogado();
 		if (self._perfilController.isEditable()) {
 			self._findMetasPertencentesUsuarioLogado();
 		}
@@ -93,7 +96,7 @@ class MetasController extends PLRController {
 
 	_findMetasCadastradasUsuarioLogado() {
 		let self = this;
-		$.when(self._metasBusiness.findMetasCadastradasUsuarioLogado())
+		$.when(self._metasBusiness.findMetasCadastradasUsuarioLogado(getPeriodoPLR()))
 		 .done(function(metas) {
 			if (metas && metas.length > 0) {
 				self._loadGridMetas(self._gridMetasRegistrado, metas);
@@ -106,10 +109,23 @@ class MetasController extends PLRController {
 
 	_findMetasPertencentesUsuarioLogado() {
 		let self = this;
-		$.when(self._metasBusiness.findMetasPertencentesUsuarioLogado())
+		$.when(self._metasBusiness.findMetasPertencentesUsuarioLogado(getPeriodoPLR()))
 		 .done(function(metas) {
 			if (metas && metas.length > 0) {
 				self._loadGridMetas(self._gridMetasPertencente, metas);
+			}
+		 })
+		 .fail(function(xhr, textStatus, errorThrown) {
+			MessageView.showSimpleErrorMessage('Erro ao carregar metas registradas pelo Usuário. ');
+		 });
+	}
+
+	_findMetasPendentesUsuarioLogado() {
+		let self = this;
+		$.when(self._metasBusiness.findMetasPendentesUsuarioLogado(getPeriodoPLR()))
+		 .done(function(metas) {
+			if (metas && metas.length > 0) {
+				self._loadGridMetas(self._gridmetasPendentes, metas);
 			}
 		 })
 		 .fail(function(xhr, textStatus, errorThrown) {
@@ -165,8 +181,11 @@ class MetasController extends PLRController {
 												$('.nav a[href="#' + 'metas' + '"]').tab('show');
 												self._findValoresMetasForFolhaMeta(item.id, item.situacao, item.colaborador.matricula);
 										   });
+							
+							if (item.situacao != 'P') {
+								$result = $result.add($view);
+							}
 
-							$result = $result.add($view);
 							return $result;
 					}
 				},

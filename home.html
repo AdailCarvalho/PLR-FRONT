@@ -124,13 +124,16 @@
     <script type="text/javascript" src="../planometas/static/js/PLRBusiness.js"></script>
     <script type="text/javascript" src="../planometas/static/js/colaborador/ColaboradorController.js"></script>
     <script type="text/javascript" src="../planometas/static/js/cardapioMetas/CardapioMetasController.js"></script>
+    <script type="text/javascript" src="../planometas/static/js/metaMensal/MetaMensalController.js"></script>
     <script type="text/javascript" src="../planometas/static/js/metas/MetasController.js"></script>
     <script type="text/javascript" src="../planometas/static/js/perfil/PerfilController.js"></script>
     <script type="text/javascript" src="../planometas/static/js/auth/AuthController.js"></script>
+    <script type="text/javascript" src="../planometas/static/js/itemMetas/ItemMetasController.js"></script>
+
     <script type="text/javascript" src="../planometas/static/js/colaborador/ColaboradorBusiness.js"></script>
     <script type="text/javascript" src="../planometas/static/js/cardapioMetas/CardapioMetasBusiness.js"></script>
-    <script type="text/javascript" src="../planometas/static/js/itemMetas/ItemMetasController.js"></script>
     <script type="text/javascript" src="../planometas/static/js/itemMetas/ItemMetasBusiness.js"></script>
+    <script type="text/javascript" src="../planometas/static/js/metaMensal/MetaMensalBusiness.js"></script>
     <script type="text/javascript" src="../planometas/static/js/perfil/PerfilBusiness.js"></script>
     <script type="text/javascript" src="../planometas/static/js/metas/MetasBusiness.js"></script>
     <script type="text/javascript" src="../planometas/static/js/auth/AuthBusiness.js"></script>
@@ -141,6 +144,7 @@
         var colaboradorController;
         var cardapioMetasController;
         var itemMetasController;
+        var metaMensalController;
 
         var plrController = new PLRController();
         var authController = new  AuthController();
@@ -156,6 +160,7 @@
             cardapioMetasController = new CardapioMetasController();
             colaboradorController = new ColaboradorController();
             itemMetasController = new ItemMetasController();
+            metaMensalController = new MetaMensalController();
         }
 
         function logout() {

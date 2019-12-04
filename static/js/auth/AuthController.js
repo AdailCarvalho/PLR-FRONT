@@ -4,13 +4,15 @@ class AuthController extends PLRController {
 
 		this._business = new AuthBusiness();
 		this._matricula = $('#matricula');
-		this._password = $('#password'); 
+        this._password = $('#password'); 
+        this._periodoPLR = $("#periodoPLR");
         this._phrase = '';
         this._hash = '';
         this._dialogPrimeiroAcesso = $('#dialogPrimeiroAcesso');
         this._newPassword = $('#idNewPassword')
         this._confirmPassword = $('#idConfirmNewPassword');
         this._passwordRegex =/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/i;
+        this.buildSelectOptions(this._periodoPLR, [{value : 2019, text : 2019}, {value : 2020, text : 2020}]);
 
         let $body = $("body");
 		$(document).on({
@@ -59,6 +61,7 @@ class AuthController extends PLRController {
                 self._phrase = userDTO.phrase;
                 self._hash = userDTO.hash;
                 setLoggedUser(userDTO);
+                setPeriodoPLR(self._periodoPLR.val());
                 //if (userDTO.inPrimeiroAcesso == 'S') {
                  //   self.redirectToHome();
                 //} else {
@@ -133,6 +136,10 @@ class AuthController extends PLRController {
             MessageView.showWarningMessage('Informe a matrícula');
             this._matricula.focus();
             return false;
+        }  else if (this._periodoPLR.val() == '') {
+            MessageView.showWarningMessage('Informe o período');
+            this._periodoPLR.focus();
+            return false;            
         } else if (this._password.val() == '') {
             MessageView.showWarningMessage('Informe a senha');
             this._password.focus();

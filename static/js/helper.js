@@ -121,11 +121,11 @@ DecimalField.prototype = new jsGrid.Field({
   },
 
   insertTemplate: function(value) {
-    return this.insertControl = $("<input>").val(accounting.formatMoney(value, "", 2, ".", ","));
+    return this.insertControl = $("<input>").val(accounting.formatMoney(value, "", 4, ".", ","));
   },
 
   editTemplate: function(value) {
-    return this.editControl = $("<input>").val(accounting.formatMoney(value, "", 2, ".", ","));
+    return this.editControl = $("<input>").val(accounting.formatMoney(value, "", 4, ".", ","));
   },
 
   insertValue: function() {
@@ -165,10 +165,19 @@ function setLoggedUser(user) {
     localStorage.setItem("plrLoggedName", userName[0]);    
   }
 
-  localStorage.setItem("plrLoggedUser",user.matricula);
+  localStorage.setItem("plrLoggedUser", user.matricula);
   localStorage.setItem("plrLoggedPhrase", user.phrase);
   localStorage.setItem("plrIsFirstAccess", user.inPrimeiroAcesso);
   registerBrowserSession(user.matricula);
+}
+
+
+function setPeriodoPLR(periodo) {
+  localStorage.setItem("periodoPLR", periodo);
+}
+
+function getPeriodoPLR() {
+  return periodoPLR;
 }
 
 function getLoggedUser() {
@@ -185,6 +194,10 @@ function getLoggedPhrase() {
 
 function isPrimeiroAcesso() {
   return localStorage.getItem("plrIsFirstAccess") == 'S';
+}
+
+function getPeriodoPLR() {
+  return localStorage.getItem("periodoPLR");
 }
 
 //Session (hour as default = 1800s)
@@ -236,6 +249,20 @@ function showTemporalMessage(type,message) {
 				msg: message});
 }
 
+function showTemporalCadastroMessage(type,message) {
+	$.iaoAlert({type: type,               //'notification','success', 'error', 'warning'
+				mode: "light", 		      // "light" ou "dark"
+				autoHide: true,
+				fadeTime: "500", 
+				alertTime: maxTimeMessage * 2,// timeout in milliseconds
+				closeButton: true,
+				closeOnClick: false,
+				position: 'center',    //or top-left, bottom-right, bottom-left
+				fadeOnHover: true,
+				zIndex: '999',
+				alertClass: '',           // additional CSS class(es)
+				msg: message});
+}
 
 var maxTimeMessage = 15000;
 

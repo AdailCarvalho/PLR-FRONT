@@ -5,7 +5,10 @@ class ColaboradorController extends PLRController {
     constructor() {
 		super();
 		this._business = new ColaboradorBusiness();
-        this.initFields();
+		this._perfilController = new PerfilController();
+
+		this.applyConstraintsOnFields(['#colaboradoresTab'], [], this._perfilController.hasPermissionToArea(4));
+		this.initFields();
 
         let $body = $("body");
         $(document).on({
@@ -64,6 +67,8 @@ class ColaboradorController extends PLRController {
 		  
 		 this._fieldDataAdmissao.datepicker({
 			numberOfMonths: 3,
+			minDate : new Date(getPeriodoPLR(), 0, 1) ,
+			maxDate : new Date(getPeriodoPLR(), 11, 31),
 			dateFormat: 'dd/mm/yy',
 			dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'],
 			dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
@@ -74,6 +79,8 @@ class ColaboradorController extends PLRController {
 
 		this._fieldDataDemissao.datepicker({
 			numberOfMonths: 3,
+			minDate : new Date(getPeriodoPLR(), 0, 1) ,
+			maxDate : new Date(getPeriodoPLR(), 11, 31),
 			dateFormat: 'dd/mm/yy',
 			dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'],
 			dayNamesMin: ['D','S','T','Q','Q','S','S','D'],

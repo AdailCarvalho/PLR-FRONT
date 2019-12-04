@@ -1,8 +1,6 @@
-class PerfilController extends PLRController {
+class PerfilController {
 
     constructor() {
-        super();
-
         this._business = new PerfilBusiness();
 
         this._perfil = {};
@@ -29,5 +27,9 @@ class PerfilController extends PLRController {
 
     isEditable() {
         return this._perfil.editable;
+    }
+
+    hasPermissionToArea(idArea) {
+        return this._perfil.idsAreaPermissaoAcesso.includes(idArea);
     }
 }

@@ -4,6 +4,9 @@ class CardapioMetasController extends PLRController {
         super();
         
 		this._business = new CardapioMetasBusiness();
+		this._perfilController = new PerfilController();
+
+		this.applyConstraintsOnFields(['#metasTab'], [],  this._perfilController.hasPermissionToArea(4));
 		this.initFields();
 
         let $body = $("body");
@@ -23,6 +26,7 @@ class CardapioMetasController extends PLRController {
 		var key = document.getElementById("cadastroMeta");
 		key.addEventListener("keydown", e => {if (e.keyCode === 13) this.pesquisarMeta();});
 
+		this._codigoMeta = $("#codigoMetaPesquisa");
         this._nomeMeta = $('#nomeMeta');
         this._tipoMeta = $("#tipoMeta");
         this._frequenciaMedicao = $("#frequenciaMedicao");
@@ -103,6 +107,7 @@ class CardapioMetasController extends PLRController {
 			});
 
 			serverData.unshift({});
+			self.buildSelectOptions(self._frequenciaMedicao, serverData);
 			self.buildSelectOptions(self._fieldFrequenciaMedicao, serverData);
 		}).fail((xhr, textStatus, errorThrown) =>
 			MessageView.showSimpleErrorMessage(("Erro ao pesquisar lista de Fórmulas! Erro : " + xhr.responseText)));
@@ -118,6 +123,7 @@ class CardapioMetasController extends PLRController {
 			});
 
 			serverData.unshift({});
+			self.buildSelectOptions(self._formulaMeta, serverData);
 			self.buildSelectOptions(self._fieldFormula, serverData);
 		}).fail((xhr, textStatus, errorThrown) =>
 			MessageView.showSimpleErrorMessage(("Erro ao pesquisar lista de Fórmulas! Erro : " + xhr.responseText)));
@@ -149,6 +155,7 @@ class CardapioMetasController extends PLRController {
 			});
 
 			serverData.unshift({});
+			self.buildSelectOptions(self._tipoMedicao, serverData);
 			self.buildSelectOptions(self._fieldTipoMedicao, serverData);
 		}).fail((xhr, textStatus, errorThrown) =>
 			MessageView.showSimpleErrorMessage(("Erro ao pesquisar lista de Tipos de Medicao! Erro : " + xhr.responseText)));
@@ -164,6 +171,7 @@ class CardapioMetasController extends PLRController {
 			});
 
 			serverData.unshift({});
+			self.buildSelectOptions(self._tipoMeta, serverData);
 			self.buildSelectOptions(self._fieldTipoMeta, serverData);
 		}).fail((xhr, textStatus, errorThrown) =>
 			MessageView.showSimpleErrorMessage(("Erro ao pesquisar lista de Tipos de Meta! Erro : " + xhr.responseText)));
@@ -174,6 +182,7 @@ class CardapioMetasController extends PLRController {
 	/** PESQUISA */
 
 	limparPesquisaMeta() {
+		this._codigoMeta.val("");
 		this._nomeMeta.val("");
         this._tipoMeta.val("");
         this._frequenciaMedicao.val("");
@@ -191,7 +200,7 @@ class CardapioMetasController extends PLRController {
 			return;
 		}
 
-		$.when(self._business.findByFilter(meta.descricao, meta.situacao, meta.tipoMedicao.descricao, meta.tipoMeta.descricao, 
+		$.when(self._business.findByFilter(meta.idMeta, meta.descricao, meta.situacao, meta.tipoMedicao.descricao, meta.tipoMeta.descricao, 
 										   meta.formula.nome, meta.frequenciaMedicao.descricao))
 		.done(function (serverData) {
 			self._loadGridPesquisaMetas(serverData);
@@ -203,7 +212,7 @@ class CardapioMetasController extends PLRController {
 
 	avaliarMetaPonderada() {
 		let self = this;
-		if (self._fieldFormula.children('option:selected').text() == "MEDIA" && self._fieldFrequenciaMedicao.children('option:selected').text() == "MÊS") {
+		if (self._fieldFormula.children('option:selected').text() == "MEDIA" && self._fieldFrequenciaMedicao.children('option:selected').text() == "ANO") {
 			self.showHiddenElement(self._fieldDenominadorMetaArea);
 			self.showHiddenElement(self._fieldNumeradorMetaArea);
 		} else {
@@ -218,6 +227,7 @@ class CardapioMetasController extends PLRController {
 			self._preencheFormCadastroMeta(metaItem);
 			self._isNewMeta = false;
 		} else {
+			self._fieldCodigoMeta.val(null);
 			self._idMeta = null;
 			self._isNewMeta = true;
 		}
@@ -321,6 +331,7 @@ class CardapioMetasController extends PLRController {
     
     get _metaDataPesquisa() {
 		return {
+			idMeta : this._codigoMeta.val(),
 			descricao : this._nomeMeta.val(),
 			situacao : this._situacaoMeta.val(),
 			tipoMedicao : {
@@ -341,7 +352,8 @@ class CardapioMetasController extends PLRController {
     /** Validacoes */
 
 	_validatePesquisa() {
-		if (!this._nomeMeta.val() && !this._tipoMeta.val() && !this._frequenciaMedicao.val() && !this._tipoMedicao.val() && !this._formulaMeta.val() && !this._situacaoMeta.val()) {
+		if (!this._nomeMeta.val() && !this._tipoMeta.val() && !this._frequenciaMedicao.val() && !this._tipoMedicao.val() 
+			&& !this._formulaMeta.val() && !this._situacaoMeta.val() && !this._codigoMeta.val()) {
 			MessageView.showWarningMessage("Por favor, informe ao menos um filtro de pesquisa");
 			return false;
 		}

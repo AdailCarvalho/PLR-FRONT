@@ -4,7 +4,9 @@ class ItemMetasController extends PLRController {
         super();
 
         this._business = new ItemMetasBusiness();
+		this._perfilController = new PerfilController();
 
+		this.applyConstraintsOnFields(['#itemMetasTab'], [],  this._perfilController.hasPermissionToArea(7));
 		this.initFields();
 
         let $body = $("body");
@@ -36,6 +38,8 @@ class ItemMetasController extends PLRController {
 
         this._inicioVigenciaItemPesquisa.datepicker({
 			numberOfMonths: 3,
+			minDate : new Date(getPeriodoPLR(), 0, 1) ,
+			maxDate : new Date(getPeriodoPLR(), 11, 31),
 			dateFormat: 'dd/mm/yy',
 			dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'],
 			dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
@@ -46,6 +50,8 @@ class ItemMetasController extends PLRController {
         
         this._fimVigenciaItemPesquisa.datepicker({
 			numberOfMonths: 3,
+			minDate : new Date(getPeriodoPLR(), 0, 1) ,
+			maxDate : new Date(getPeriodoPLR(), 11, 31),
 			dateFormat: 'dd/mm/yy',
 			dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'],
 			dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
@@ -64,13 +70,13 @@ class ItemMetasController extends PLRController {
 		this._fieldInicioVigenciaItemCadastro = $("#inicioVigenciaItemCadastro");
 		this._fieldFimVigenciaItemCadastro = $("#fimVigenciaItemCadastro");
 		this._fieldResponsavelItemCadastro = $("#responsavelItemCadastro");
-		this._fieldCadastroSituacaoItemMeta = $("#cadastroSituacaoItemMeta");
+		this._fieldNumeroFolhaMeta = $("#numeroFolhaMeta");
 		this._fieldSomatorioPeso = $('#somatorioPeso');
 		this._gridCadastroItensMeta = $("#jsGridCadastroItensMeta");
 
 		this._fieldsCadastroItemMetasList = [this._fieldMatriculaItemCadastro, this._fieldColaboradorItemCadastro, 
 											this._fieldInicioVigenciaItemCadastro, this._fieldFimVigenciaItemCadastro, 
-											this._fieldResponsavelItemCadastro, this._fieldCadastroSituacaoItemMeta, this._fieldSomatorioPeso];
+											this._fieldResponsavelItemCadastro, this._fieldSomatorioPeso];
 		this._listaMetas = [];
 		this._idItemMeta = null;
 		this._isNewItemMeta = true;
@@ -78,6 +84,8 @@ class ItemMetasController extends PLRController {
 
 		this._fieldInicioVigenciaItemCadastro.datepicker({
 			numberOfMonths: 3,
+			minDate : new Date(getPeriodoPLR(), 0, 1) ,
+			maxDate : new Date(getPeriodoPLR(), 11, 31),
 			dateFormat: 'dd/mm/yy',
 			dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'],
 			dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
@@ -88,6 +96,8 @@ class ItemMetasController extends PLRController {
 
 		this._fieldFimVigenciaItemCadastro.datepicker({
 			numberOfMonths: 3,
+			minDate : new Date(getPeriodoPLR(), 0, 1) ,
+			maxDate : new Date(getPeriodoPLR(), 11, 31),
 			dateFormat: 'dd/mm/yy',
 			dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'],
 			dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
@@ -131,7 +141,6 @@ class ItemMetasController extends PLRController {
         this._responsavelItemPesquisa.val("");
         this._inicioVigenciaItemPesquisa.val("");
         this._fimVigenciaItemPesquisa.val("");
-		this._situacaoMetaItemPesquisa.val("");
 		this._loadGridPesquisaItemMetas([]);
 	}
     
@@ -208,10 +217,11 @@ class ItemMetasController extends PLRController {
 		if(new Validation().validateFields(self._validateCadastro())) {
 			$.when(self._business.salvarItemMeta(novaFolhaMeta))
 			.done(function (serverData) {
-				MessageView.showSuccessMessage('Dados da Folha de Meta salvos com sucesso!');
+				showTemporalCadastroMessage('success', 'Dados da Folha de Meta salvos com sucesso!\nAnote o número da sua Folha de Meta: ' + serverData.id);
 				self._idItemMeta = serverData.id;
-				self._fechaCadastroItemMeta();
-				self.pesquisarItemMeta();
+				$('.nav a[href="#' + 'dadosFolhaMeta' + '"]').tab('show');
+				self._fieldNumeroFolhaMeta.val(serverData.id);
+				self._fieldNumeroFolhaMeta.focus();
 			}).fail((xhr, textStatus, errorThrown) =>
 				MessageView.showSimpleErrorMessage(("Erro ao salvar os dados da Folha da Meta! Erro : " + xhr.responseText)));
 		}
@@ -239,7 +249,6 @@ class ItemMetasController extends PLRController {
 		this._fieldColaboradorItemCadastro.val(metaItem.colaborador.nome);
 		this._fieldInicioVigenciaItemCadastro.val(metaItem.inicioVigencia);
 		this._fieldFimVigenciaItemCadastro.val(metaItem.fimVigencia);
-		this._fieldCadastroSituacaoItemMeta.val(metaItem.situacao);
 		this._fieldResponsavelItemCadastro.val(metaItem.responsavel.nome);		
 		this._loadGridCadastroItemMetas(metaItem.folhasMetaItem);
 	}
@@ -319,6 +328,7 @@ class ItemMetasController extends PLRController {
 		let self = this;
 		
 		let somaPeso = 0;
+		let lastDeletedSequence = -1;
 		itemsMetas.forEach(item => {
 			somaPeso += item.peso;
 		});
@@ -352,16 +362,9 @@ class ItemMetasController extends PLRController {
 				let valorInserido = self._gridCadastroItensMeta.jsGrid("option", "fields")[3].insertControl.val();
 
 				let previousSomaPeso = somaPeso;
-				let sequencia = args.item.sequencia;
 				somaPeso = 0;
 				for (var i = 0; i < dados.length; i ++) {
 					somaPeso += dados[i].peso;
-					if (dados[i].sequencia == sequencia) {
-						MessageView.showWarningMessage("Campos obrigatórios não informados ou inválidos:\n A sequência informada já existe. ");
-						args.cancel = true;
-						somaPeso = previousSomaPeso;
-						return;
-					}
 				}
 
 				somaPeso += parseFloat(formatDecimalToBigDecimal(valorInserido));
@@ -371,6 +374,13 @@ class ItemMetasController extends PLRController {
 					somaPeso = previousSomaPeso;
 					return;
 				}
+
+				if (lastDeletedSequence > 0) {
+					args.item.sequencia = lastDeletedSequence;
+				} else {
+					args.item.sequencia = dados.length + 1;
+				}
+
 
 				args.item.folhaMeta = {id : self._idItemMeta};
 				self._configFieldSomatorioPeso(somaPeso)
@@ -408,16 +418,13 @@ class ItemMetasController extends PLRController {
 				self._configFieldSomatorioPeso(somaPeso)
 			},
 			onItemDeleting : function (args) {
+				lastDeletedSequence = args.item.sequencia;
 				somaPeso = somaPeso - parseFloat(formatDecimalToBigDecimal(args.item.peso));
 				self._configFieldSomatorioPeso(somaPeso);
 			},
 			fields : [
 				{type : "control", width : 40},
-				{name : "sequencia", type : "number", title : "Sequência", width : 100, align : "center",
-					validate : {
-						validator : "required",
-						message : "Informe a Sequência"
-					}
+				{name : "sequencia", type : "number", title : "Sequência", width : 100, align : "center", readOnly : true
 				},
 				{name : "meta.id", type : "select", title : "Indicador", items : self._listaMetas, valueField : "id", textField : "descricao", width : 250, align : "left",
 					validate : {
@@ -460,7 +467,7 @@ class ItemMetasController extends PLRController {
             inicioVigencia : this._inicioVigenciaItemPesquisa.val(),
             fimVigencia : this._fimVigenciaItemPesquisa.val(),
             responsavel : this._responsavelItemPesquisa.val(),
-            situacao : this._situacaoMetaItemPesquisa.val()
+            situacao : 'A'
         }                                         
 	}
 	
@@ -475,7 +482,7 @@ class ItemMetasController extends PLRController {
 		
 		return {
 			id : self._idItemMeta,
-			situacao : self._fieldCadastroSituacaoItemMeta.val(),
+			situacao : "P",
 			inicioVigencia : self._fieldInicioVigenciaItemCadastro.val(),
 			fimVigencia : self._fieldFimVigenciaItemCadastro.val(),
 			colaborador : {
@@ -502,17 +509,13 @@ class ItemMetasController extends PLRController {
 		validationFieldsArray.push(this.getFieldValidation(
 					this._fieldFimVigenciaItemCadastro.val(), 'Fim da Vigência', 
 					[Validation.types.NOT_EMPTY]));
-			
-		validationFieldsArray.push(this.getFieldValidation(
-					this._fieldCadastroSituacaoItemMeta.val(), 'Status', 
-					[Validation.types.NOT_EMPTY]));
 							
 		return validationFieldsArray;
 	}
 
 	_validatePesquisa() {
         if (!this._matriculaItemPesquisa.val() && !this._colaboradorItemPesquisa.val() && !this._inicioVigenciaItemPesquisa.val() && !this._fimVigenciaItemPesquisa.val() 
-             && !this._responsavelItemPesquisa.val() && !this._situacaoMetaItemPesquisa.val()) {
+             && !this._responsavelItemPesquisa.val()) {
 			MessageView.showWarningMessage("Por favor, informe ao menos um filtro de pesquisa");
 			return false;
         }
