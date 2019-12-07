@@ -33,12 +33,13 @@ class MetaMensalController extends PLRController {
 
         this._listaIndicadores = [];
         this._listaCamposMes = ['valJan', 'valFev', 'valMar', 'valAbr', 'valMai', 'valJun', 'valJul', 'valAgo', 'valSet', 'valOut', 'valNov', 'valDez'];
+        this._listaCamposIdMes = ['idJan', 'idFev', 'idMar', 'idAbr', 'idMai', 'idJun', 'idJul', 'idAgo', 'idSet', 'idOut', 'idNov', 'idDez'];
         this._dataMetaMensalArray = [
             {
-                tipoMeta : 1,
+                tipoMeta : "META",
             },
             {
-                tipoMeta : 2
+                tipoMeta : "REAL"
             }
         ];
 
@@ -58,59 +59,93 @@ class MetaMensalController extends PLRController {
                 return /[-\d,.\t]*$/.test(value); });
 
         this.carregarListaMetas();
-        this._loadGridMetasMensais(this._dataMetaMensalArray);
+        this._loadGridMetasMensais([]);
 	}
 
     carregarListaMetas() {
 		let self = this;
-		$.when(self._business.getLista("/metas"))
+		$.when(self._business.getLista("/metas/quantitativas/" + getPeriodoPLR()))
 		.done(function (serverData) {
-			serverData.forEach(item => {
+            let listaIndicadoresFiltered = serverData.filter(item => (item.formula.nome == "SOMA" || item.formula.nome == "MEDIA"));
+			listaIndicadoresFiltered.forEach(item => {
 				item.value = item.id;
 				item.text = item.descricao;
             });
             
-            self._listaIndicadores = serverData;
+            self._listaIndicadores = listaIndicadoresFiltered;
+            listaIndicadoresFiltered.unshift({});
 
-            serverData.unshift({});
-
-            self.buildSelectOptions(self._indicadorMensal, serverData);
+            self.buildSelectOptions(self._indicadorMensal, listaIndicadoresFiltered);
 		}).fail((xhr, textStatus, errorThrown) =>
 			MessageView.showSimpleErrorMessage(("Erro ao pesquisar lista de Indicadores! Erro : " + xhr.responseText)));
     }
 
-    _calcularAcumuladosViaCopia() {
-        let self = this;
-        let aggMetaPlan = 0;
-        let aggMetaReal = 0;
-        let itemMetaPlan = self._dataMetaMensalArray[0];
-        let itemMetaReal = self._dataMetaMensalArray[1];
-        for (var i = 0; i < self._listaCamposMes.length; i ++) {
-            let valMetaPlan = itemMetaPlan[self._listaCamposMes[i]];
-            if (valMetaPlan) {
-                aggMetaPlan += parseFloat(formatDecimalToBigDecimal(valMetaPlan));
-            }
-
-            let valMetaReal = itemMetaReal[self._listaCamposMes[i]];
-            if (valMetaReal) {
-                aggMetaReal += parseFloat(formatDecimalToBigDecimal(valMetaReal));
-            }
+    copiarMetasMensais() {
+        if (!this._indicadorMensal.val()) {
+            MessageView.showWarningMessage("Por favor, escolha um indicador.");
+            return;
         }
 
-        self._acumuladoMetaPlan.val(accounting.formatMoney(aggMetaPlan, "", 4, ".", ","));
-        self._acumuladoMetaReal.val(accounting.formatMoney(aggMetaReal, "", 4, ".", ","));
-    }
-
-    copiarMetasMensais() {
         this._modalCopiaMetasMensais.dialog('open');
     }
 
+    findMetasMensaisForIndicador() {
+        let self = this;
+
+        if (!self._indicadorMensal.val()) {
+            self.limparCamposPesquisaIndicador();
+            return;
+        }
+
+        let selectedIndicador = this._indicadorMensal.val();
+        let metaSelecionada = this._listaIndicadores.filter(item => item.id == selectedIndicador);
+        self._preencheCamposPesquisaIndicador(metaSelecionada);
+
+        $.when(self._business.findMetasMensais(selectedIndicador))
+        .done(function (serverData) {
+            self._loadGridMetasMensais(serverData);                
+        }).fail((xhr, textStatus, errorThrown) =>
+             MessageView.showSimpleErrorMessage(("Erro ao pesquisar as Metas mensais para o indicador informado! Erro : " + xhr.responseText)));
+    }
+
+    limparCamposPesquisaIndicador() {
+        this._codigoMetaMensal.val("");
+        this._tipoIndicadorMensal.val("");
+        this._formulaIndicadorMensal.val("");
+        this._tipoMedicaoMensal.val("");
+        this._pontuacaoMensal.val("");
+        this._loadGridMetasMensais([]);
+    }
+
     pushItemToDataMetaMensal(tipoMeta, item) {
-        if (tipoMeta == 1) {
+        if (tipoMeta == "META") {
             this._dataMetaMensalArray[0] = item;
         } else {
             this._dataMetaMensalArray[1] = item;
         }
+    }
+
+    salvarMetasMensais() {
+        let self = this;
+        let mensalPlanejado = self._dataMetaMensalArray[0];
+        let mensalReal = self._dataMetaMensalArray[1];
+        let mensaisParaSalvar = [];
+
+        for (var i = 0; i < self._listaCamposMes.length; i ++) {
+            let itemUnificado = {
+                id : mensalReal[self._listaCamposIdMes[i]], 
+                idMeta : self._indicadorMensal.val(), 
+                valorReal : mensalReal[self._listaCamposMes[i]], 
+                valorMeta : mensalPlanejado[self._listaCamposMes[i]], 
+                prazo : getPeriodoPLR() + "0101"
+            };
+
+            mensaisParaSalvar.push(itemUnificado);
+        }
+
+        console.log('Mensais para salvar');
+        console.dir(mensaisParaSalvar);
+        MessageView.showSuccessMessage("Salvo!");
     }
 
     salvarCopiaMetasMentais() {
@@ -170,15 +205,34 @@ class MetaMensalController extends PLRController {
         this._limpaCamposCopiarMetasMensais();
     }
 
+    _calcularAcumuladosViaCopia() {
+        let self = this;
+        let aggMetaPlan = 0;
+        let aggMetaReal = 0;
+        let itemMetaPlan = self._dataMetaMensalArray[0];
+        let itemMetaReal = self._dataMetaMensalArray[1];
+        for (var i = 0; i < self._listaCamposMes.length; i ++) {
+            let valMetaPlan = itemMetaPlan[self._listaCamposMes[i]];
+            if (valMetaPlan && parseFloat(formatDecimalToBigDecimal(valMetaPlan) != 0)) {
+                aggMetaPlan += parseFloat(formatDecimalToBigDecimal(valMetaPlan));
+            }
+
+            let valMetaReal = itemMetaReal[self._listaCamposMes[i]];
+            if (valMetaReal && parseFloat(formatDecimalToBigDecimal(valMetaPlan) != 0)) {
+                aggMetaReal += parseFloat(formatDecimalToBigDecimal(valMetaReal));
+            }
+        }
+
+        self._acumuladoMetaPlan.val(accounting.formatMoney(aggMetaPlan, "", 4, ".", ","));
+        self._acumuladoMetaReal.val(accounting.formatMoney(aggMetaReal, "", 4, ".", ","));
+    }
+
     _limpaCamposCopiarMetasMensais() {
         this._copiaMetaMensalPlan.val("");
         this._copiaMetaMensalReal.val("");
     }
-    
-    preencheCampos() {
-        let selectedIndicador = this._indicadorMensal.val();
-        let meta = this._listaIndicadores.filter(item => item.id == selectedIndicador);
 
+    _preencheCamposPesquisaIndicador(meta) {
         if (meta.length > 0) {
             this._codigoMetaMensal.val(meta[0].id);
             this._tipoIndicadorMensal.val(meta[0].tipoMeta.descricao);
@@ -190,7 +244,7 @@ class MetaMensalController extends PLRController {
     }
 
     _preencheValoresAgregados(valMeta, denominadorMedia, tipoMeta) {
-        if (tipoMeta == 1) {
+        if (tipoMeta == "META") {
             if (this._tipoMedicaoMensal.val() == "SOMA") {
                 this._acumuladoMetaPlan.val(accounting.formatMoney(valMeta, "", 4, ".", ","));
             } else {
@@ -204,6 +258,8 @@ class MetaMensalController extends PLRController {
             }
         }
     }
+
+    /** GRID */
 
     _loadGridMetasMensais(metasMensaisData) {
         let self = this;
@@ -230,7 +286,7 @@ class MetaMensalController extends PLRController {
                 aggMeta = 0;
                 for (var i = 3; i < 12; i ++) {
                     let valMeta = self._gridCadastroMetasMensais.jsGrid("option","fields")[i].editControl.val()
-                    if (valMeta && parseFloat(formatDecimalToBigDecimal(valMeta)) > 0) {
+                    if (valMeta && parseFloat(formatDecimalToBigDecimal(valMeta)) != 0) {
                         aggMeta += parseFloat(formatDecimalToBigDecimal(valMeta));
                         denominadorMedia += 1;
                     }
@@ -241,7 +297,7 @@ class MetaMensalController extends PLRController {
 
             fields : [
                 {type : "control", width : 60, deleteButton : false}, //[0]
-                {name : "tipoMeta", title : "Tipo", type : "select", align : "center", width : 100, items : [{id : 1, descricao : "PLANEJADO"}, {id : 2, descricao : "REAL"}],
+                {name : "tipoMeta", title : "Tipo", type : "select", align : "center", width : 100, items : [{id : "META", descricao : "PLANEJADO"}, {id : "REAL", descricao : "REAL"}],
                     valueField : "id", textField : "descricao", readOnly : true
                 }, //[1]
                 {name : "valJan",  title : "Jan", type : "decimal", align : "center", width : 150}, //[2]

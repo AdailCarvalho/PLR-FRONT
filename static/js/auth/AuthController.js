@@ -12,11 +12,10 @@ class AuthController extends PLRController {
         this._newPassword = $('#idNewPassword')
         this._confirmPassword = $('#idConfirmNewPassword');
         this._passwordRegex =/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/i;
-        this.buildSelectOptions(this._periodoPLR, [{value : 2019, text : 2019}, {value : 2020, text : 2020}]);
 
         let $body = $("body");
 		$(document).on({
-			ajaxStart: function() { $body.addClass("loading");    },
+			ajaxStart: function() { $body.addClass("loading");},
 			ajaxStop: function() { $body.removeClass("loading"); }
 		});
 
@@ -24,10 +23,11 @@ class AuthController extends PLRController {
 	}
 
     _init() {
+        this._carregarPeriodosAtivos();
         this._dialogPrimeiroAcesso.dialog({
                 resizable: false,
                 height: "auto",
-                width: 400,
+                width: 500,
                 modal: true,
                 autoOpen: false,
                 closeOnEscape: false
@@ -48,6 +48,15 @@ class AuthController extends PLRController {
         }
     }
 
+    _carregarPeriodosAtivos() {
+        let self = this;
+        $.when(self._business.getPeriodosAtivos())
+        .done(function (serverData) {
+            let selectItems = [];
+            serverData.forEach(item => selectItems.push({value : item, text : item}));
+            self.buildSelectOptions(self._periodoPLR, selectItems);
+        });
+    }
 
     checkActiveSession() {
         return resetBrowserSession();
@@ -56,7 +65,7 @@ class AuthController extends PLRController {
     login() {
         let self = this;
         if (self._validateForm()) {
-            $.when(self._business.login(this._userData))
+            $.when(self._business.login(self._userData, self._periodoPLR.val()))
             .done(function(userDTO) {
                 self._phrase = userDTO.phrase;
                 self._hash = userDTO.hash;
@@ -71,7 +80,8 @@ class AuthController extends PLRController {
                 //}
             })
             .fail(function(xhr, textStatus, errorThrown) {
-                    MessageView.showSimpleErrorMessage('Login inválido! ');
+                    MessageView.showSimpleErrorMessage('Login inválido! Erro: ' + xhr.responseJSON.message);
+                    return;
             });
         }
     }

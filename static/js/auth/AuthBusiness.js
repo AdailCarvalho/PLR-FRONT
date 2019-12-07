@@ -3,9 +3,17 @@ class AuthBusiness extends PLRBusiness {
 		super();
 	}
 
-	login(user) {
+	getPeriodosAtivos() {
 		return $.ajax({
-			url : this._API_BASE_URI + '/usuarios/login',
+			url : this._API_BASE_URI + '/tempo/ano',
+			type : "GET",
+			async : false
+		});
+	}
+
+	login(user, periodoPLR) {
+		return $.ajax({
+			url : this._API_BASE_URI + '/usuarios/login/' + periodoPLR,
 			type : "POST",
 			contentType: "application/json; charset=utf-8",
 			data : JSON.stringify(user),

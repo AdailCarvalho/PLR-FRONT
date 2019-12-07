@@ -157,14 +157,14 @@
                             </div>
                             <div class="form-group col-md-3">
                                     <label class="plr-bold" for="selectIndicadorMensal" title="Indicador">Indicador: </label>
-                                    <select id="selectIndicadorMensal" class="form-control" onchange="metaMensalController.preencheCampos()">
+                                    <select id="selectIndicadorMensal" class="form-control" onchange="metaMensalController.findMetasMensaisForIndicador()">
                                     </select>
                             </div>
-                            <div class="form-group col-md-1">
+                            <div class="form-group col-md-2">
                                 <label class="plr-bold" for="tipoIndicadorMensal" title="Tipo de Indicador">Tipo: </label>
                                 <input type="text" id="tipoIndicadorMensal" maxlength="32" class="form-control" placeholder="Tipo" readonly/>
                             </div>
-                            <div class="form-group col-md-1">
+                            <div class="form-group col-md-2">
                                 <label class="plr-bold" for="pontuacaoMensal" title="Pontuação">Pontuação: </label>
                                 <input type="text" id="pontuacaoMensal" maxlength="32" class="form-control" placeholder="Pontuação" readonly/>
                             </div>
@@ -172,24 +172,9 @@
                                 <label class="plr-bold" for="tipoMedicaoMensal" title="Tipo de Medição">Medição: </label>
                                 <input type="text" id="tipoMedicaoMensal" maxlength="32" class="form-control" placeholder="Tipo" readonly/>
                             </div>
-                            <div class="form-group col-md-1">
+                            <div class="form-group col-md-2">
                                 <label class="plr-bold" for="formulaIndicadorMensal" title="Fórmula">Fórmula: </label>
                                 <input type="text" id="formulaIndicadorMensal" maxlength="32" class="form-control" placeholder="Formula" readonly/>
-                            </div>
-                            <div class="form-group col-md-1">
-                                <label class="plr-bold" for="situacaoMetaMensal" title="Situação">Status: </label>
-                                <select id="situacaoMetaMensal" class="form-control" disabled>
-                                        <option value="A">ATIVO</option>
-                                        <option value="I">INATIVO</option>
-                                </select>
-                            </div>
-                            <div class="form-group col-md-2">
-                                    <a type="button" id="btnPesquisarMetaMensal" class="btn btn-sm plr-search-button mt-4" title="Pesquisar" onclick="metaMensalController.pesquisarMeta()">
-                                        <i class="fas fa-search"></i>
-                                    </a>
-                                    <a type="button" id="btnLimpaPesquisaMetaMensal" class="btn btn-sm mt-4 plr-search-broom ml-1" title="Limpar Filtro" onclick="metaMensalController.limparPesquisaMeta()">
-                                        <i class="fas fa-eraser"></i>
-                                    </a>
                             </div>
                         </div>
                     </div>
@@ -417,8 +402,8 @@
                 <div class="form-group col-md-3">
                     <label for="cadastroQualidade" class="plr-bold" title="Quantitativo / Qualitativo">Quantitativo / Qualitativo: </label>
                     <select id="cadastroQualidade" class="form-control" style="font-size: 14px;">
-                        <option value="0">QUALITATIVA</option>
                         <option value="1">QUANTITATIVA</option>                      
+                        <option value="2">QUALITATIVA</option>
                     </select>
                 </div>
                 <div class="form-group col-md-3">

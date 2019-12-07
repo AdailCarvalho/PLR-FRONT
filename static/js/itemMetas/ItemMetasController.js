@@ -126,7 +126,7 @@ class ItemMetasController extends PLRController {
 
 	_carregarListaMetas() {
 		let self = this;
-		$.when(self._business.getLista("/metas"))
+		$.when(self._business.getLista("/metas/quantitativas/" + getPeriodoPLR()))
 		.done(function (serverData) {
 			self._listaMetas = serverData;
 		}).fail((xhr, textStatus, errorThrown) =>
