@@ -53,11 +53,14 @@ class ColaboradorController extends PLRController {
 		this._fieldDataDemissao = $("#cadastroDtDemissao");
 		this._fieldElegivel = $("#cadastroElegivel");
 		this._isNewColaborador = true;
+
+
 		
 		this._fieldsCadastroList = [this._fieldMatricula, this._fieldNome, this._fieldCargo, this._fieldDiretoria, this._fieldTime, this._fieldFilial, 
 			this._fieldSituacao, this._fieldDataAdmissao, this._fieldDataDemissao, this._fieldElegivel];
 
-
+		this._labelCaptionEquivalenciaCargo = $("#captionEquivalenciaCargo");
+		this._listaCargos = [];
 		this._regexDataValidator = /^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/;
 		this._modalCadastroColaboradores = $("#modalCadastroColaborador");
 
@@ -67,8 +70,6 @@ class ColaboradorController extends PLRController {
 		  
 		 this._fieldDataAdmissao.datepicker({
 			numberOfMonths: 3,
-			minDate : new Date(getPeriodoPLR(), 0, 1) ,
-			maxDate : new Date(getPeriodoPLR(), 11, 31),
 			dateFormat: 'dd/mm/yy',
 			dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'],
 			dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
@@ -79,8 +80,6 @@ class ColaboradorController extends PLRController {
 
 		this._fieldDataDemissao.datepicker({
 			numberOfMonths: 3,
-			minDate : new Date(getPeriodoPLR(), 0, 1) ,
-			maxDate : new Date(getPeriodoPLR(), 11, 31),
 			dateFormat: 'dd/mm/yy',
 			dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'],
 			dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
@@ -97,7 +96,6 @@ class ColaboradorController extends PLRController {
 		this._modalCadastroColaboradores.dialog({
 			autoOpen: false,
 			resizable: false,
-			draggable : false,
 			width: 1280,
 			minHeight : 500,
 			show: {effect: "fade", duration: 200},
@@ -118,6 +116,7 @@ class ColaboradorController extends PLRController {
 			});
 
 			serverData.unshift({});
+			self._listaCargos = serverData;
 			self.buildSelectOptions(self._fieldCargo, serverData);
 		}).fail((xhr, textStatus, errorThrown) =>
 			MessageView.showSimpleErrorMessage(("Erro ao pesquisar lista de Cargos! Erro : " + xhr.responseText)));
@@ -166,6 +165,14 @@ class ColaboradorController extends PLRController {
 			self.buildSelectOptions(self._fieldTime, serverData);
 		}).fail((xhr, textStatus, errorThrown) =>
 			MessageView.showSimpleErrorMessage(("Erro ao pesquisar lista de Times! Erro : "  + xhr.responseText)));
+	}
+
+	avaliarEquivalenciaCargo() {
+		let selectedCargo = this._fieldCargo.val();
+		let resultCargo = this._listaCargos.filter(cargo => cargo.id == selectedCargo);
+		if (resultCargo && resultCargo.length > 0) {
+			this._labelCaptionEquivalenciaCargo.text("Equiv.: " + resultCargo[0].equivalencia.descricao);
+		}
 	}
 
 	limparPesquisaColaborador() {
@@ -223,6 +230,7 @@ class ColaboradorController extends PLRController {
 		this._fieldDataAdmissao.val(colaboradorItem.dataAdmissao);
 		this._fieldDataDemissao.val(colaboradorItem.dataDemissao);
 		this._fieldElegivel.val(colaboradorItem.elegivel);
+		this._labelCaptionEquivalenciaCargo.text("Equiv.: " + colaboradorItem.cargo.equivalencia.descricao);
 	}
 
 	salvarColaborador() {

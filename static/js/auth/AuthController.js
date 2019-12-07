@@ -132,14 +132,14 @@ class AuthController extends PLRController {
     }
 
     _validateForm() { 
-        if (this._matricula.val() == '') {
-            MessageView.showWarningMessage('Informe a matrícula');
-            this._matricula.focus();
-            return false;
-        }  else if (this._periodoPLR.val() == '') {
+        if (this._periodoPLR.val() == '') {
             MessageView.showWarningMessage('Informe o período');
             this._periodoPLR.focus();
-            return false;            
+            return false; 
+        } else if (this._matricula.val() == '') {
+            MessageView.showWarningMessage('Informe a matrícula');
+            this._matricula.focus();
+            return false;           
         } else if (this._password.val() == '') {
             MessageView.showWarningMessage('Informe a senha');
             this._password.focus();

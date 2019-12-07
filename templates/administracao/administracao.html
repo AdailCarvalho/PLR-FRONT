@@ -199,11 +199,34 @@
                         <div class="col-md-12 mt-2">
                             <div class="card border-primary bg-light mb-2">
                                 <div class="card-header border-primary text-muted">Metas Mensais:</div>
-                                    <div class="card-body" style="overflow : auto;">
-                                        <div id="jsGridCadastroMetasMensais"></div>
+                                    <div class="card-body">
+                                        <div class="form-row">
+                                            <div class="form-group col-md-2">
+                                                <label for="acumuladoMetaPlan" class="plr-bold" title="Acumulado Planejado">Σ Planejado: </label>
+                                                <input id="acumuladoMetaPlan" type="text" class="form-control" style="font-size: 14px;" readonly/>                      
+                                            </div>
+                                            <div class="form-group col-md-2">
+                                                <label for="acumuladoMetaReal" class="plr-bold" title="Acumulado Real">Σ Real: </label>
+                                                <input id="acumuladoMetaReal" type="text" class="form-control" style="font-size: 14px;" readonly/>                      
+                                            </div>
+                                        </div>
+                                        <br />
+                                        <div style="overflow : auto;">
+                                            <div id="jsGridCadastroMetasMensais"></div>
+                                        </div>
                                     </div>
                                 </div>
                         </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-auto">
+                            <input type="button" value="Salvar" id="salvarMetasMensais" title="Salvar" class="btn btn-sm btn-success" 
+                                   onclick="metaMensalController.salvarMetasMensais()" />
+                    </div>
+                    <div class="col-md-auto">
+                        <input type="button" value="Copiar" id="copiarMetasMensais" title="Copiar" class="btn btn-sm btn-info" style="margin-left: -12px;" 
+                               onclick="metaMensalController.copiarMetasMensais()" />
+                    </div>
                 </div>
             </div>
 
@@ -297,8 +320,9 @@
             <div class="row">
                 <div class="form-group col-md-6">
                     <label for="cadastroCargo" class="plr-bold">Cargo: </label>
-                    <select id="cadastroCargo" class="form-control" style="font-size: 14px;">                      
+                    <select id="cadastroCargo" class="form-control" style="font-size: 14px;" onchange="colaboradorController.avaliarEquivalenciaCargo()">                      
                     </select>
+                    <label id="captionEquivalenciaCargo" class="plr-bold" style="font-size : 12px; font-style: italic;"></label>
                 </div>
                 <div class="form-group col-md-3">
                     <label for="cadastroDiretoria" class="plr-bold">Diretoria: </label>
@@ -378,28 +402,26 @@
                     <select id="cadastroMetaDenominador" class="form-control" style="font-size: 14px;">                      
                     </select>
                 </div>
-                
-                <!--
-                <div class="form-group col-md-3">
-                    <label for="cadastroPrazo" class="plr-bold" title="Prazo da Meta">Prazo:</label>
-                    <input type="text" id="cadastroPrazo" pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="dd/mm/yyyy"  maxlength="32" class="form-control"/>
-                </div> -->
             </div>
             <hr>
             <div class="row">
                 <div class="form-group col-md-4">
                     <label for="cadastroTipoMeta" class="plr-bold" title="Tipo de Meta">Tipo: </label>
-                    <select id="cadastroTipoMeta" class="form-control" style="font-size: 14px;">                      
+                    <select id="cadastroTipoMeta" class="form-control" style="font-size: 14px;" onchange="cardapioMetasController.avaliarMetaProjeto()">                      
                     </select>
                 </div>
-                <div class="form-group col-md-4">
+                <div id="prazoRow" class="form-group col-md-2" hidden>
+                    <label for="cadastroPrazo" class="plr-bold" title="Prazo da Meta">Prazo:</label>
+                    <input type="text" id="cadastroPrazo" pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="dd/mm/yyyy"  maxlength="32" class="form-control"/>
+                </div>
+                <div class="form-group col-md-3">
                     <label for="cadastroQualidade" class="plr-bold" title="Quantitativo / Qualitativo">Quantitativo / Qualitativo: </label>
                     <select id="cadastroQualidade" class="form-control" style="font-size: 14px;">
                         <option value="0">QUALITATIVA</option>
                         <option value="1">QUANTITATIVA</option>                      
                     </select>
                 </div>
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-3">
                     <label class="plr-bold" for="cadastroSituacaoMeta" title="Situação">Status: </label>
                     <select id="cadastroSituacaoMeta" class="form-control" style="font-size: 14px;">
                         <option value="A">ATIVO</option>
@@ -425,8 +447,8 @@
         </div>
      </div> <!--Cadastro Meta -->
 
-     <div id="modalCadastroItemMetas"  title="Cadastro de Item de Metas"> 
-        <div class="container" style="margin-top: 0">
+     <div id="modalCadastroItemMetas"  title="Cadastro de Item de Metas" class="ml-4"> 
+        <div class="container-fluid" style="margin-top: 0">
                 <div class="col-md-auto mt-2">
                     <div class="nav nav-tabs plr-navside mb-2" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                         <a class="nav-link active" id="folhaMetaTab" data-toggle="tab" href="#dadosFolhaMeta" role="tab" aria-controls="dadosFolhaMeta" aria-selected="true">Dados da Folha</a>
@@ -506,6 +528,36 @@
         </div>  
     </div> <!--Cadastro Item de Meta -->
 
+    <div id="modalCopiaMetasMensais" title="Cópia de Metas">  <!-- Copia de Metas -->
+        <div class="container-fluid" style="margin-top: 0;">
+               
+            <div class="row" style="margin-top: 5px;">
+                <div class="form-group col-md-12">
+                    <label for="copiaMetaMensalPlan" class="plr-bold" title="Copie os valores da Meta abaixo">Valores Planejado: </label>
+                    <input id="copiaMetaMensalPlan" type="text" class="form-control" style="font-size: 14px;" onchange="metaMensalController.salvarCopiaMetasMensaisPlan()" />                      
+                </div>
+            </div>
+            <div class="row" style="margin-top: 5px;">
+                <div class="form-group col-md-12">
+                    <label for="copiaMetaMensalReal" class="plr-bold" title="Copie os valores da Meta abaixo">Valores Real: </label>
+                    <input id="copiaMetaMensalReal" type="text" class="form-control" style="font-size: 14px;" onchange="metaMensalController.salvarCopiaMetasMensaisReal()"/>                      
+                </div>
+            </div>
+
+
+            <div class="modal-footer" style="bottom : 0;">
+                <div class="form-group col-md-auto">
+                    <input type="button" value="Salvar" id="confirmarCopiaValores" title="Salvar"  class="btn btn-sm btn-success" 
+                           onclick="metaMensalController.salvarCopiaMetasMentais()" />
+                </div>
+                <div class="form-group col-md-auto">
+                    <input type="button" value="Voltar" id="voltarCopiaValores" title="Voltar" class="btn btn-sm btn-info" style="margin-left : -18px;" 
+                           onclick="metaMensalController.closeCopiarMetasMensais()" />
+                </div>
+            </div>
+
+        </div>  
+    </div><!-- Copia de Metas -->
 
     <div class="modalLoading">
 		<h5 style="text-align: center;vertical-align: middle; margin-top: 23%; font-weight: bold;">Processando a solicitação...</h5>

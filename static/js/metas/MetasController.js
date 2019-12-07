@@ -49,7 +49,7 @@ class MetasController extends PLRController {
 		this._selectFrequenciaAvaliacao = [{frequencia : ""}, {frequencia : "Mensal"},{frequencia : "Bimestral"},{frequencia : "Trimestral"},
 										   {frequencia : "Semestral"},{frequencia : "Anual"},{frequencia : "Data Específica"}];
 		this._selectTipoMetas = [{tipoMeta : ""},{tipoMeta : "Quanto Maior, Melhor"},{tipoMeta : "Quanto Menor, Melhor"},{tipoMeta : "Cumpriu/Não Cumpriu"}];										   
-		this._selectSituacao = [{situacao : "A", descSituacao : "Ativo"}, {situacao : "I", descSituacao : "Inativo"}];
+		this._selectSituacao = [{situacao : "A", descSituacao : "ATIVO"}, {situacao : "I", descSituacao : "INATIVO"}, {situacao : "P", descSituacao : "PENDENTE"}];
 
 		this._dialogVersao.dialog({
 			resizable: false,
@@ -191,7 +191,7 @@ class MetasController extends PLRController {
 				},
 				{name : "id", title : "Nº Folha", type : "number", align : "center", width : 100, editing: false},
 				{name : "colaborador.nome", title: "Colaborador", type : "text", align : "center", width : 225, editing: false},
-				{name : "situacao", title: "Status", type : "text", align : "center", width : 50, editing: false},
+				{name : "situacao", title: "Status", type : "select", items : self._selectSituacao, valueField : "situacao", textField : "descSituacao", align : "center", width : 50, editing: false},
 				{name : "inicioVigencia", title : "Início Vigência", type : "text", align : "center", width : 100, editing: false},
 				{name : "fimVigencia", title : "Fim Vigência", type : "text", align : "center", width : 100},
 				{name : "responsavel.nome", title : "Responsável", type : "text", align : "center", width : 225, editing: false}

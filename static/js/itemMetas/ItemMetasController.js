@@ -114,7 +114,7 @@ class ItemMetasController extends PLRController {
 		this._modalCadastroItemMetas.dialog({
 			autoOpen: false,
 			resizable: false,
-			width: 1200,
+			width: 1500,
 			show: {effect: "fade", duration: 200},
 			hide: {effect: "explode", duration: 200},
 			position: {my: "center", at: "center", of: window}

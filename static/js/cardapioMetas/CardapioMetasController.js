@@ -46,11 +46,12 @@ class CardapioMetasController extends PLRController {
 		this._fieldTipoMedicao = $("#cadastroTipoMedicao");
 		this._fieldFormula = $("#cadastroFormula");
 		this._fieldQualidade = $("#cadastroQualidade");
-		//this._fieldPrazo = $("#cadastroPrazo");
+		this._fieldPrazo = $("#cadastroPrazo");
 		this._fieldSituacaoMeta = $("#cadastroSituacaoMeta");
 		this._fieldObservacaoMeta = $("#cadastroObservacaoMeta");
 		this._fieldCodigoMeta = $("#cadastroIdMeta");
-
+		
+		this._prazoRowArea = $("#prazoRow");
 
 		this._fieldNumeradorMetaArea = $("#cadastroNumeradorMetaArea");
 		this._fieldDenominadorMetaArea = $("#cadastroDenominadorMetaArea");
@@ -66,16 +67,18 @@ class CardapioMetasController extends PLRController {
 
 		this._modalCadastroCardapioMeta = $("#modalCadastroMetas");
 
-		/*
+		
 		this._fieldPrazo.datepicker({
 			numberOfMonths: 3,
+			minDate : 0,
+			maxDate : new Date(getPeriodoPLR(), 11, 31),
 			dateFormat: 'dd/mm/yy',
 			dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'],
 			dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
 			dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
 			monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
 			monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']
-		});*/
+		});
 
 		this.carregarListaFrequenciaMedicao();
 		this.carregarListaFormula();
@@ -86,7 +89,6 @@ class CardapioMetasController extends PLRController {
 		this._modalCadastroCardapioMeta.dialog({
 			autoOpen: false,
 			resizable: false,
-			draggable : false,
 			width: 1200,
 			minHeight : 500, 
 			show: {effect: "fade", duration: 200},
@@ -177,8 +179,6 @@ class CardapioMetasController extends PLRController {
 			MessageView.showSimpleErrorMessage(("Erro ao pesquisar lista de Tipos de Meta! Erro : " + xhr.responseText)));
 	}
 
-
-
 	/** PESQUISA */
 
 	limparPesquisaMeta() {
@@ -217,6 +217,15 @@ class CardapioMetasController extends PLRController {
 			self.showHiddenElement(self._fieldNumeradorMetaArea);
 		} else {
 			self.hideElements([self._fieldDenominadorMetaArea, self._fieldNumeradorMetaArea]);
+		}
+	}
+
+	avaliarMetaProjeto() {
+		let self = this;
+		if (self._fieldTipoMeta.children('option:selected').text() == "PROJETOS") {
+			self.showHiddenElement(self._prazoRowArea);
+		} else {
+			self.hideElements([self._prazoRowArea]);
 		}
 	}
 
@@ -271,9 +280,12 @@ class CardapioMetasController extends PLRController {
 		this._fieldTipoMedicao.val(metaItem.tipoMedicao.id);
 		this._fieldFormula.val(metaItem.formula.id);
 		this._fieldQualidade.val(metaItem.isQuantitativa);
-		//this._fieldPrazo.val(metaItem.prazo);
+		this._fieldPrazo.val(metaItem.prazo);
 		this._fieldSituacaoMeta.val(metaItem.situacao);
 		this._fieldObservacaoMeta.val(metaItem.observacao);
+
+		this.avaliarMetaPonderada();
+		this.avaliarMetaProjeto();
 	}
 
     /** Grids */
@@ -319,7 +331,7 @@ class CardapioMetasController extends PLRController {
 			descricao : this._fieldNomeMeta.val(),
 			situacao : this._fieldSituacaoMeta.val(),
 			observacao : this._fieldObservacaoMeta.val(),
-			prazo : -1,
+			prazo : this._fieldPrazo ? this._fieldPrazo.val() : -1,
 			tipoMeta : {id : this._fieldTipoMeta.val()},
 			tipoMedicao : {id : this._fieldTipoMedicao.val()},
 			frequenciaMedicao : {id : this._fieldFrequenciaMedicao.val()},
@@ -384,10 +396,12 @@ class CardapioMetasController extends PLRController {
 					this._fieldQualidade.val(), 'Quantitativa / Qualitativa', 
 					[Validation.types.NOT_EMPTY]));
 		
-				/*
-		validationFieldsArray.push(this.getFieldValidation(
-					this._fieldPrazo.val(), 'Prazo', 
-					[Validation.types.NOT_EMPTY]));*/
+		
+		if (this._fieldTipoMeta.children("option:selected").text() == "PROJETOS") {
+			validationFieldsArray.push(this.getFieldValidation(
+				this._fieldPrazo.val(), 'Prazo', 
+				[Validation.types.NOT_EMPTY]));
+		}
 
 		validationFieldsArray.push(this.getFieldValidation(
 					this._fieldSituacaoMeta.val(), 'Situação', 

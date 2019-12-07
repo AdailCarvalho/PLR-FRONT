@@ -34,7 +34,15 @@
 					<!-- Inicio Body de Identificação-->
 					<div class="card-body">
 						<form>
-							<!-- Dados Gerais do Colaborador -->
+                            <!-- Dados Gerais do Colaborador -->
+                            <div class="form-row">
+                                    <div class="form-group" style="width : 100%;">
+                                        <label class="plr-bold" for="periodoPLR" title="Período PLR">Período PLR: </label>
+                                        <select id="periodoPLR" class="form-control">
+                                        <option value=""></option>							  
+                                        </select>
+                                    </div>
+                            </div>
 							<div class="form-row">
 								<div class="form-group">
 									<label class="plr-bold" for="matricula" title="matricula">Matrícula: </label>
@@ -47,14 +55,6 @@
                                     <input type="password" id="password" maxlength="6" class="form-control" placeholder="Password" />                             
                                 </div>
                           </div>
-                          <div class="form-row">
-                            <div class="form-group" style="width : 100%;">
-                                <label class="plr-bold" for="periodoPLR" title="Período PLR">Período PLR: </label>
-                                <select id="periodoPLR" class="form-control">
-                                <option value=""></option>							  
-                                </select>
-                            </div>
-                        </div>
                           <div class="form-row">
                             <div class="form-group">
                                 <button id="btnLogin" type="button" 

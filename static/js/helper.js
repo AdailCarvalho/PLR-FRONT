@@ -94,7 +94,7 @@ function FloatNumberField(config) {
   },
 
   itemTemplate : function (value) {
-    return value.toFixed(2);
+    return value ? value.toFixed(4) : NaN;
   },
 
   insertValue : function () {
@@ -116,16 +116,18 @@ function DecimalField(config) {
 DecimalField.prototype = new jsGrid.Field({
 
   itemTemplate: function(value) {
-   //let parsedValue = formatDecimalToBigDecimal(value);
-    return accounting.formatMoney(value, "", 2, ".", ",");
+    let parsedValue = formatDecimalToBigDecimal(value);
+    return accounting.formatMoney(parsedValue, "", 4, ".", ",");
   },
 
   insertTemplate: function(value) {
-    return this.insertControl = $("<input>").val(accounting.formatMoney(value, "", 4, ".", ","));
+    let parsedValue = formatDecimalToBigDecimal(value);
+    return this.insertControl = $("<input>").val(accounting.formatMoney(parsedValue, "", 4, ".", ","));
   },
 
   editTemplate: function(value) {
-    return this.editControl = $("<input>").val(accounting.formatMoney(value, "", 4, ".", ","));
+    let parsedValue = formatDecimalToBigDecimal(value);
+    return this.editControl = $("<input>").val(accounting.formatMoney(parsedValue, "", 4, ".", ","));
   },
 
   insertValue: function() {
