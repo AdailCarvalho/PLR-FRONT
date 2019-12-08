@@ -72,6 +72,7 @@
                         <div w3-include-html="templates/metas/metasCadastro.html"></div>
                     </div>
                     <div class="tab-pane fade" id="config" role="tabpanel" aria-labelledby="config-tab">
+                        <div w3-include-html="templates/configuracao/configuracao.html"></div>
                     </div>
                     <div class="tab-pane fade" id="sair" role="tabpanel" aria-labelledby="sair-tab">
                     </div>
@@ -132,11 +133,14 @@
     <script type="text/javascript" src="../planometas/static/js/perfil/PerfilController.js"></script>
     <script type="text/javascript" src="../planometas/static/js/auth/AuthController.js"></script>
     <script type="text/javascript" src="../planometas/static/js/itemMetas/ItemMetasController.js"></script>
+    <script type="text/javascript" src="../planometas/static/js/metasPeriodo/MetasPeriodoController.js"></script>
+
 
     <script type="text/javascript" src="../planometas/static/js/colaborador/ColaboradorBusiness.js"></script>
     <script type="text/javascript" src="../planometas/static/js/cardapioMetas/CardapioMetasBusiness.js"></script>
     <script type="text/javascript" src="../planometas/static/js/itemMetas/ItemMetasBusiness.js"></script>
     <script type="text/javascript" src="../planometas/static/js/metaMensal/MetaMensalBusiness.js"></script>
+    <script type="text/javascript" src="../planometas/static/js/metasPeriodo/MetasPeriodoBusiness.js"></script>
     <script type="text/javascript" src="../planometas/static/js/perfil/PerfilBusiness.js"></script>
     <script type="text/javascript" src="../planometas/static/js/metas/MetasBusiness.js"></script>
     <script type="text/javascript" src="../planometas/static/js/auth/AuthBusiness.js"></script>
@@ -148,6 +152,7 @@
         var cardapioMetasController;
         var itemMetasController;
         var metaMensalController;
+        var metaPeriodoController;
 
         var plrController = new PLRController();
         var authController = new  AuthController();
@@ -164,6 +169,7 @@
             colaboradorController = new ColaboradorController();
             itemMetasController = new ItemMetasController();
             metaMensalController = new MetaMensalController();
+            metaPeriodoController = new MetasPeriodoController();
         }
 
         function logout() {

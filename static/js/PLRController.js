@@ -15,30 +15,28 @@ class PLRController {
         });
     }
 
-	enableDisableElements(elems, stat) {
-		elems.forEach(elm => $(elm.id).prop('disabled', stat));
+	  enableDisableElements(elems, stat) {
+	  	elems.forEach(elm => $(elm.id).prop('disabled', stat));
     }
-
     
-	getFieldValidation(fieldValue, fieldName, types, customMessage) {
-		return {value:fieldValue, fieldName:fieldName, types:types, customMessage:customMessage};
-	}
-    
+	  getFieldValidation(fieldValue, fieldName, types, customMessage) {
+	  	return {value:fieldValue, fieldName:fieldName, types:types, customMessage:customMessage};
+	  }
+      
     hideElements(fields) {
         fields.forEach(field => $(field).hide());
     }
     
     setFieldValue(field, value) {
-		$('#' + field).val(value);
+	    $('#' + field).val(value);
     }
-
+  
     showHiddenElement(field) {
         if (field.is(':hidden')) {
             field.removeAttr('hidden');
             field.show();       
         } 
     }
-
     setInputFilter(textbox, inputFilter) {
         ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(event) {
           textbox.addEventListener(event, function() {
@@ -55,12 +53,12 @@ class PLRController {
           });
         });
     }
-
+  
     writeSessionMessage() {
         let nomeUsuarioLogado = getLoggedName();
         let periodoPLRAtivo = getPeriodoPLR();
         let minutosRestantes = Math.round(sessionRemainingMin()) + ' min';
-
+    
         document.getElementById('idNomeUsuarioLogado').textContent = nomeUsuarioLogado;
         document.getElementById('idTempoRestante').textContent = minutosRestantes;
         document.getElementById('idPeriodoPLRAtivo').textContent = 'PERÍODO: ' + periodoPLRAtivo;

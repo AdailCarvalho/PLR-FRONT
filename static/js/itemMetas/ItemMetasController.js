@@ -72,7 +72,12 @@ class ItemMetasController extends PLRController {
 		this._fieldResponsavelItemCadastro = $("#responsavelItemCadastro");
 		this._fieldNumeroFolhaMeta = $("#numeroFolhaMeta");
 		this._fieldSomatorioPeso = $('#somatorioPeso');
+		this._fieldCargoItemCadastro = $("#cargoItemCadastro");
+		this._fieldDiretoriaItemCadastro = $("#diretoriaItemCadastro");
+		this._fieldTimeItemCadastro = $("#timeItemCadastro");
+		this._fieldFilialItemCadastro = $("#filialItemCadastro");
 		this._gridCadastroItensMeta = $("#jsGridCadastroItensMeta");
+	
 
 		this._fieldsCadastroItemMetasList = [this._fieldMatriculaItemCadastro, this._fieldColaboradorItemCadastro, 
 											this._fieldInicioVigenciaItemCadastro, this._fieldFimVigenciaItemCadastro, 
@@ -114,6 +119,7 @@ class ItemMetasController extends PLRController {
 		this._modalCadastroItemMetas.dialog({
 			autoOpen: false,
 			resizable: false,
+			minHeight : 600,
 			width: 1500,
 			show: {effect: "fade", duration: 200},
 			hide: {effect: "explode", duration: 200},
@@ -235,6 +241,10 @@ class ItemMetasController extends PLRController {
 	limparPesquisaItemMetaSimples() {
 		this._fieldMatriculaItemCadastro.val("");
 		this._fieldColaboradorItemCadastro.val("");
+		this._fieldCargoItemCadastro.val("");
+		this._fieldDiretoriaItemCadastro.val("");
+		this._fieldTimeItemCadastro.val("");
+		this._fieldFilialItemCadastro.val("");
 		this._loadGridPesquisaColaboradorSimples([]);
 	}
 
@@ -247,6 +257,10 @@ class ItemMetasController extends PLRController {
 		this._idItemMeta = metaItem.id;
 		this._fieldMatriculaItemCadastro.val(metaItem.colaborador.matricula);
 		this._fieldColaboradorItemCadastro.val(metaItem.colaborador.nome);
+		this._fieldCargoItemCadastro.val(metaItem.colaborador.cargo.nome);
+		this._fieldDiretoriaItemCadastro.val(metaItem.colaborador.diretoria.nome);
+		this._fieldTimeItemCadastro.val(metaItem.colaborador.time.nome);
+		this._fieldFilialItemCadastro.val(metaItem.colaborador.filial.nome);
 		this._fieldInicioVigenciaItemCadastro.val(metaItem.inicioVigencia);
 		this._fieldFimVigenciaItemCadastro.val(metaItem.fimVigencia);
 		this._fieldResponsavelItemCadastro.val(metaItem.responsavel.nome);		
@@ -259,6 +273,10 @@ class ItemMetasController extends PLRController {
 
 		this._fieldMatriculaItemCadastro.val(itemColaborador.matricula);
 		this._fieldColaboradorItemCadastro.val(itemColaborador.nome);
+		this._fieldDiretoriaItemCadastro.val(itemColaborador.diretoria.nome);
+		this._fieldFilialItemCadastro.val(itemColaborador.filial.nome);
+		this._fieldCargoItemCadastro.val(itemColaborador.cargo.nome);
+		this._fieldTimeItemCadastro.val(itemColaborador.time.codigo);
 	}
 
     _loadGridPesquisaItemMetas(itemsMetas) {
@@ -304,7 +322,7 @@ class ItemMetasController extends PLRController {
 			editing: false,
 			sorting: true,
 			paging: true,
-			pageSize: 5,
+			pageSize: 3,
 			data: itemsColaboradores,
 			pagerFormat: 'Páginas: {first} {prev} {pages} {next} {last} &nbsp;&nbsp; {pageIndex} de {pageCount}',
 			pageNextText: 'Próxima',
@@ -319,7 +337,11 @@ class ItemMetasController extends PLRController {
 
 			fields : [
 				{name : "matricula", title : "Matrícula", type : "text", align : "center", width : 50, editing : false},
-				{name : "nome", title : "Colaborador", type : "text", align : "left", width : 100, editing: false}
+				{name : "nome", title : "Colaborador", type : "text", align : "left", width : 100, editing: false},
+				{name : "cargo.nome", title : "Cargo", type :"text", align : "center", width : 100, editing :false},
+				{name : "diretoria.nome", title : "Diretoria", type :"text", align : "center", width : 100, editing :false},
+				{name : "time.codigo", title : "Time", type :"text", align : "center", width : 100, editing :false},
+				{name : "filial.nome", title : "Filial", type :"text", align : "center", width : 100, editing :false}
 			]
 		});
 	}

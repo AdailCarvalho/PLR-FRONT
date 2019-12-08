@@ -103,7 +103,7 @@ class MetaMensalController extends PLRController {
 
         $.when(self._business.findMetasMensais(selectedIndicador))
         .done(function (serverData) {
-            self._loadGridMetasMensais(serverData);                
+            self._loadGridMetasMensais(serverData && serverData.length > 0 ? serverData : self._dataMetaMensalArray);                
         }).fail((xhr, textStatus, errorThrown) =>
              MessageView.showSimpleErrorMessage(("Erro ao pesquisar as Metas mensais para o indicador informado! Erro : " + xhr.responseText)));
     }
@@ -143,7 +143,6 @@ class MetaMensalController extends PLRController {
             mensaisParaSalvar.push(itemUnificado);
         }
 
-        console.log('Mensais para salvar');
         console.dir(mensaisParaSalvar);
         MessageView.showSuccessMessage("Salvo!");
     }
@@ -162,7 +161,7 @@ class MetaMensalController extends PLRController {
             return;
         } 
         
-        let itemMetaPlan = {tipoMeta : 1};
+        let itemMetaPlan = {tipoMeta : "META"};
         for (var i = 0; i < capturedValuesPlan.length; i ++) {
             let valuePlan = capturedValuesPlan[i];
             if (!/(^-?\d*[.,]?\d{0,4}\t?)$/.test(valuePlan)) {
@@ -174,7 +173,7 @@ class MetaMensalController extends PLRController {
             itemMetaPlan[this._listaCamposMes[i]] = valuePlan;
         }
 
-        this.pushItemToDataMetaMensal(1, itemMetaPlan);
+        this.pushItemToDataMetaMensal("META", itemMetaPlan);
     }
 
     salvarCopiaMetasMensaisReal() {
@@ -185,7 +184,7 @@ class MetaMensalController extends PLRController {
             return;
         } 
         
-        let itemMetaReal = {tipoMeta : 2};
+        let itemMetaReal = {tipoMeta : "REAL"};
         for (var i = 0; i < capturedValuesReal.length; i ++) {
             let valueReal = capturedValuesReal[i];
             if (!/(^-?\d*[.,]?\d{0,4}\t?)$/.test(valueReal)) {
@@ -197,7 +196,7 @@ class MetaMensalController extends PLRController {
             itemMetaReal[this._listaCamposMes[i]] = valueReal;
         }
 
-        this.pushItemToDataMetaMensal(2, itemMetaReal);
+        this.pushItemToDataMetaMensal("REAL", itemMetaReal);
     }
 
     closeCopiarMetasMensais() {
@@ -209,22 +208,31 @@ class MetaMensalController extends PLRController {
         let self = this;
         let aggMetaPlan = 0;
         let aggMetaReal = 0;
+        let denominadorMediaPlan = 0;
+        let denominadorMediaReal = 0;
         let itemMetaPlan = self._dataMetaMensalArray[0];
         let itemMetaReal = self._dataMetaMensalArray[1];
         for (var i = 0; i < self._listaCamposMes.length; i ++) {
             let valMetaPlan = itemMetaPlan[self._listaCamposMes[i]];
-            if (valMetaPlan && parseFloat(formatDecimalToBigDecimal(valMetaPlan) != 0)) {
+            if (valMetaPlan && parseFloat(formatDecimalToBigDecimal(valMetaPlan)) != 0) {
                 aggMetaPlan += parseFloat(formatDecimalToBigDecimal(valMetaPlan));
+                denominadorMediaPlan += 1;
             }
 
             let valMetaReal = itemMetaReal[self._listaCamposMes[i]];
-            if (valMetaReal && parseFloat(formatDecimalToBigDecimal(valMetaPlan) != 0)) {
+            if (valMetaReal && parseFloat(formatDecimalToBigDecimal(valMetaPlan)) != 0) {
                 aggMetaReal += parseFloat(formatDecimalToBigDecimal(valMetaReal));
+                denominadorMediaReal += 1;
             }
         }
 
-        self._acumuladoMetaPlan.val(accounting.formatMoney(aggMetaPlan, "", 4, ".", ","));
-        self._acumuladoMetaReal.val(accounting.formatMoney(aggMetaReal, "", 4, ".", ","));
+        if (this._formulaIndicadorMensal.val() == "SOMA") {
+            self._acumuladoMetaPlan.val(accounting.formatMoney(aggMetaPlan, "", 4, ".", ","));
+            self._acumuladoMetaReal.val(accounting.formatMoney(aggMetaReal, "", 4, ".", ","));    
+        } else {
+            self._acumuladoMetaPlan.val(accounting.formatMoney((aggMetaPlan / denominadorMediaPlan), "", 4, ".", ","));
+            self._acumuladoMetaReal.val(accounting.formatMoney((aggMetaReal / denominadorMediaReal), "", 4, ".", ","));    
+        }
     }
 
     _limpaCamposCopiarMetasMensais() {
@@ -245,13 +253,13 @@ class MetaMensalController extends PLRController {
 
     _preencheValoresAgregados(valMeta, denominadorMedia, tipoMeta) {
         if (tipoMeta == "META") {
-            if (this._tipoMedicaoMensal.val() == "SOMA") {
+            if (this._formulaIndicadorMensal.val() == "SOMA") {
                 this._acumuladoMetaPlan.val(accounting.formatMoney(valMeta, "", 4, ".", ","));
             } else {
                 this._acumuladoMetaPlan.val(accounting.formatMoney((valMeta / denominadorMedia), "", 4, ".", ","));                
             }
         } else {
-            if (this._tipoMedicaoMensal.val() == "SOMA") {
+            if (this._formulaIndicadorMensal.val() == "SOMA") {
                 this._acumuladoMetaReal.val(accounting.formatMoney(valMeta, "", 4, ".", ","));
             } else {
                 this._acumuladoMetaReal.val(accounting.formatMoney((valMeta / denominadorMedia), "", 4, ".", ","));
@@ -284,7 +292,7 @@ class MetaMensalController extends PLRController {
             onItemUpdating : function (args) {
                 let denominadorMedia = 0;
                 aggMeta = 0;
-                for (var i = 3; i < 12; i ++) {
+                for (var i = 2; i <= 13; i ++) {
                     let valMeta = self._gridCadastroMetasMensais.jsGrid("option","fields")[i].editControl.val()
                     if (valMeta && parseFloat(formatDecimalToBigDecimal(valMeta)) != 0) {
                         aggMeta += parseFloat(formatDecimalToBigDecimal(valMeta));

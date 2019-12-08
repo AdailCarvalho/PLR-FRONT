@@ -432,7 +432,7 @@
         </div>
      </div> <!--Cadastro Meta -->
 
-     <div id="modalCadastroItemMetas"  title="Cadastro de Item de Metas" class="ml-4"> 
+     <div id="modalCadastroItemMetas"  title="Cadastro de Item de Metas" class="ml-4">  <!--Cadastro de Item de Metas-->
         <div class="container-fluid" style="margin-top: 0">
                 <div class="col-md-auto mt-2">
                     <div class="nav nav-tabs plr-navside mb-2" id="v-pills-tab" role="tablist" aria-orientation="vertical">
@@ -466,7 +466,28 @@
                                             <input type="text" id="fimVigenciaItemCadastro" pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="dd/mm/yyyy"  maxlength="32" class="form-control"/>
                                         </div>
                                  </div>
-                                 <div id="divExtraPesquisaColaboradorSimples" hidden>
+                                 
+                                 <div class="row" style="margin-top : 5px">
+                                    <div class="form-group col-md-3">
+                                        <label class="plr-bold" for="cargoItemCadastro" title="Cargo">Cargo: </label>
+                                        <input type="text" id="cargoItemCadastro" style="font-size: 14px;" maxlength="8" class="form-control" placeholder="Cargo" readonly/>
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label class="plr-bold" for="diretoriaItemCadastro" title="Diretoria">Diretoria: </label>
+                                        <input type="text" id="diretoriaItemCadastro" style="font-size: 14px;" maxlength="8" class="form-control" placeholder="Diretoria" readonly/>
+                                    </div>
+                                    
+                                    <div class="form-group col-md-3">
+                                        <label class="plr-bold" for="timeItemCadastro" title="Time">Time: </label>
+                                        <input type="text" id="timeItemCadastro" style="font-size: 14px;" maxlength="64" class="form-control" placeholder="Time" readonly/>
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label class="plr-bold" for="filialItemCadastro" title="Filial">Filial: </label>
+                                        <input type="text" id="filialItemCadastro" style="font-size: 14px;" maxlength="64" class="form-control" placeholder="Filial" readonly/>
+                                    </div>
+                                 </div>
+                                 
+                                <div id="divExtraPesquisaColaboradorSimples" hidden>
                                     <hr>
                                     <div class="row">
                                        <div class="form-group col-md-2">
