@@ -70,6 +70,14 @@ class MetasPeriodoController extends PLRController {
             deleteConfirm : "Deseja realmente excluir o item selecionado?",
             data: metasPeriodoData,
 
+            invalidNotify: function(args) {	
+				var messageHeader = 'Campos obrigatórios não informados ou inválidos:';
+				var messages = messageHeader + $.map(args.errors, function(error) {
+		            return "\n" + error.message;
+		        });
+				showTemporalMessage("warning", messages);
+			},
+
             onItemInserting : function (args) {
                 let items = self._gridMetasPeriodo.jsGrid("option", "data");
                 args.item.tempo.id = args.item.tempo.ano + '0101';

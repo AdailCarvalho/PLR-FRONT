@@ -7,7 +7,7 @@ class ColaboradorController extends PLRController {
 		this._business = new ColaboradorBusiness();
 		this._perfilController = new PerfilController();
 
-		this.applyConstraintsOnFields(['#colaboradoresTab'], [], this._perfilController.hasPermissionToArea(4));
+		this.applyConstraintsOnFields(['#colaboradoresTab', '#cadastroColaborador'], [], this._perfilController.hasPermissionToArea(4));
 		this.initFields();
 
         let $body = $("body");
@@ -96,8 +96,8 @@ class ColaboradorController extends PLRController {
 		this._modalCadastroColaboradores.dialog({
 			autoOpen: false,
 			resizable: false,
-			width: 1280,
-			minHeight : 500,
+			width: 1400,
+            minHeight : 600,
 			show: {effect: "fade", duration: 200},
 			hide: {effect: "explode", duration: 200},
 			position: {my: "center", at: "center", of: window}

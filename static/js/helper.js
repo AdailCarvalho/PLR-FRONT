@@ -256,7 +256,7 @@ function showTemporalCadastroMessage(type,message) {
 				mode: "light", 		      // "light" ou "dark"
 				autoHide: true,
 				fadeTime: "500", 
-				alertTime: maxTimeMessage * 2,// timeout in milliseconds
+				alertTime: maxTimeMessage * 8,// timeout in milliseconds = 2 minutes to take note of results
 				closeButton: true,
 				closeOnClick: false,
 				position: 'center',    //or top-left, bottom-right, bottom-left
@@ -267,6 +267,8 @@ function showTemporalCadastroMessage(type,message) {
 }
 
 var maxTimeMessage = 15000;
+
+var readOnlyJsGridFieldsColor = "#d4d6d9";
 
 //Properties
 app_properties = {

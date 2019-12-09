@@ -33,20 +33,14 @@ class MetaMensalController extends PLRController {
 
         this._listaIndicadores = [];
         this._listaCamposMes = ['valJan', 'valFev', 'valMar', 'valAbr', 'valMai', 'valJun', 'valJul', 'valAgo', 'valSet', 'valOut', 'valNov', 'valDez'];
+        this._listaCamposMesNum = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
         this._listaCamposIdMes = ['idJan', 'idFev', 'idMar', 'idAbr', 'idMai', 'idJun', 'idJul', 'idAgo', 'idSet', 'idOut', 'idNov', 'idDez'];
-        this._dataMetaMensalArray = [
-            {
-                tipoMeta : "META",
-            },
-            {
-                tipoMeta : "REAL"
-            }
-        ];
+        this._dataMetaMensalArray = [{tipoMeta : "META"},{tipoMeta : "REAL"}];
 
         this._modalCopiaMetasMensais.dialog({
 			autoOpen: false,
 			resizable: false,
-			width: 1500, 
+            width: 1400,
 			show: {effect: "fade", duration: 200},
 			hide: {effect: "explode", duration: 200},
 			position: {my: "center", at: "center", of: window}
@@ -89,6 +83,7 @@ class MetaMensalController extends PLRController {
         this._modalCopiaMetasMensais.dialog('open');
     }
 
+    /** onchange _indicadorMensal */
     findMetasMensaisForIndicador() {
         let self = this;
 
@@ -103,7 +98,18 @@ class MetaMensalController extends PLRController {
 
         $.when(self._business.findMetasMensais(selectedIndicador))
         .done(function (serverData) {
-            self._loadGridMetasMensais(serverData && serverData.length > 0 ? serverData : self._dataMetaMensalArray);                
+            self._acumuladoMetaPlan.val("");
+            self._acumuladoMetaReal.val("");
+
+            if (serverData && serverData.length > 0) {
+                self._dataMetaMensalArray = [...serverData];
+                self._loadGridMetasMensais(self._dataMetaMensalArray); 
+
+                self._calcularAcumuladosViaCopia();
+            } else {
+                self._dataMetaMensalArray = [{tipoMeta : "META"},{tipoMeta : "REAL"}];
+                self._loadGridMetasMensais(self._dataMetaMensalArray);
+            }
         }).fail((xhr, textStatus, errorThrown) =>
              MessageView.showSimpleErrorMessage(("Erro ao pesquisar as Metas mensais para o indicador informado! Erro : " + xhr.responseText)));
     }
@@ -129,22 +135,25 @@ class MetaMensalController extends PLRController {
         let self = this;
         let mensalPlanejado = self._dataMetaMensalArray[0];
         let mensalReal = self._dataMetaMensalArray[1];
-        let mensaisParaSalvar = [];
+        let itensMetasMensais = [];
 
         for (var i = 0; i < self._listaCamposMes.length; i ++) {
             let itemUnificado = {
                 id : mensalReal[self._listaCamposIdMes[i]], 
                 idMeta : self._indicadorMensal.val(), 
-                valorReal : mensalReal[self._listaCamposMes[i]], 
-                valorMeta : mensalPlanejado[self._listaCamposMes[i]], 
-                prazo : getPeriodoPLR() + "0101"
+                valorReal : parseFloat(formatDecimalToBigDecimal(mensalReal[self._listaCamposMes[i]])), 
+                valorMeta : parseFloat(formatDecimalToBigDecimal(mensalPlanejado[self._listaCamposMes[i]])), 
+                prazo : {id :getPeriodoPLR() + self._listaCamposMesNum[i] + "01"}
             };
 
-            mensaisParaSalvar.push(itemUnificado);
+            itensMetasMensais.push(itemUnificado);
         }
 
-        console.dir(mensaisParaSalvar);
-        MessageView.showSuccessMessage("Salvo!");
+        $.when(self._business.saveMetasMensais(itensMetasMensais))
+        .done(function (serverData) {
+            MessageView.showSuccessMessage("Metas mensais salvas!");
+        }).fail((xhr, textStatus, errorThrown) =>
+            MessageView.showSimpleErrorMessage(("Erro ao salvar os itens de Meta Mensal! Erro : " + xhr.responseText)));
     }
 
     salvarCopiaMetasMentais() {
@@ -220,7 +229,7 @@ class MetaMensalController extends PLRController {
             }
 
             let valMetaReal = itemMetaReal[self._listaCamposMes[i]];
-            if (valMetaReal && parseFloat(formatDecimalToBigDecimal(valMetaPlan)) != 0) {
+            if (valMetaReal && parseFloat(formatDecimalToBigDecimal(valMetaReal)) != 0) {
                 aggMetaReal += parseFloat(formatDecimalToBigDecimal(valMetaReal));
                 denominadorMediaReal += 1;
             }
@@ -289,6 +298,14 @@ class MetaMensalController extends PLRController {
             deleteConfirm : "Deseja realmente excluir o item selecionado?",
             data: metasMensaisData,
 
+            invalidNotify: function(args) {	
+				var messageHeader = 'Campos obrigatórios não informados ou inválidos:';
+				var messages = messageHeader + $.map(args.errors, function(error) {
+		            return "\n" + error.message;
+		        });
+				showTemporalMessage("warning", messages);
+			},
+
             onItemUpdating : function (args) {
                 let denominadorMedia = 0;
                 aggMeta = 0;
@@ -308,18 +325,102 @@ class MetaMensalController extends PLRController {
                 {name : "tipoMeta", title : "Tipo", type : "select", align : "center", width : 100, items : [{id : "META", descricao : "PLANEJADO"}, {id : "REAL", descricao : "REAL"}],
                     valueField : "id", textField : "descricao", readOnly : true
                 }, //[1]
-                {name : "valJan",  title : "Jan", type : "decimal", align : "center", width : 150}, //[2]
-                {name : "valFev", title : "Fev", type : "decimal", align : "center", width : 150}, //[3]
-                {name : "valMar",  title : "Mar", type : "decimal", align : "center", width : 150}, //[4]
-                {name : "valAbr",  title : "Abr", type : "decimal", align : "center", width : 150},//[5]
-                {name : "valMai",  title : "Mai", type : "decimal", align : "center", width : 150},//[6]
-                {name : "valJun", title : "Jun", type : "decimal", align : "center", width : 150},//[7]
-                {name : "valJul",  title : "Jul", type : "decimal", align : "center", width : 150},//[8]
-                {name : "valAgo", title : "Ago", type : "decimal", align : "center", width : 150},//[9]
-                {name : "valSet",  title : "Set", type : "decimal", align : "center", width : 150},//[10]
-                {name : "valOut",  title : "Out", type : "decimal", align : "center", width : 150},//[11]
-                {name : "valNov",  title : "Nov", type : "decimal", align : "center", width : 150},//[12]
-                {name : "valDez", title : "Dez",  type : "decimal", align : "center", width : 150}//[13]
+                {name : "valJan",  title : "Jan", type : "decimal", align : "center", width : 150, //[2]
+                 validate: {
+                        validator : function (value) {
+                            return /^-?\d{1,3}(\.\d{3})*(,\d{0,4})?$/.test(value);
+                        },
+                        message : "Por favor, informe um número válido"
+                    }
+                },
+                {name : "valFev", title : "Fev", type : "decimal", align : "center", width : 150, 
+                 validate: {
+                        validator : function (value) {
+                            return /^-?\d{1,3}(\.\d{3})*(,\d{0,4})?$/.test(value);
+                         },
+                        message : "Por favor, informe um número válido"
+                    }
+                }, //[3]
+                {name : "valMar",  title : "Mar", type : "decimal", align : "center", width : 150,
+                    validate: {
+                        validator : function (value) {
+                            return /^-?\d{1,3}(\.\d{3})*(,\d{0,4})?$/.test(value);
+                        },
+                        message : "Por favor, informe um número válido"
+                    }
+                }, //[4]
+                {name : "valAbr",  title : "Abr", type : "decimal", align : "center", width : 150,
+                 validate: {
+                        validator : function (value) {
+                            return /^-?\d{1,3}(\.\d{3})*(,\d{0,4})?$/.test(value);
+                        },
+                        message : "Por favor, informe um número válido"
+                    }
+                },//[5]
+                {name : "valMai",  title : "Mai", type : "decimal", align : "center", width : 150,
+                    validate: {
+                        validator : function (value) {
+                            return /^-?\d{1,3}(\.\d{3})*(,\d{0,4})?$/.test(value);
+                        },
+                        message : "Por favor, informe um número válido"
+                    }
+                },//[6]
+                {name : "valJun", title : "Jun", type : "decimal", align : "center", width : 150,
+                    validate: {
+                        validator : function (value) {
+                            return /^-?\d{1,3}(\.\d{3})*(,\d{0,4})?$/.test(value);
+                        },
+                        message : "Por favor, informe um número válido"
+                    }
+                },//[7]
+                {name : "valJul",  title : "Jul", type : "decimal", align : "center", width : 150,
+                    validate: {
+                        validator : function (value) {
+                            return /^-?\d{1,3}(\.\d{3})*(,\d{0,4})?$/.test(value);
+                        },
+                        message : "Por favor, informe um número válido"
+                    }
+                },//[8]
+                {name : "valAgo", title : "Ago", type : "decimal", align : "center", width : 150,
+                    validate: {
+                        validator : function (value) {
+                            return /^-?\d{1,3}(\.\d{3})*(,\d{0,4})?$/.test(value);
+                        },
+                        message : "Por favor, informe um número válido"
+                    }
+                },//[9]
+                {name : "valSet",  title : "Set", type : "decimal", align : "center", width : 150,
+                    validate: {
+                        validator : function (value) {
+                            return /^-?\d{1,3}(\.\d{3})*(,\d{0,4})?$/.test(value);
+                        },
+                        message : "Por favor, informe um número válido"
+                    }
+                },//[10]
+                {name : "valOut",  title : "Out", type : "decimal", align : "center", width : 150,
+                    validate: {
+                        validator : function (value) {
+                            return /^-?\d{1,3}(\.\d{3})*(,\d{0,4})?$/.test(value);
+                        },
+                        message : "Por favor, informe um número válido"
+                    }
+                },//[11]
+                {name : "valNov",  title : "Nov", type : "decimal", align : "center", width : 150,
+                    validate: {
+                        validator : function (value) {
+                            return /^-?\d{1,3}(\.\d{3})*(,\d{0,4})?$/.test(value);
+                        },
+                        message : "Por favor, informe um número válido"
+                    }
+                },//[12]
+                {name : "valDez", title : "Dez",  type : "decimal", align : "center", width : 150,
+                    validate: {
+                        validator : function (value) {
+                            return /^-?\d{1,3}(\.\d{3})*(,\d{0,4})?$/.test(value);
+                        },
+                        message : "Por favor, informe um número válido"
+                    }
+                }//[13]
             ]
         });
     }

@@ -89,8 +89,8 @@ class CardapioMetasController extends PLRController {
 		this._modalCadastroCardapioMeta.dialog({
 			autoOpen: false,
 			resizable: false,
-			width: 1200,
-			minHeight : 500, 
+			width: 1400,
+			minHeight : 600, 
 			show: {effect: "fade", duration: 200},
 			hide: {effect: "explode", duration: 200},
 			position: {my: "center", at: "center", of: window}
@@ -133,16 +133,17 @@ class CardapioMetasController extends PLRController {
 
 	carregarListaMetas() {
 		let self = this;
-		$.when(self._business.getLista("/metas"))
+		$.when(self._business.getLista("/metas/quantitativas/" + getPeriodoPLR()))
 		.done(function (serverData) {
-			serverData.forEach(item => {
+			let listaIndicadoresFiltered = serverData.filter(item => (item.formula.nome == "SOMA" || item.formula.nome == "MEDIA"));
+			listaIndicadoresFiltered.forEach(item => {
 				item.value = item.id;
 				item.text = item.descricao;
 			});
 
-			serverData.unshift({});
-			self.buildSelectOptions(self._fieldNumeradorMeta, serverData);
-			self.buildSelectOptions(self._fieldDenominadorMeta, serverData);
+			listaIndicadoresFiltered.unshift({});
+			self.buildSelectOptions(self._fieldNumeradorMeta, listaIndicadoresFiltered);
+			self.buildSelectOptions(self._fieldDenominadorMeta, listaIndicadoresFiltered);
 		}).fail((xhr, textStatus, errorThrown) =>
 			MessageView.showSimpleErrorMessage(("Erro ao pesquisar lista de Indicadores! Erro : " + xhr.responseText)));
 	}
@@ -212,7 +213,7 @@ class CardapioMetasController extends PLRController {
 
 	avaliarMetaPonderada() {
 		let self = this;
-		if (self._fieldFormula.children('option:selected').text() == "MEDIA" && self._fieldFrequenciaMedicao.children('option:selected').text() == "ANO") {
+		if (self._fieldFormula.children('option:selected').text() == "MEDIA" && self._fieldFrequenciaMedicao.children('option:selected').text() == "ANUAL") {
 			self.showHiddenElement(self._fieldDenominadorMetaArea);
 			self.showHiddenElement(self._fieldNumeradorMetaArea);
 		} else {
@@ -223,8 +224,12 @@ class CardapioMetasController extends PLRController {
 	avaliarMetaProjeto() {
 		let self = this;
 		if (self._fieldTipoMeta.children('option:selected').text() == "PROJETOS") {
+			self._fieldFormula.val(4); //ENTREGA
+			self._fieldFrequenciaMedicao.val(9); //DATA
 			self.showHiddenElement(self._prazoRowArea);
 		} else {
+			self._fieldFormula.val("");
+			self._fieldFrequenciaMedicao.val("");
 			self.hideElements([self._prazoRowArea]);
 		}
 	}
@@ -312,10 +317,11 @@ class CardapioMetasController extends PLRController {
 				return false;
 			},
 			fields : [
+				{name : "id", title : "Código", type : "number", align : "center", width : 70, editing : false},
 				{name : "descricao", title : "Meta", type : "text", align : "left", width : 200, editing : false},
                 {name : "tipoMeta.descricao", title : "Tipo de Meta", type : "text", align : "center", width : 100, editing: false},
                 {name : "frequenciaMedicao.descricao", title : "Frequência", type : "text", align : "center", width : 50, editing: false},
-				{name : "tipoMedicao.descricao", title: "Tipo de Medição", type : "text", align : "center", width : 50, editing: false},
+				{name : "tipoMedicao.descricao", title: "Tipo de Medição", type : "text", align : "center", width : 120, editing: false},
 				{name : "formula.nome", title : "Fórmula", type : "text", align : "center", width : 50},
 				{name : "situacao", title : "Status", type : "select", items : [{id : "A", nome : "Ativo"}, {id : "I", nome : "Inativo"}],
 				 valueField : "id", textField : "nome", align : "center", width : 50, editing: false}
@@ -331,7 +337,7 @@ class CardapioMetasController extends PLRController {
 			descricao : this._fieldNomeMeta.val(),
 			situacao : this._fieldSituacaoMeta.val(),
 			observacao : this._fieldObservacaoMeta.val(),
-			prazo : this._fieldPrazo ? this._fieldPrazo.val() : -1,
+			prazo : this._fieldPrazo.val() ? this._fieldPrazo.val() : -1,
 			tipoMeta : {id : this._fieldTipoMeta.val()},
 			tipoMedicao : {id : this._fieldTipoMedicao.val()},
 			frequenciaMedicao : {id : this._fieldFrequenciaMedicao.val()},

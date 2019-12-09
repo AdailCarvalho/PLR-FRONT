@@ -7,6 +7,9 @@ class ItemMetasController extends PLRController {
 		this._perfilController = new PerfilController();
 
 		this.applyConstraintsOnFields(['#itemMetasTab'], [],  this._perfilController.hasPermissionToArea(7));
+		this.applyConstraintsOnFields(['#idPesquisaItemMetaCompleta'], [],  this._perfilController.hasPermissionToArea(10));
+		this.applyConstraintsOnFields(['#idPesquisaItemMetaBasica'], [],  this._perfilController.hasPermissionToArea(11));
+
 		this.initFields();
 
         let $body = $("body");
@@ -120,7 +123,7 @@ class ItemMetasController extends PLRController {
 			autoOpen: false,
 			resizable: false,
 			minHeight : 600,
-			width: 1500,
+			width: 1400,
 			show: {effect: "fade", duration: 200},
 			hide: {effect: "explode", duration: 200},
 			position: {my: "center", at: "center", of: window}
@@ -223,7 +226,8 @@ class ItemMetasController extends PLRController {
 		if(new Validation().validateFields(self._validateCadastro())) {
 			$.when(self._business.salvarItemMeta(novaFolhaMeta))
 			.done(function (serverData) {
-				showTemporalCadastroMessage('success', 'Dados da Folha de Meta salvos com sucesso!\nAnote o número da sua Folha de Meta: ' + serverData.id);
+				showTemporalCadastroMessage('success', 'Dados da Folha de Meta salvos com sucesso!\n Anote os dados da Folha de Meta\nNúmero: ' 
+					+ serverData.id + '\nColaborador: ' + self._fieldColaboradorItemCadastro.val() + '\nMatrícula: '+ self._fieldMatriculaItemCadastro.val());
 				self._idItemMeta = serverData.id;
 				$('.nav a[href="#' + 'dadosFolhaMeta' + '"]').tab('show');
 				self._fieldNumeroFolhaMeta.val(serverData.id);
@@ -446,7 +450,24 @@ class ItemMetasController extends PLRController {
 			},
 			fields : [
 				{type : "control", width : 40},
-				{name : "sequencia", type : "number", title : "Sequência", width : 100, align : "center", readOnly : true
+				{name : "sequencia", type : "number", title : "Sequência", width : 100, align : "center", readOnly : true,
+				 insertTemplate : function () {
+					var grid = this._grid;
+					var $fieldSequencia = jsGrid.fields.number.prototype.insertTemplate.call(this, arguments);
+
+					$fieldSequencia.css("background-color", "#d4d6d9");
+
+					return $fieldSequencia;
+				 },
+
+				 editTemplate : function (value, editItem) {
+					var grid = this._grid;
+					var $fieldSequencia = jsGrid.fields.number.prototype.editTemplate.apply(this, arguments);
+
+					$fieldSequencia.css("background-color", "#d4d6d9");
+
+					return $fieldSequencia;
+				 },
 				},
 				{name : "meta.id", type : "select", title : "Indicador", items : self._listaMetas, valueField : "id", textField : "descricao", width : 250, align : "left",
 					validate : {
@@ -486,10 +507,10 @@ class ItemMetasController extends PLRController {
         return {
             matricula : this._matriculaItemPesquisa.val(),
             colaborador : this._colaboradorItemPesquisa.val(),
-            inicioVigencia : this._inicioVigenciaItemPesquisa.val(),
-            fimVigencia : this._fimVigenciaItemPesquisa.val(),
-            responsavel : this._responsavelItemPesquisa.val(),
-            situacao : 'A'
+            inicioVigencia : this._inicioVigenciaItemPesquisa.val() ? this._inicioVigenciaItemPesquisa.val() : "01/01/" + getPeriodoPLR(),
+            fimVigencia : this._fimVigenciaItemPesquisa.val() ? this._fimVigenciaItemPesquisa.val() : "31/12/" + getPeriodoPLR(),
+			responsavel : this._responsavelItemPesquisa.val(),
+			situacao : ""
         }                                         
 	}
 	

@@ -191,7 +191,8 @@ class MetasController extends PLRController {
 				},
 				{name : "id", title : "Nº Folha", type : "number", align : "center", width : 100, editing: false},
 				{name : "colaborador.nome", title: "Colaborador", type : "text", align : "center", width : 225, editing: false},
-				{name : "situacao", title: "Status", type : "select", items : self._selectSituacao, valueField : "situacao", textField : "descSituacao", align : "center", width : 50, editing: false},
+				{name : "situacao", title: "Status", type : "select", items : self._selectSituacao, valueField : "situacao", 
+						 textField : "descSituacao", align : "center", width : 50, editing: false},
 				{name : "inicioVigencia", title : "Início Vigência", type : "text", align : "center", width : 100, editing: false},
 				{name : "fimVigencia", title : "Fim Vigência", type : "text", align : "center", width : 100},
 				{name : "responsavel.nome", title : "Responsável", type : "text", align : "center", width : 225, editing: false}

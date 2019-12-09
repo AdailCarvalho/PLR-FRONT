@@ -119,6 +119,13 @@ body.loading .modalLoading {
 	display: block;
 }
 
+.ui-dialog {
+    left: 10% !important;
+   /* top: 50% !important;
+    margin-left: -700px !important;
+    margin-top: -300px !important;*/
+}
+
 /*
 .ui-dialog, .ui-corner-all, .ui-widget, .ui-widget-content, .ui-front:not(.jsgrid) {
     zoom : 110% !important;
