@@ -226,7 +226,7 @@ class ItemMetasController extends PLRController {
 		if(new Validation().validateFields(self._validateCadastro())) {
 			$.when(self._business.salvarItemMeta(novaFolhaMeta))
 			.done(function (serverData) {
-				showTemporalCadastroMessage('success', 'Dados da Folha de Meta salvos com sucesso!\n Anote os dados da Folha de Meta\nNúmero: ' 
+				showTemporalCadastroMessage('success', 'Dados da Folha de Meta salvos com sucesso!\nAnote os dados da Folha de Meta\nNúmero: ' 
 					+ serverData.id + '\nColaborador: ' + self._fieldColaboradorItemCadastro.val() + '\nMatrícula: '+ self._fieldMatriculaItemCadastro.val());
 				self._idItemMeta = serverData.id;
 				$('.nav a[href="#' + 'dadosFolhaMeta' + '"]').tab('show');
@@ -259,6 +259,8 @@ class ItemMetasController extends PLRController {
 
 	_preencheFormCadastroItemMeta(metaItem) {
 		this._idItemMeta = metaItem.id;
+		this._fieldNumeroFolhaMeta.val(metaItem.id);
+		this._fieldNumeroFolhaMeta.focus();
 		this._fieldMatriculaItemCadastro.val(metaItem.colaborador.matricula);
 		this._fieldColaboradorItemCadastro.val(metaItem.colaborador.nome);
 		this._fieldCargoItemCadastro.val(metaItem.colaborador.cargo.nome);
@@ -281,6 +283,9 @@ class ItemMetasController extends PLRController {
 		this._fieldFilialItemCadastro.val(itemColaborador.filial.nome);
 		this._fieldCargoItemCadastro.val(itemColaborador.cargo.nome);
 		this._fieldTimeItemCadastro.val(itemColaborador.time.codigo);
+
+		let metasEquivalentes = itemColaborador.cargo.equivalencia.metasEquivalentes;
+		this._loadGridCadastroItemMetas(metasEquivalentes.filter(item => item.idTempo == getPeriodoPLR() + '0101'));
 	}
 
     _loadGridPesquisaItemMetas(itemsMetas) {
@@ -376,6 +381,7 @@ class ItemMetasController extends PLRController {
 			pagePrevText: 'Anterior',
 			pageFirstText: 'Primeira',
 			pageLastText: 'Última', 
+			deleteConfirm : 'Deseja excluir o item selecionado?',
 			invalidNotify: function(args) {	
 				var messageHeader = 'Campos obrigatórios não informados ou inválidos:';
 				var messages = messageHeader + $.map(args.errors, function(error) {
@@ -385,7 +391,9 @@ class ItemMetasController extends PLRController {
 			},
 			onItemInserting : function (args) {
 				let dados = self._gridCadastroItensMeta.jsGrid("option","data");
-				let valorInserido = self._gridCadastroItensMeta.jsGrid("option", "fields")[3].insertControl.val();
+				let valorInserido = self._gridCadastroItensMeta.jsGrid("option", "fields")[4].insertControl.val();
+
+				args.item.tipoSugerida = 'N';
 
 				let previousSomaPeso = somaPeso;
 				somaPeso = 0;
@@ -415,12 +423,18 @@ class ItemMetasController extends PLRController {
 				let dados = self._gridCadastroItensMeta.jsGrid("option","data");
 				let idAtualizado = args.item.id;
 				let sequenciaAtualizada = self._gridCadastroItensMeta.jsGrid("option", "fields")[1].editControl.val();
-				let valorAtualizado = self._gridCadastroItensMeta.jsGrid("option", "fields")[3].editControl.val();
+				let valorAtualizado = self._gridCadastroItensMeta.jsGrid("option", "fields")[4].editControl.val();
+
+				if (args.item.tipoSugerida == 'S') {
+					MessageView.showWarningMessage("Essa meta é sugerida e não pode ser editada!");
+					args.cancel = true;
+					return;
+				} 
 				
 				let previousSomaPeso = somaPeso;
 				somaPeso = 0;
 				for (var i = 0; i < dados.length; i ++) {
-					if (dados[i].id == idAtualizado) {
+					if (dados[i].tipoSugerida == 'N' && dados[i].id == idAtualizado) {
 						somaPeso += parseFloat(formatDecimalToBigDecimal(valorAtualizado));
 					} else {
 						somaPeso += dados[i].peso;
@@ -444,13 +458,19 @@ class ItemMetasController extends PLRController {
 				self._configFieldSomatorioPeso(somaPeso)
 			},
 			onItemDeleting : function (args) {
+				if (args.item.tipoSugerida == 'S') {
+					MessageView.showWarningMessage("Essa meta é sugerida e não pode ser editada!");
+					args.cancel = true;
+					return;
+				}
+
 				lastDeletedSequence = args.item.sequencia;
 				somaPeso = somaPeso - parseFloat(formatDecimalToBigDecimal(args.item.peso));
 				self._configFieldSomatorioPeso(somaPeso);
 			},
 			fields : [
-				{type : "control", width : 40},
-				{name : "sequencia", type : "number", title : "Sequência", width : 100, align : "center", readOnly : true,
+				{type : "control", width : 40}, //[0]
+				{name : "sequencia", type : "number", title : "Sequência", width : 100, align : "center", readOnly : true, //[1]
 				 insertTemplate : function () {
 					var grid = this._grid;
 					var $fieldSequencia = jsGrid.fields.number.prototype.insertTemplate.call(this, arguments);
@@ -469,19 +489,59 @@ class ItemMetasController extends PLRController {
 					return $fieldSequencia;
 				 },
 				},
-				{name : "meta.id", type : "select", title : "Indicador", items : self._listaMetas, valueField : "id", textField : "descricao", width : 250, align : "left",
+				{
+					name : "meta.id", type : "number", title : "Código", width : 100, align : "center", readOnly : true, //[2]
+					insertTemplate : function () {
+						var grid = this._grid;
+						var $fieldCodigo = jsGrid.fields.number.prototype.insertTemplate.call(this, arguments);
+	
+						$fieldCodigo.css("background-color", "#d4d6d9");
+	
+						return $fieldCodigo;
+					 },
+	
+					 editTemplate : function (value, editItem) {
+						var grid = this._grid;
+						var $fieldCodigo = jsGrid.fields.number.prototype.editTemplate.apply(this, arguments);
+	
+						$fieldCodigo.css("background-color", "#d4d6d9");
+	
+						return $fieldCodigo;
+					 },
+				},
+				{name : "meta.id", type : "select", title : "Indicador", items : self._listaMetas, valueField : "id", textField : "descricao", width : 250, align : "left", //[3]
 					validate : {
 						validator : "required",
 						message : "Informe o Indicador"
 					}
 				},
-				{name : "peso", type : "floatNumber", title : "Peso", width : 100, align : "center", validate : 
+				{name : "peso", type : "floatNumber", title : "Peso", width : 100, align : "center", //[4]
+				 validate : 
 					{
 						validator : function (value) {
 							return !Number.isNaN(value);
 						},
 						message : "Informe o Peso"
 					}
+				},
+				{name : "tipoSugerida", type : "text", title : "Sugerida (S/N)", align : "center", width : 100, readOnly : true, //[5]
+					insertTemplate : function () {
+						var grid = this._grid;
+						var $fieldSugerida = jsGrid.fields.text.prototype.insertTemplate.call(this, arguments);
+
+						$fieldSugerida.css("background-color", "#d4d6d9");
+
+						return $fieldSugerida;
+					 },
+
+					 editTemplate : function (value, editItem) {
+						var grid = this._grid;
+						var $fieldSugerida = jsGrid.fields.text.prototype.editTemplate.apply(this, arguments);
+
+						$fieldSugerida.css("background-color", "#d4d6d9");
+
+						return $fieldSugerida;
+					 },
 				}
 			]
 		});
