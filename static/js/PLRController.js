@@ -21,7 +21,7 @@ class PLRController {
     
 	  getFieldValidation(fieldValue, fieldName, types, customMessage) {
 	  	return {value:fieldValue, fieldName:fieldName, types:types, customMessage:customMessage};
-	  }
+    }
       
     hideElements(fields) {
         fields.forEach(field => $(field).hide());

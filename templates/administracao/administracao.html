@@ -147,7 +147,7 @@
 
             <div class="tab-pane fade" id="cadastroMetaMensal" role="tabpanel" aria-labelledby="metasMensaisTab">
                     
-                <!-- Inicia Pesquisa Metas Mensais -->
+                <!-- Inicia Pesquisa Metas Mensais -->                
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-row">
@@ -179,23 +179,23 @@
                         </div>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="form-group col-md-2">
+                        <label for="acumuladoMetaPlan" class="plr-bold" title="Acumulado Planejado">Σ Planejado: </label>
+                        <input id="acumuladoMetaPlan" type="text" class="form-control" style="font-size: 14px;" readonly/>                      
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="acumuladoMetaReal" class="plr-bold" title="Acumulado Real">Σ Real: </label>
+                        <input id="acumuladoMetaReal" type="text" class="form-control" style="font-size: 14px;" readonly/>                      
+                    </div>
+                </div>
 
                 <div class="row">
                         <div class="col-md-12 mt-2">
-                            <div class="card border-primary bg-light mb-2">
+                            <div class="card border-primary bg-light">
                                 <div class="card-header border-primary text-muted">Metas Mensais:</div>
                                     <div class="card-body">
-                                        <div class="form-row">
-                                            <div class="form-group col-md-2">
-                                                <label for="acumuladoMetaPlan" class="plr-bold" title="Acumulado Planejado">Σ Planejado: </label>
-                                                <input id="acumuladoMetaPlan" type="text" class="form-control" style="font-size: 14px;" readonly/>                      
-                                            </div>
-                                            <div class="form-group col-md-2">
-                                                <label for="acumuladoMetaReal" class="plr-bold" title="Acumulado Real">Σ Real: </label>
-                                                <input id="acumuladoMetaReal" type="text" class="form-control" style="font-size: 14px;" readonly/>                      
-                                            </div>
-                                        </div>
-                                        <br />
+                                        <label for="jsGridCadastroMetasMensais" ></label>
                                         <div style="overflow : auto;">
                                             <div id="jsGridCadastroMetasMensais"></div>
                                         </div>
@@ -387,18 +387,23 @@
                     <select id="cadastroTipoMeta" class="form-control" style="font-size: 14px;" onchange="cardapioMetasController.avaliarMetaProjeto()">                      
                     </select>
                 </div>
+                <div class="form-group col-md-2" hidden>
+                    <label for="aprovadorMeta" class="plr-bold" title="Aprovador da Meta">Aprovador: </label>
+                    <select id="aprovadorMeta" class="form-control" style="font-size: 14px;" >                      
+                    </select>
+                </div>
                 <div id="prazoRow" class="form-group col-md-2" hidden>
                     <label for="cadastroPrazo" class="plr-bold" title="Prazo da Meta">Prazo:</label>
                     <input type="text" id="cadastroPrazo" pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="dd/mm/yyyy"  maxlength="32" class="form-control"/>
                 </div>
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-2">
                     <label for="cadastroQualidade" class="plr-bold" title="Quantitativo / Qualitativo">Quantitativo / Qualitativo: </label>
                     <select id="cadastroQualidade" class="form-control" style="font-size: 14px;">
                         <option value="1">QUANTITATIVA</option>                      
                         <option value="2">QUALITATIVA</option>
                     </select>
                 </div>
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-2">
                     <label class="plr-bold" for="cadastroSituacaoMeta" title="Situação">Status: </label>
                     <select id="cadastroSituacaoMeta" class="form-control" style="font-size: 14px;">
                         <option value="A">ATIVO</option>
@@ -466,11 +471,13 @@
                                         </div>
                                         <div class="form-group col-md-2">
                                             <label class="plr-bold" for="matriculaItemCadastro" title="Matrícula">Matrícula: </label>
-                                            <input type="text" id="matriculaItemCadastro" style="font-size: 14px;" maxlength="8" class="form-control" placeholder="Mat."/>
+                                            <input type="text" id="matriculaItemCadastro" style="font-size: 14px;" maxlength="8" class="form-control" placeholder="Mat."
+                                                   onchange=""/>
                                         </div>
                                         <div class="form-group col-md-5">
                                                 <label class="plr-bold" for="colaboradorItemCadastro" title="Colaborador">Colaborador: </label>
-                                                <input type="text" id="colaboradorItemCadastro" style="font-size: 14px;" maxlength="64" class="form-control" placeholder="Nome"/>
+                                                <input type="text" id="colaboradorItemCadastro" style="font-size: 14px;" maxlength="64" class="form-control" placeholder="Nome"
+                                                   onchange=""/>
                                         </div>
                                         <div class="form-group col-md-2">
                                             <label for="inicioVigenciaItemCadastro" class="plr-bold" title="Início Vigência">Início da Vigência:</label>
@@ -504,6 +511,7 @@
                                  
                                 <div id="divExtraPesquisaColaboradorSimples" hidden>
                                     <hr>
+                                    <label class="plr-bold" for="pesquisaSimplesColab" title="Pesquisar Colaborador">Pesquisar Colaborador: </label>
                                     <div class="row">
                                        <div class="form-group col-md-2">
                                            <a type="button" id="btnPesquisaSimplesColaborador" class="btn btn-sm mt-1" title="Pesquisar Colaborador" 

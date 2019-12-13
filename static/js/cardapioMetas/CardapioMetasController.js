@@ -6,14 +6,14 @@ class CardapioMetasController extends PLRController {
 		this._business = new CardapioMetasBusiness();
 		this._perfilController = new PerfilController();
 
-		this.applyConstraintsOnFields(['#metasTab'], [],  this._perfilController.hasPermissionToArea(4));
-		this.initFields();
-
-        let $body = $("body");
+		let $body = $("body");
         $(document).on({
             ajaxStart: function() { $body.addClass("loading");    },
             ajaxStop: function() { $body.removeClass("loading"); }
         });
+
+		this.applyConstraintsOnFields(['#metasTab'], [],  this._perfilController.hasPermissionToArea(4));
+		this.initFields();        
     }
 
     initFields() {
@@ -57,17 +57,17 @@ class CardapioMetasController extends PLRController {
 		this._fieldDenominadorMetaArea = $("#cadastroDenominadorMetaArea");
 		this._fieldNumeradorMeta = $("#cadastroMetaNumerador");
 		this._fieldDenominadorMeta = $("#cadastroMetaDenominador");
+		this._fieldAprovador = $("#aprovadorMeta");
 
 
 		this._idMeta = null;
 		this._isNewMeta = true;
 
 		this._fieldsCadastroMetasList = [this._fieldNomeMeta, this._fieldTipoMeta, this._fieldFrequenciaMedicao, this._fieldTipoMedicao, this._fieldFormula, this._fieldQualidade, 
-				this._fieldSituacaoMeta, this._fieldObservacaoMeta];
+				this._fieldSituacaoMeta, this._fieldObservacaoMeta, this._fieldAprovador];
 
 		this._modalCadastroCardapioMeta = $("#modalCadastroMetas");
 
-		
 		this._fieldPrazo.datepicker({
 			numberOfMonths: 3,
 			minDate : 0,
@@ -80,17 +80,21 @@ class CardapioMetasController extends PLRController {
 			monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']
 		});
 
-		this.carregarListaFrequenciaMedicao();
-		this.carregarListaFormula();
-		this.carregarListaTipoMedicao();
-		this.carregarListaTipoMetas();
-		this.carregarListaMetas();
-		
+		if (this._perfilController.hasPermissionToArea(4)) {
+			this.carrregarListaColaboradores();
+			this.carregarListaFrequenciaMedicao();
+			this.carregarListaFormula();
+			this.carregarListaTipoMedicao();
+			this.carregarListaTipoMetas();
+			this.carregarListaMetas();
+		}
+
 		this._modalCadastroCardapioMeta.dialog({
 			autoOpen: false,
 			resizable: false,
+			draggable : false,
 			width: 1400,
-			minHeight : 600, 
+			minHeight : 800, 
 			show: {effect: "fade", duration: 200},
 			hide: {effect: "explode", duration: 200},
 			position: {my: "center", at: "center", of: window}
@@ -113,6 +117,21 @@ class CardapioMetasController extends PLRController {
 			self.buildSelectOptions(self._fieldFrequenciaMedicao, serverData);
 		}).fail((xhr, textStatus, errorThrown) =>
 			MessageView.showSimpleErrorMessage(("Erro ao pesquisar lista de Fórmulas! Erro : " + xhr.responseText)));
+	}
+
+	carrregarListaColaboradores() {
+		let self = this;
+		$.when(self._business.getLista("/colaboradores/filter?situacao=A"))
+		.done(function (serverData) {
+			serverData.forEach(item => {
+				item.value = item.matricula;
+				item.text = item.nome;
+			});
+
+			serverData.unshift({});
+			self.buildSelectOptions(self._fieldAprovador, serverData);
+		}).fail((xhr, textStatus, errorThrown) =>
+			MessageView.showSimpleErrorMessage(("Erro ao pesquisar lista de Colaboradores! Erro : " + xhr.responseText)));
 	}
 
 	carregarListaFormula() {
@@ -225,12 +244,11 @@ class CardapioMetasController extends PLRController {
 		let self = this;
 		if (self._fieldTipoMeta.children('option:selected').text() == "PROJETOS") {
 			self._fieldFormula.val(4); //ENTREGA
-			self._fieldFrequenciaMedicao.val(9); //DATA
+			self._fieldFrequenciaMedicao.val(3); //DATA
 			self.showHiddenElement(self._prazoRowArea);
+			self.showHiddenElement(self._fieldAprovador);
 		} else {
-			self._fieldFormula.val("");
-			self._fieldFrequenciaMedicao.val("");
-			self.hideElements([self._prazoRowArea]);
+			self.hideElements([self._prazoRowArea, self._fieldAprovador]);
 		}
 	}
 
@@ -286,6 +304,7 @@ class CardapioMetasController extends PLRController {
 		this._fieldFormula.val(metaItem.formula.id);
 		this._fieldQualidade.val(metaItem.isQuantitativa);
 		this._fieldPrazo.val(metaItem.prazo);
+		this._fieldAprovador.val(metaItem.aprovador.matricula);
 		this._fieldSituacaoMeta.val(metaItem.situacao);
 		this._fieldObservacaoMeta.val(metaItem.observacao);
 
@@ -342,6 +361,9 @@ class CardapioMetasController extends PLRController {
 			tipoMedicao : {id : this._fieldTipoMedicao.val()},
 			frequenciaMedicao : {id : this._fieldFrequenciaMedicao.val()},
 			formula : {id : this._fieldFormula.val()},
+			metaNumerador : {id : this._fieldNumeradorMeta.val() ? this._fieldNumeradorMeta.val() : -1},
+			metaDenominador : {id : this._fieldDenominadorMeta.val() ? this._fieldDenominadorMeta.val() : -1},
+			aprovador : {matricula : this._fieldAprovador.val() ? this._fieldAprovador.val() : "000000"},
 			isNewMeta : this._isNewMeta,
 			isQuantitativa : this._fieldQualidade.val()
 		}
@@ -407,6 +429,10 @@ class CardapioMetasController extends PLRController {
 			validationFieldsArray.push(this.getFieldValidation(
 				this._fieldPrazo.val(), 'Prazo', 
 				[Validation.types.NOT_EMPTY]));
+
+				validationFieldsArray.push(this.getFieldValidation(
+					this._fieldAprovador.val(), 'Aprovador', 
+					[Validation.types.NOT_EMPTY]));
 		}
 
 		validationFieldsArray.push(this.getFieldValidation(

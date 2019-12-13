@@ -7,14 +7,14 @@ class ColaboradorController extends PLRController {
 		this._business = new ColaboradorBusiness();
 		this._perfilController = new PerfilController();
 
-		this.applyConstraintsOnFields(['#colaboradoresTab', '#cadastroColaborador'], [], this._perfilController.hasPermissionToArea(4));
-		this.initFields();
-
-        let $body = $("body");
+		let $body = $("body");
         $(document).on({
             ajaxStart: function() { $body.addClass("loading");    },
             ajaxStop: function() { $body.removeClass("loading"); }
         });
+
+		this.applyConstraintsOnFields(['#colaboradoresTab', '#cadastroColaborador'], [], this._perfilController.hasPermissionToArea(4));
+		this.initFields();
     }
 
     initFields() {
@@ -88,10 +88,12 @@ class ColaboradorController extends PLRController {
 			monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']
 		});
 
-		this.carregarListaCargos();
-		this.carregarListaDiretoria();
-		this.carregarListaFiliais();
-		this.carregarListaTimes();
+		if (this._perfilController.hasPermissionToArea(4)) {
+			this.carregarListaCargos();
+			this.carregarListaDiretoria();
+			this.carregarListaFiliais();
+			this.carregarListaTimes();
+		}
 
 		this._modalCadastroColaboradores.dialog({
 			autoOpen: false,

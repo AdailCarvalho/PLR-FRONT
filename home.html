@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="../planometas/static/css/iao-alert.css">
     <link rel="stylesheet" href="../planometas/static/css/all.css" />
 </head>
-<body>
+<body onchange="plrController.keepAlive()">
      <!-- HEADER -->
      <nav id="idHeader" class="navbar navbar-ligth plr-nav align-top">
          <div class="d-inline-block">               
@@ -188,10 +188,14 @@
                     }   
                     
                     plrController.writeSessionMessage();
-                }, 60000); 
+                }, 120000); 
             }
         );
 
+        /*
+        $(body).on("change", function () {
+
+        });*/
         
     </script>
 </body>

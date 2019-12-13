@@ -6,6 +6,12 @@ class MetasPeriodoController extends PLRController {
         this._business = new MetasPeriodoBusiness();
         this._authBusiness = new AuthBusiness();
 
+        let $body = $("body");
+        $(document).on({
+            ajaxStart: function() { $body.addClass("loading");    },
+            ajaxStop: function() { $body.removeClass("loading"); }
+        });
+
         this._perfilController = new PerfilController();
 
         this.applyConstraintsOnFields(['#configMetasPeriodoTab', '#configMetasPeriodoTabContent'], [],  this._perfilController.hasPermissionToArea(9));
@@ -26,9 +32,9 @@ class MetasPeriodoController extends PLRController {
     
 	_carregarListaMetas() {
 		let self = this;
-		$.when(self._business.getLista("/metas"))
+		$.when(self._business.getLista("/metas/quantitativas"))
 		.done(function (serverData) {
-			self._listaMetas = serverData.filter(item => item.isQuantitativa ==  "1");
+			self._listaMetas = serverData;
 		}).fail((xhr, textStatus, errorThrown) =>
 			MessageView.showSimpleErrorMessage(("Erro ao pesquisar lista de Metas! Erro : " + xhr.responseText)));
     }
@@ -37,7 +43,7 @@ class MetasPeriodoController extends PLRController {
         let self = this;
         $.when(self._authBusiness.getPeriodosAtivos())
         .done(function (serverData) {
-            serverData.forEach(item => self._listaPeriodos.push({ano : item}));
+            serverData.filter(item => item == getPeriodoPLR()).forEach(item => self._listaPeriodos.push({ano : item}));
         }).fail((xhr, textStatus, errorThrown) =>
             MessageView.showSimpleErrorMessage(("Erro ao pesquisar lista de Metas! Erro : " + xhr.responseText)));
     }
@@ -54,7 +60,7 @@ class MetasPeriodoController extends PLRController {
     _loadGridMetasPeriodo(metasPeriodoData) {
         let self = this;
         self._gridMetasPeriodo.jsGrid({
-            width: "70%",
+            width: "80%",
             height: "auto",
             inserting: self._perfilController.hasPermissionToArea(9),
             deleting : self._perfilController.hasPermissionToArea(9),
@@ -116,7 +122,26 @@ class MetasPeriodoController extends PLRController {
 
             fields : [
                 {type : "control", width : 60, editButton : self._perfilController.hasPermissionToArea(9), deletButton : self._perfilController.hasPermissionToArea(9)}, //[0]
-                {name : "meta.id", title : "Indicador", type : "select", align : "center", width : 200, items : self._listaMetas,
+                {name : "meta.id", title : "Código", type : "number", align : "center", width : 100, readOnly : true, 
+                    insertTemplate : function () {
+                        var grid = this._grid;
+                        var $fieldCodigo = jsGrid.fields.number.prototype.insertTemplate.call(this, arguments);
+
+                        $fieldCodigo.css("background-color", "#d4d6d9");
+
+                        return $fieldCodigo;
+                     },
+
+                     editTemplate : function (value, editItem) {
+                        var grid = this._grid;
+                        var $fieldCodigo = jsGrid.fields.number.prototype.editTemplate.apply(this, arguments);
+
+                        $fieldCodigo.css("background-color", "#d4d6d9");
+
+                        return $fieldCodigo;
+                     },
+                },
+                {name : "meta.id", title : "Indicador", type : "select", align : "left", width : 200, items : self._listaMetas,
                     valueField : "id", textField : "descricao",
                     validate : {
                         validator : "required",

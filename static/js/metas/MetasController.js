@@ -9,7 +9,8 @@ class MetasController extends PLRController {
 
 		this._dialogVersao = $('#dialogVersao');
 		
-		this.applyConstraintsOnFields(['#meusCadastrosTab',], [], this._perfilController.hasPermissionToArea(2));
+		this.applyConstraintsOnFields(['#meusCadastrosTab'], [], this._perfilController.hasPermissionToArea(2));
+		this.applyConstraintsOnFields(['#metasPendentesTab'], [], this._perfilController.hasPermissionToArea(3));
 		this.applyConstraintsOnFields(['#cadastros-tab'], [], this._perfilController.hasPermissionToArea(8));
 
 		this._initFields();
@@ -35,9 +36,9 @@ class MetasController extends PLRController {
 		this._gridFolhaMetasArea = $('#idGridFolhaMetasArea');
 		
 		//historico
-		this._gridMetasRegistrado = $('#jsGridMetasRegistrado');
-		this._gridMetasPertencente = $('#jsGridMetasPertencente');
-		this._gridmetasPendentes = $('#jsGridMetasPendentes');
+		this._gridmMinhasMetas = $('#jsGridMetasRegistrado');
+		this._gridMetasCadastradas = $('#jsGridMetasPertencente');
+		this._gridMetasPendentes = $('#jsGridMetasPendentes');
 
 		//Buttons
 		this._btnCriarVersao = $('#btnCriarVersao');
@@ -94,12 +95,13 @@ class MetasController extends PLRController {
 		}
 	}
 
+	/** Todas as situações */
 	_findMetasCadastradasUsuarioLogado() {
 		let self = this;
 		$.when(self._metasBusiness.findMetasCadastradasUsuarioLogado(getPeriodoPLR()))
 		 .done(function(metas) {
 			if (metas && metas.length > 0) {
-				self._loadGridMetas(self._gridMetasRegistrado, metas);
+				self._loadGridMetas(self._gridMetasCadastradas, metas);
 			}
 		 })
 		 .fail(function(xhr, textStatus, errorThrown) {
@@ -107,12 +109,13 @@ class MetasController extends PLRController {
 		 });
 	}
 
+	/** Aprovadas */
 	_findMetasPertencentesUsuarioLogado() {
 		let self = this;
 		$.when(self._metasBusiness.findMetasPertencentesUsuarioLogado(getPeriodoPLR()))
 		 .done(function(metas) {
 			if (metas && metas.length > 0) {
-				self._loadGridMetas(self._gridMetasPertencente, metas);
+				self._loadGridMetas(self._gridmMinhasMetas, metas);
 			}
 		 })
 		 .fail(function(xhr, textStatus, errorThrown) {
@@ -120,12 +123,13 @@ class MetasController extends PLRController {
 		 });
 	}
 
+	/**  */
 	_findMetasPendentesUsuarioLogado() {
 		let self = this;
 		$.when(self._metasBusiness.findMetasPendentesUsuarioLogado(getPeriodoPLR()))
 		 .done(function(metas) {
 			if (metas && metas.length > 0) {
-				self._loadGridMetas(self._gridmetasPendentes, metas);
+				self._loadGridMetas(self._gridMetasPendentes, metas);
 			}
 		 })
 		 .fail(function(xhr, textStatus, errorThrown) {
@@ -174,7 +178,13 @@ class MetasController extends PLRController {
 						editButton : false, 
 						itemTemplate: function(value, item) {
 							var $result = this.__proto__.itemTemplate.call(this, value, item);
-							
+							var $viewItems = $("<a style='color: #003cbe'><i class='fas fa-eye fa-lg' " +
+							" title='Visualizar Folha de Meta' style= 'margin-left: 7px;'></i></a>")
+										   .click(function() {
+												let itemMetaController = new ItemMetasController(1400, 600);
+												itemMetaController.cadastrarItemMeta(item);
+										   });
+										   
 							var $view = $("<a style='color: #003cbe'><i class='fas fa-eye fa-lg' " +
 							" title='Visualizar Meta' style= 'margin-left: 7px;'></i></a>")
 										   .click(function() {
@@ -184,6 +194,8 @@ class MetasController extends PLRController {
 							
 							if (item.situacao != 'P') {
 								$result = $result.add($view);
+							} else {
+								$result = $result.add($viewItems);
 							}
 
 							return $result;

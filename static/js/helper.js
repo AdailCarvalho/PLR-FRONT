@@ -281,8 +281,8 @@ app_standalone_properties = {
 }
 
 app_tomcat_properties = {
-    app_base_uri : 'http://localhost:8080/planometas',
-    api_base_uri : 'http://localhost:8080/plr-api'
+    app_base_uri : 'http://172.16.0.16:8080/planometas',
+    api_base_uri : 'http://172.16.0.16:8080/plr-api'
 }
 
 function getPropertyVal(key) {

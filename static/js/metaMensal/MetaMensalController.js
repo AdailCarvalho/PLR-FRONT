@@ -5,14 +5,14 @@ class MetaMensalController extends PLRController {
         this._business = new MetaMensalBusiness();
         this._perfilController = new PerfilController();
 
-        this.applyConstraintsOnFields(['#metasMensaisTab'], [], this._perfilController.hasPermissionToArea(6));
-        this.initFields();
-
         let $body = $("body");
         $(document).on({
             ajaxStart: function() { $body.addClass("loading");    },
             ajaxStop: function() { $body.removeClass("loading"); }
         });
+
+        this.applyConstraintsOnFields(['#metasMensaisTab'], [], this._perfilController.hasPermissionToArea(6));
+        this.initFields();
     }
 
     initFields() {
@@ -136,7 +136,12 @@ class MetaMensalController extends PLRController {
         let mensalPlanejado = self._dataMetaMensalArray[0];
         let mensalReal = self._dataMetaMensalArray[1];
         let itensMetasMensais = [];
-
+		
+		if (!self._indicadorMensal.val()) {
+            MessageView.showWarningMessage("Por favor, escolha um indicador.");
+            return;
+        }
+		
         for (var i = 0; i < self._listaCamposMes.length; i ++) {
             let itemUnificado = {
                 id : mensalReal[self._listaCamposIdMes[i]], 
@@ -328,7 +333,7 @@ class MetaMensalController extends PLRController {
                 {name : "valJan",  title : "Jan", type : "decimal", align : "center", width : 150, //[2]
                  validate: {
                         validator : function (value) {
-                            return /^-?\d{1,3}(\.\d{3})*(,\d{0,4})?$/.test(value);
+                            return /^-?\d{1,3}(\.?\d{3})*(,\d{0,4})?$/.test(value);
                         },
                         message : "Por favor, informe um número válido"
                     }
@@ -336,7 +341,7 @@ class MetaMensalController extends PLRController {
                 {name : "valFev", title : "Fev", type : "decimal", align : "center", width : 150, 
                  validate: {
                         validator : function (value) {
-                            return /^-?\d{1,3}(\.\d{3})*(,\d{0,4})?$/.test(value);
+                            return /^-?\d{1,3}(\.?\d{3})*(,\d{0,4})?$/.test(value);
                          },
                         message : "Por favor, informe um número válido"
                     }
@@ -344,7 +349,7 @@ class MetaMensalController extends PLRController {
                 {name : "valMar",  title : "Mar", type : "decimal", align : "center", width : 150,
                     validate: {
                         validator : function (value) {
-                            return /^-?\d{1,3}(\.\d{3})*(,\d{0,4})?$/.test(value);
+                            return /^-?\d{1,3}(\.?\d{3})*(,\d{0,4})?$/.test(value);
                         },
                         message : "Por favor, informe um número válido"
                     }
@@ -352,7 +357,7 @@ class MetaMensalController extends PLRController {
                 {name : "valAbr",  title : "Abr", type : "decimal", align : "center", width : 150,
                  validate: {
                         validator : function (value) {
-                            return /^-?\d{1,3}(\.\d{3})*(,\d{0,4})?$/.test(value);
+                            return /^-?\d{1,3}(\.?\d{3})*(,\d{0,4})?$/.test(value);
                         },
                         message : "Por favor, informe um número válido"
                     }
@@ -360,7 +365,7 @@ class MetaMensalController extends PLRController {
                 {name : "valMai",  title : "Mai", type : "decimal", align : "center", width : 150,
                     validate: {
                         validator : function (value) {
-                            return /^-?\d{1,3}(\.\d{3})*(,\d{0,4})?$/.test(value);
+                            return /^-?\d{1,3}(\.?\d{3})*(,\d{0,4})?$/.test(value);
                         },
                         message : "Por favor, informe um número válido"
                     }
@@ -368,7 +373,7 @@ class MetaMensalController extends PLRController {
                 {name : "valJun", title : "Jun", type : "decimal", align : "center", width : 150,
                     validate: {
                         validator : function (value) {
-                            return /^-?\d{1,3}(\.\d{3})*(,\d{0,4})?$/.test(value);
+                            return /^-?\d{1,3}(\.?\d{3})*(,\d{0,4})?$/.test(value);
                         },
                         message : "Por favor, informe um número válido"
                     }
@@ -376,7 +381,7 @@ class MetaMensalController extends PLRController {
                 {name : "valJul",  title : "Jul", type : "decimal", align : "center", width : 150,
                     validate: {
                         validator : function (value) {
-                            return /^-?\d{1,3}(\.\d{3})*(,\d{0,4})?$/.test(value);
+                            return /^-?\d{1,3}(\.?\d{3})*(,\d{0,4})?$/.test(value);
                         },
                         message : "Por favor, informe um número válido"
                     }
@@ -384,7 +389,7 @@ class MetaMensalController extends PLRController {
                 {name : "valAgo", title : "Ago", type : "decimal", align : "center", width : 150,
                     validate: {
                         validator : function (value) {
-                            return /^-?\d{1,3}(\.\d{3})*(,\d{0,4})?$/.test(value);
+                            return /^-?\d{1,3}(\.?\d{3})*(,\d{0,4})?$/.test(value);
                         },
                         message : "Por favor, informe um número válido"
                     }
@@ -392,7 +397,7 @@ class MetaMensalController extends PLRController {
                 {name : "valSet",  title : "Set", type : "decimal", align : "center", width : 150,
                     validate: {
                         validator : function (value) {
-                            return /^-?\d{1,3}(\.\d{3})*(,\d{0,4})?$/.test(value);
+                            return /^-?\d{1,3}(\.?\d{3})*(,\d{0,4})?$/.test(value);
                         },
                         message : "Por favor, informe um número válido"
                     }
@@ -400,7 +405,7 @@ class MetaMensalController extends PLRController {
                 {name : "valOut",  title : "Out", type : "decimal", align : "center", width : 150,
                     validate: {
                         validator : function (value) {
-                            return /^-?\d{1,3}(\.\d{3})*(,\d{0,4})?$/.test(value);
+                            return /^-?\d{1,3}(\.?\d{3})*(,\d{0,4})?$/.test(value);
                         },
                         message : "Por favor, informe um número válido"
                     }
@@ -408,7 +413,7 @@ class MetaMensalController extends PLRController {
                 {name : "valNov",  title : "Nov", type : "decimal", align : "center", width : 150,
                     validate: {
                         validator : function (value) {
-                            return /^-?\d{1,3}(\.\d{3})*(,\d{0,4})?$/.test(value);
+                            return /^-?\d{1,3}(\.?\d{3})*(,\d{0,4})?$/.test(value);
                         },
                         message : "Por favor, informe um número válido"
                     }
@@ -416,7 +421,7 @@ class MetaMensalController extends PLRController {
                 {name : "valDez", title : "Dez",  type : "decimal", align : "center", width : 150,
                     validate: {
                         validator : function (value) {
-                            return /^-?\d{1,3}(\.\d{3})*(,\d{0,4})?$/.test(value);
+                            return /^-?\d{1,3}(\.?\d{3})*(,\d{0,4})?$/.test(value);
                         },
                         message : "Por favor, informe um número válido"
                     }

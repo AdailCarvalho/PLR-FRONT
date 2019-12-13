@@ -1,10 +1,18 @@
 class ItemMetasController extends PLRController {
 
-    constructor() {
+    constructor(widthCadastro, minHeightCadastro) {
         super();
 
         this._business = new ItemMetasBusiness();
 		this._perfilController = new PerfilController();
+		this._minHeightCadastro = minHeightCadastro ;
+		this._widthCadastro = widthCadastro;
+
+		let $body = $("body");
+        $(document).on({
+            ajaxStart: function() { $body.addClass("loading");    },
+            ajaxStop: function() { $body.removeClass("loading"); }
+        });
 
 		this.applyConstraintsOnFields(['#itemMetasTab'], [],  this._perfilController.hasPermissionToArea(7));
 		this.applyConstraintsOnFields(['#idPesquisaItemMetaCompleta'], [],  this._perfilController.hasPermissionToArea(10));
@@ -12,11 +20,6 @@ class ItemMetasController extends PLRController {
 
 		this.initFields();
 
-        let $body = $("body");
-        $(document).on({
-            ajaxStart: function() { $body.addClass("loading");    },
-            ajaxStop: function() { $body.removeClass("loading"); }
-        });
     }
 
     initFields() {
@@ -67,30 +70,31 @@ class ItemMetasController extends PLRController {
 	}
 	
 	_initFieldsCadastro() {
-
-		this._fieldMatriculaItemCadastro = $("#matriculaItemCadastro");
-		this._fieldColaboradorItemCadastro = $("#colaboradorItemCadastro");
-		this._fieldInicioVigenciaItemCadastro = $("#inicioVigenciaItemCadastro");
-		this._fieldFimVigenciaItemCadastro = $("#fimVigenciaItemCadastro");
-		this._fieldResponsavelItemCadastro = $("#responsavelItemCadastro");
-		this._fieldNumeroFolhaMeta = $("#numeroFolhaMeta");
-		this._fieldSomatorioPeso = $('#somatorioPeso');
-		this._fieldCargoItemCadastro = $("#cargoItemCadastro");
-		this._fieldDiretoriaItemCadastro = $("#diretoriaItemCadastro");
-		this._fieldTimeItemCadastro = $("#timeItemCadastro");
-		this._fieldFilialItemCadastro = $("#filialItemCadastro");
-		this._gridCadastroItensMeta = $("#jsGridCadastroItensMeta");
+		let self = this;
+		
+		self._fieldMatriculaItemCadastro = $("#matriculaItemCadastro");
+		self._fieldColaboradorItemCadastro = $("#colaboradorItemCadastro");
+		self._fieldInicioVigenciaItemCadastro = $("#inicioVigenciaItemCadastro");
+		self._fieldFimVigenciaItemCadastro = $("#fimVigenciaItemCadastro");
+		self._fieldResponsavelItemCadastro = $("#responsavelItemCadastro");
+		self._fieldNumeroFolhaMeta = $("#numeroFolhaMeta");
+		self._fieldSomatorioPeso = $('#somatorioPeso');
+		self._fieldCargoItemCadastro = $("#cargoItemCadastro");
+		self._fieldDiretoriaItemCadastro = $("#diretoriaItemCadastro");
+		self._fieldTimeItemCadastro = $("#timeItemCadastro");
+		self._fieldFilialItemCadastro = $("#filialItemCadastro");
+		self._gridCadastroItensMeta = $("#jsGridCadastroItensMeta");
 	
 
-		this._fieldsCadastroItemMetasList = [this._fieldMatriculaItemCadastro, this._fieldColaboradorItemCadastro, 
-											this._fieldInicioVigenciaItemCadastro, this._fieldFimVigenciaItemCadastro, 
-											this._fieldResponsavelItemCadastro, this._fieldSomatorioPeso];
-		this._listaMetas = [];
-		this._idItemMeta = null;
-		this._isNewItemMeta = true;
+		self._fieldsCadastroItemMetasList = [self._fieldMatriculaItemCadastro, self._fieldColaboradorItemCadastro, 
+											self._fieldInicioVigenciaItemCadastro, self._fieldFimVigenciaItemCadastro, 
+											self._fieldResponsavelItemCadastro, self._fieldSomatorioPeso];
+		self._listaMetas = [];
+		self._idItemMeta = null;
+		self._isNewItemMeta = true;
 
 
-		this._fieldInicioVigenciaItemCadastro.datepicker({
+		self._fieldInicioVigenciaItemCadastro.datepicker({
 			numberOfMonths: 3,
 			minDate : new Date(getPeriodoPLR(), 0, 1) ,
 			maxDate : new Date(getPeriodoPLR(), 11, 31),
@@ -102,7 +106,7 @@ class ItemMetasController extends PLRController {
 			monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']
 		});
 
-		this._fieldFimVigenciaItemCadastro.datepicker({
+		self._fieldFimVigenciaItemCadastro.datepicker({
 			numberOfMonths: 3,
 			minDate : new Date(getPeriodoPLR(), 0, 1) ,
 			maxDate : new Date(getPeriodoPLR(), 11, 31),
@@ -114,27 +118,29 @@ class ItemMetasController extends PLRController {
 			monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']
 		});
 		
-		this._modalCadastroItemMetas = $("#modalCadastroItemMetas");
-		this._carregarListaMetas();
-		this._loadGridCadastroItemMetas([]);
-		this._loadGridPesquisaColaboradorSimples([]);
+		self._modalCadastroItemMetas = $("#modalCadastroItemMetas");
+		self._carregarListaMetas();
+		self._loadGridCadastroItemMetas([]);
+		self._loadGridPesquisaColaboradorSimples([]);
 
-		this._modalCadastroItemMetas.dialog({
+		self._modalCadastroItemMetas.dialog({
 			autoOpen: false,
+			draggable : false,
 			resizable: false,
-			minHeight : 600,
-			width: 1400,
+			minHeight : self._minHeightCadastro ? self._minHeightCadastro : 850,
+			width: self._widthCadastro ? self._widthCadastro : 1650,
 			show: {effect: "fade", duration: 200},
 			hide: {effect: "explode", duration: 200},
 			position: {my: "center", at: "center", of: window}
 		});
 	}
-
 	
 	/** Carregar Dados */
 
+	
 	_carregarListaMetas() {
 		let self = this;
+		
 		$.when(self._business.getLista("/metas/quantitativas/" + getPeriodoPLR()))
 		.done(function (serverData) {
 			self._listaMetas = serverData;
@@ -217,17 +223,23 @@ class ItemMetasController extends PLRController {
 	salvarItemMeta() {
 		let self = this;
 		let novaFolhaMeta = this._itemMetasDataCadastro;
+		
 		if (self._fieldSomatorioPeso.val() != 100) {
 			MessageView.showWarningMessage("Itens de folha não cadastrados ou inválidos!\nConfira se os itens foram informados" 
-			+ " e se o somatório de pesos atingiu o valor = 100, para que seja possível concluir o cadastro da Folha.");
+			+ " e se o somatório de pesos atingiu o valor = 100, para que seja possível concluir o cadastro da Folha. ");
 			return;
 		}
 
 		if(new Validation().validateFields(self._validateCadastro())) {
 			$.when(self._business.salvarItemMeta(novaFolhaMeta))
 			.done(function (serverData) {
-				showTemporalCadastroMessage('success', 'Dados da Folha de Meta salvos com sucesso!\nAnote os dados da Folha de Meta\nNúmero: ' 
-					+ serverData.id + '\nColaborador: ' + self._fieldColaboradorItemCadastro.val() + '\nMatrícula: '+ self._fieldMatriculaItemCadastro.val());
+				if (novaFolhaMeta.id) {
+					showTemporalCadastroMessage('success', 'Dados da Folha de Meta atualizados com sucesso!');
+				} else {
+					showTemporalCadastroMessage('success', 'Dados da Folha de Meta salvos com sucesso!\nAnote os dados da Folha de Meta\nNúmero: ' 
+						+ serverData.id + '\nColaborador: ' + self._fieldColaboradorItemCadastro.val() + '\nMatrícula: '+ self._fieldMatriculaItemCadastro.val());
+				}
+				
 				self._idItemMeta = serverData.id;
 				$('.nav a[href="#' + 'dadosFolhaMeta' + '"]').tab('show');
 				self._fieldNumeroFolhaMeta.val(serverData.id);
@@ -513,7 +525,7 @@ class ItemMetasController extends PLRController {
 					validate : {
 						validator : "required",
 						message : "Informe o Indicador"
-					}
+					},
 				},
 				{name : "peso", type : "floatNumber", title : "Peso", width : 100, align : "center", //[4]
 				 validate : 
@@ -584,7 +596,7 @@ class ItemMetasController extends PLRController {
 		});
 		
 		return {
-			id : self._idItemMeta,
+			id : self._idItemMeta ? self._idItemMeta : self._fieldNumeroFolhaMeta.val(),
 			situacao : "P",
 			inicioVigencia : self._fieldInicioVigenciaItemCadastro.val(),
 			fimVigencia : self._fieldFimVigenciaItemCadastro.val(),

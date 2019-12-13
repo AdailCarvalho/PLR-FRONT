@@ -6,7 +6,7 @@ class MetasPeriodoBusiness extends PLRBusiness {
 
     getDadosMetasPeriodo() {
         return $.ajax({
-            url : this._API_BASE_URI + '/metasperiodo',
+            url : this._API_BASE_URI + '/metasperiodo/' + getPeriodoPLR() + "0101?page=50",
             type : "GET",
             async : false
         });
