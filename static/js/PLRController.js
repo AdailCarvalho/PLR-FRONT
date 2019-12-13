@@ -6,6 +6,8 @@ class PLRController {
         if (!hasPermission) {
             this.enableDisableElements(fieldsToBlock, true);
             this.hideElements(fieldsToHide);
+        } else {
+          fieldsToHide.forEach(field => this.showHiddenElement($(field)));
         }
     }
 

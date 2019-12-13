@@ -157,7 +157,8 @@
                             </div>
                             <div class="form-group col-md-3">
                                     <label class="plr-bold" for="selectIndicadorMensal" title="Indicador">Indicador: </label>
-                                    <select id="selectIndicadorMensal" class="form-control" onchange="metaMensalController.findMetasMensaisForIndicador()">
+                                    <select id="selectIndicadorMensal" class="form-control" data-live-search="true" 
+                                            onchange="metaMensalController.findMetasMensaisForIndicador()">
                                     </select>
                             </div>
                             <div class="form-group col-md-2">
@@ -203,6 +204,7 @@
                                 </div>
                         </div>
                 </div>
+                <br />
                 <div class="row">
                     <div class="col-md-auto">
                             <input type="button" value="Salvar" id="salvarMetasMensais" title="Salvar" class="btn btn-sm btn-success" 

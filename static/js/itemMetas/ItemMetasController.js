@@ -92,7 +92,7 @@ class ItemMetasController extends PLRController {
 		self._listaMetas = [];
 		self._idItemMeta = null;
 		self._isNewItemMeta = true;
-
+		self._isFolhaEditavel = true;
 
 		self._fieldInicioVigenciaItemCadastro.datepicker({
 			numberOfMonths: 3,
@@ -119,6 +119,8 @@ class ItemMetasController extends PLRController {
 		});
 		
 		self._modalCadastroItemMetas = $("#modalCadastroItemMetas");
+		
+
 		self._carregarListaMetas();
 		self._loadGridCadastroItemMetas([]);
 		self._loadGridPesquisaColaboradorSimples([]);
@@ -202,6 +204,11 @@ class ItemMetasController extends PLRController {
 			self._isNewItemMeta = false;
 			self._fieldMatriculaItemCadastro.prop('disabled', true)
 			self._fieldColaboradorItemCadastro.prop('disabled', true);
+
+			self.applyConstraintsOnFields(['#salvarCadastroItemMeta'],	
+				[self._fieldInicioVigenciaItemCadastro, self._fieldFimVigenciaItemCadastro, self._fieldMatriculaItemCadastro, self._fieldColaboradorItemCadastro], 
+				self._isFolhaEditavel);
+			
 		} else {
 			self.showHiddenElement(self._areaPesquisaSimplesColaborador);
 
@@ -211,6 +218,8 @@ class ItemMetasController extends PLRController {
 			self._fieldColaboradorItemCadastro.val("");
 			self._fieldMatriculaItemCadastro.removeAttr('disabled');
 			self._fieldColaboradorItemCadastro.removeAttr('disabled');
+			self._fieldInicioVigenciaItemCadastro.val("01/01/" + getPeriodoPLR());
+			self._fieldFimVigenciaItemCadastro.val("31/12/" + getPeriodoPLR());
 			self._loadGridPesquisaColaboradorSimples([]);
 			self._loadGridCadastroItemMetas([]);
 		}
@@ -271,6 +280,7 @@ class ItemMetasController extends PLRController {
 
 	_preencheFormCadastroItemMeta(metaItem) {
 		this._idItemMeta = metaItem.id;
+		this._isFolhaEditavel = metaItem.situacao == 'P';
 		this._fieldNumeroFolhaMeta.val(metaItem.id);
 		this._fieldNumeroFolhaMeta.focus();
 		this._fieldMatriculaItemCadastro.val(metaItem.colaborador.matricula);
@@ -327,7 +337,7 @@ class ItemMetasController extends PLRController {
                 {name : "inicioVigencia", title : "Início Vigência", type : "text", align : "center", width : 100, editing: false},
                 {name : "fimVigencia", title : "Fim Vigência", type : "text", align : "center", width : 100, editing: false},
 				{name : "responsavel.nome", title: "Responsável", type : "text", align : "center", width : 200, editing: false},
-				{name : "situacao", title : "Status", type : "select", items : [{id : "A", nome : "Ativo"}, {id : "I", nome : "Inativo"}],
+				{name : "situacao", title : "Status", type : "select", items : [{id : "A", nome : "Ativo"}, {id : "I", nome : "Inativo"}, [{id : "P", nome : "Pendente"}]],
 				 valueField : "id", textField : "nome", align : "center", width : 50, editing: false}
 			]
 		});
@@ -381,8 +391,8 @@ class ItemMetasController extends PLRController {
 			width: "100%",
 			height: "auto",
 	 
-			inserting: true,
-			editing: true,
+			inserting: self._isFolhaEditavel,
+			editing: self._isFolhaEditavel,
 			sorting: true,
 			paging: true,
 			autoload : true,
@@ -481,7 +491,7 @@ class ItemMetasController extends PLRController {
 				self._configFieldSomatorioPeso(somaPeso);
 			},
 			fields : [
-				{type : "control", width : 40}, //[0]
+				{type : "control", width : 40, deleteButton : self._isFolhaEditavel, editButton : self._isFolhaEditavel}, //[0]
 				{name : "sequencia", type : "number", title : "Sequência", width : 100, align : "center", readOnly : true, //[1]
 				 insertTemplate : function () {
 					var grid = this._grid;
@@ -521,11 +531,41 @@ class ItemMetasController extends PLRController {
 						return $fieldCodigo;
 					 },
 				},
-				{name : "meta.id", type : "select", title : "Indicador", items : self._listaMetas, valueField : "id", textField : "descricao", width : 250, align : "left", //[3]
+				{name : "meta.id", type : "select", title : "Indicador", items : self._listaMetas, valueField : "id", textField : "descricao", width : 350, align : "left", //[3]
 					validate : {
 						validator : "required",
 						message : "Informe o Indicador"
 					},
+					insertTemplate: function(value, item) {
+						   var $select = jsGrid.fields.select.prototype.insertTemplate.call(this);
+						   $select.addClass('selectpicker form-control');
+						   $select.attr("data-live-search", "true");
+			   			   $select.attr("data-container", "body");
+						   
+						   setTimeout(function() {
+							   $select.selectpicker({
+								   liveSearch: true
+							   });		             		
+							   $select.selectpicker('refresh');
+							   $select.selectpicker('render');
+						   });
+						   return $select;
+					},
+					editTemplate : function (value, editItem) {
+						var $select = jsGrid.fields.select.prototype.editTemplate.apply(this, arguments);
+						$select.addClass('selectpicker form-control');
+						$select.attr("data-live-search", "true");
+						   $select.attr("data-container", "body");
+						
+						setTimeout(function() {
+							$select.selectpicker({
+								liveSearch: true
+							});		             		
+							$select.selectpicker('refresh');
+							$select.selectpicker('render');
+						});
+						return $select;
+					}
 				},
 				{name : "peso", type : "floatNumber", title : "Peso", width : 100, align : "center", //[4]
 				 validate : 
@@ -535,25 +575,6 @@ class ItemMetasController extends PLRController {
 						},
 						message : "Informe o Peso"
 					}
-				},
-				{name : "tipoSugerida", type : "text", title : "Sugerida (S/N)", align : "center", width : 100, readOnly : true, //[5]
-					insertTemplate : function () {
-						var grid = this._grid;
-						var $fieldSugerida = jsGrid.fields.text.prototype.insertTemplate.call(this, arguments);
-
-						$fieldSugerida.css("background-color", "#d4d6d9");
-
-						return $fieldSugerida;
-					 },
-
-					 editTemplate : function (value, editItem) {
-						var grid = this._grid;
-						var $fieldSugerida = jsGrid.fields.text.prototype.editTemplate.apply(this, arguments);
-
-						$fieldSugerida.css("background-color", "#d4d6d9");
-
-						return $fieldSugerida;
-					 },
 				}
 			]
 		});

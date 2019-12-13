@@ -31,6 +31,8 @@ class MetaMensalController extends PLRController {
         this._gridCadastroMetasMensais = $("#jsGridCadastroMetasMensais");
         this._modalCopiaMetasMensais = $("#modalCopiaMetasMensais");
 
+        this._indicadorMensal.selectpicker();
+
         this._listaIndicadores = [];
         this._listaCamposMes = ['valJan', 'valFev', 'valMar', 'valAbr', 'valMai', 'valJun', 'valJul', 'valAgo', 'valSet', 'valOut', 'valNov', 'valDez'];
         this._listaCamposMesNum = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
@@ -60,9 +62,9 @@ class MetaMensalController extends PLRController {
 		let self = this;
 		$.when(self._business.getLista("/metas/quantitativas/" + getPeriodoPLR()))
 		.done(function (serverData) {
-            let listaIndicadoresFiltered = serverData.filter(item => (item.formula.nome == "SOMA" || item.formula.nome == "MEDIA"));
+            let listaIndicadoresFiltered = serverData;
 			listaIndicadoresFiltered.forEach(item => {
-				item.value = item.id;
+                item.value = item.id;
 				item.text = item.descricao;
             });
             

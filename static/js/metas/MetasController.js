@@ -6,8 +6,6 @@ class MetasController extends PLRController {
 		this._metasBusiness = new MetasBusiness();
 		this._perfilController = new PerfilController();
 		this._colaboradorBusiness = new ColaboradorBusiness();
-
-		this._dialogVersao = $('#dialogVersao');
 		
 		this.applyConstraintsOnFields(['#meusCadastrosTab'], [], this._perfilController.hasPermissionToArea(2));
 		this.applyConstraintsOnFields(['#metasPendentesTab'], [], this._perfilController.hasPermissionToArea(3));
@@ -47,19 +45,7 @@ class MetasController extends PLRController {
 		this._idsButtons = [{id : '#btnEditar'}, {id : '#btnCancel'},{id : "#btnExport"},{id : "#btnCriarVersao"}, {id : "#btnAnexarFoto"}];
 
 		//Select grids
-		this._selectFrequenciaAvaliacao = [{frequencia : ""}, {frequencia : "Mensal"},{frequencia : "Bimestral"},{frequencia : "Trimestral"},
-										   {frequencia : "Semestral"},{frequencia : "Anual"},{frequencia : "Data Específica"}];
-		this._selectTipoMetas = [{tipoMeta : ""},{tipoMeta : "Quanto Maior, Melhor"},{tipoMeta : "Quanto Menor, Melhor"},{tipoMeta : "Cumpriu/Não Cumpriu"}];										   
 		this._selectSituacao = [{situacao : "A", descSituacao : "ATIVO"}, {situacao : "I", descSituacao : "INATIVO"}, {situacao : "P", descSituacao : "PENDENTE"}];
-
-		this._dialogVersao.dialog({
-			resizable: false,
-			height: "auto",
-			width: 600,
-			modal: true,
-			autoOpen: false,
-			closeOnEscape: true
-		});
 
 		this._loadGridFolhaMetas(this._folhaMetasData);
 	}
@@ -184,19 +170,15 @@ class MetasController extends PLRController {
 												let itemMetaController = new ItemMetasController(1400, 600);
 												itemMetaController.cadastrarItemMeta(item);
 										   });
-										   
+							/*			   
 							var $view = $("<a style='color: #003cbe'><i class='fas fa-eye fa-lg' " +
 							" title='Visualizar Meta' style= 'margin-left: 7px;'></i></a>")
 										   .click(function() {
 												$('.nav a[href="#' + 'metas' + '"]').tab('show');
 												self._findValoresMetasForFolhaMeta(item.id, item.situacao, item.colaborador.matricula);
-										   });
+										   });*/
 							
-							if (item.situacao != 'P') {
-								$result = $result.add($view);
-							} else {
-								$result = $result.add($viewItems);
-							}
+							$result = $result.add($viewItems);
 
 							return $result;
 					}
