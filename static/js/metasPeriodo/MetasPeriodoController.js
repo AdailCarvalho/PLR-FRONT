@@ -121,7 +121,8 @@ class MetasPeriodoController extends PLRController {
             },
 
             fields : [
-                {type : "control", width : 60, editButton : self._perfilController.hasPermissionToArea(9), deletButton : self._perfilController.hasPermissionToArea(9)}, //[0]
+                {type : "control", width : 60, editButton : self._perfilController.hasPermissionToArea(9), deletButton : self._perfilController.hasPermissionToArea(9)
+                }, //[0]
                 {name : "meta.id", title : "Código", type : "number", align : "center", width : 100, readOnly : true, 
                     insertTemplate : function () {
                         var grid = this._grid;
@@ -193,7 +194,7 @@ class MetasPeriodoController extends PLRController {
                      message : "Favor informar a Situação"
                  }
                 } //[3]
-            ]
+            ],
         });
     }
 

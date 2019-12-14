@@ -45,7 +45,7 @@ class MetasController extends PLRController {
 		this._idsButtons = [{id : '#btnEditar'}, {id : '#btnCancel'},{id : "#btnExport"},{id : "#btnCriarVersao"}, {id : "#btnAnexarFoto"}];
 
 		//Select grids
-		this._selectSituacao = [{situacao : "A", descSituacao : "ATIVO"}, {situacao : "I", descSituacao : "INATIVO"}, {situacao : "P", descSituacao : "PENDENTE"}];
+		this._selectSituacao = [{},{situacao : "A", descSituacao : "ATIVO"}, {situacao : "I", descSituacao : "INATIVO"}, {situacao : "P", descSituacao : "PENDENTE"}];
 
 		this._loadGridFolhaMetas(this._folhaMetasData);
 	}
@@ -140,18 +140,19 @@ class MetasController extends PLRController {
 		gridObject.jsGrid({
 			width: "100%",
 			height: "auto",
-	 
+			autoload : true,
 			inserting: false,
 			editing: false,
 			sorting: true,
+			filtering : true,
 			paging: true,
 			pageSize: 15,
-			data: itemsMetas,
 			pagerFormat: 'Páginas: {first} {prev} {pages} {next} {last} &nbsp;&nbsp; {pageIndex} de {pageCount}',
 			pageNextText: 'Próxima',
 			pagePrevText: 'Anterior',
 			pageFirstText: 'Primeira',
 			pageLastText: 'Última', 
+			filterButtonTooltip: "Filtrar nos resultados",
 
 			rowClick : function(args) {
 				return false;
@@ -160,6 +161,9 @@ class MetasController extends PLRController {
 			fields: [
 				{type: "control", width : 50, align : "center", deleteButton : false, inserting : false, 
 						editButton : false, 
+						_createFilterSwitchButton: function() {
+							return this._createOnOffSwitchButton("filtering", this.searchModeButtonClass, false);
+						},
 						itemTemplate: function(value, item) {
 							var $result = this.__proto__.itemTemplate.call(this, value, item);
 							var $viewItems = $("<a style='color: #003cbe'><i class='fas fa-eye fa-lg' " +
@@ -175,14 +179,6 @@ class MetasController extends PLRController {
 												let itemMetaController = new ItemMetasController(1400, 600);
 												itemMetaController.cadastrarItemMeta(item);
 											});
-
-							/*			   
-							var $view = $("<a style='color: #003cbe'><i class='fas fa-eye fa-lg' " +
-							" title='Visualizar Meta' style= 'margin-left: 7px;'></i></a>")
-										   .click(function() {
-												$('.nav a[href="#' + 'metas' + '"]').tab('show');
-												self._findValoresMetasForFolhaMeta(item.id, item.situacao, item.colaborador.matricula);
-										   });*/
 							
 							if (item.situacao == 'P') {
 								$result = $result.add($editItems);
@@ -200,8 +196,23 @@ class MetasController extends PLRController {
 				{name : "inicioVigencia", title : "Início Vigência", type : "text", align : "center", width : 100, editing: false},
 				{name : "fimVigencia", title : "Fim Vigência", type : "text", align : "center", width : 100},
 				{name : "responsavel.nome", title : "Responsável", type : "text", align : "center", width : 225, editing: false}
-			]
+			],
+
+			controller: {
+				loadData:  function(filter) {
+					return $.grep(itemsMetas, function(item) {
+					   return (!filter.id || filter.id == item.id) 
+							 && (!filter.colaborador || item.colaborador.nome.toUpperCase().indexOf(filter.colaborador.nome.toUpperCase()) > -1)
+							 && (!filter.situacao || item.situacao.toUpperCase().indexOf(filter.situacao.toUpperCase()) > -1)
+							 && (!filter.inicioVigencia || item.inicioVigencia.toUpperCase().indexOf(filter.inicioVigencia.toUpperCase()) > -1)
+							 && (!filter.fimVigencia || item.fimVigencia.toUpperCase().indexOf(filter.fimVigencia.toUpperCase()) > -1)
+							 && (!filter.responsavel || item.responsavel.nome.toUpperCase().indexOf(filter.responsavel.nome.toUpperCase()) > -1) 
+					});
+				 } 
+			}
 		});
+
+		gridObject.jsGrid("option", "filtering", false);
 	}
 
 	_loadGridFolhaMetas(folhaMetasData) {
