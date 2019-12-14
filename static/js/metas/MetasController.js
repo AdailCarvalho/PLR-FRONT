@@ -145,7 +145,7 @@ class MetasController extends PLRController {
 			editing: false,
 			sorting: true,
 			paging: true,
-			pageSize: 10,
+			pageSize: 15,
 			data: itemsMetas,
 			pagerFormat: 'Páginas: {first} {prev} {pages} {next} {last} &nbsp;&nbsp; {pageIndex} de {pageCount}',
 			pageNextText: 'Próxima',
@@ -163,11 +163,19 @@ class MetasController extends PLRController {
 						itemTemplate: function(value, item) {
 							var $result = this.__proto__.itemTemplate.call(this, value, item);
 							var $viewItems = $("<a style='color: #003cbe'><i class='fas fa-eye fa-lg' " +
-							" title='Visualizar Folha de Meta' style= 'margin-left: 7px;'></i></a>")
+							" title='Visualizar Folha de Meta' style='margin-left: 7px;'></i></a>")
 										   .click(function() {
 												let itemMetaController = new ItemMetasController(1400, 600);
 												itemMetaController.cadastrarItemMeta(item);
 										   });
+							
+							var $editItems = $("<a style='color : #003cbe'><i class='fas fa-edit fa-lg' "+ 
+							" title='Editar Folha de Meta' style='margin-left : 7px;'></i></a>")
+										   	.click(function() {
+												let itemMetaController = new ItemMetasController(1400, 600);
+												itemMetaController.cadastrarItemMeta(item);
+											});
+
 							/*			   
 							var $view = $("<a style='color: #003cbe'><i class='fas fa-eye fa-lg' " +
 							" title='Visualizar Meta' style= 'margin-left: 7px;'></i></a>")
@@ -176,7 +184,11 @@ class MetasController extends PLRController {
 												self._findValoresMetasForFolhaMeta(item.id, item.situacao, item.colaborador.matricula);
 										   });*/
 							
-							$result = $result.add($viewItems);
+							if (item.situacao == 'P') {
+								$result = $result.add($editItems);
+							} else {
+								$result = $result.add($viewItems);
+							}
 
 							return $result;
 					}
