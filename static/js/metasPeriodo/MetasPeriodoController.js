@@ -60,7 +60,7 @@ class MetasPeriodoController extends PLRController {
     _loadGridMetasPeriodo(metasPeriodoData) {
         let self = this;
         self._gridMetasPeriodo.jsGrid({
-            width: "80%",
+            width: "100%",
             height: "auto",
             inserting: self._perfilController.hasPermissionToArea(9),
             deleting : self._perfilController.hasPermissionToArea(9),
@@ -141,12 +141,43 @@ class MetasPeriodoController extends PLRController {
                         return $fieldCodigo;
                      },
                 },
-                {name : "meta.id", title : "Indicador", type : "select", align : "left", width : 200, items : self._listaMetas,
+                {name : "meta.id", title : "Indicador", type : "select", align : "left", width : 300, items : self._listaMetas,
                     valueField : "id", textField : "descricao",
                     validate : {
                         validator : "required",
                         message : "Favor informar o Indicador"
-                    }                
+                    },
+                    insertTemplate: function(value, item) {
+                        var $select = jsGrid.fields.select.prototype.insertTemplate.call(this);
+                        $select.addClass('selectpicker form-control');
+                        $select.attr("data-live-search", "true");
+                        $select.attr("data-container", "body");
+                        
+                        setTimeout(function() {
+                            $select.selectpicker({
+                                liveSearch: true
+                            });		             		
+                            $select.selectpicker('refresh');
+                            $select.selectpicker('render');
+                        });
+                        return $select;
+                 },
+                 
+                 editTemplate : function (value, editItem) {
+                     var $select = jsGrid.fields.select.prototype.editTemplate.apply(this, arguments);
+                     $select.addClass('selectpicker form-control');
+                     $select.attr("data-live-search", "true");
+                        $select.attr("data-container", "body");
+                     
+                     setTimeout(function() {
+                         $select.selectpicker({
+                             liveSearch: true
+                         });		             		
+                         $select.selectpicker('refresh');
+                         $select.selectpicker('render');
+                     });
+                     return $select;
+                 }                
                 }, //[1]
                 {name : "tempo.ano",  title : "Período PLR", type : "select", align : "center", width : 100, valueField : "ano", 
                  textField : "ano", items : self._listaPeriodos,

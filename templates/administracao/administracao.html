@@ -155,7 +155,7 @@
                                 <label class="plr-bold" for="codigoMetaMensal" title="Código do Indicador">Cod.: </label>
                                 <input type="text" id="codigoMetaMensal" maxlength="256" class="form-control" placeholder="Código" readonly/>
                             </div>
-                            <div class="form-group col-md-3">
+                            <div class="form-group col-md-4">
                                     <label class="plr-bold" for="selectIndicadorMensal" title="Indicador">Indicador: </label>
                                     <select id="selectIndicadorMensal" class="form-control" data-live-search="true" 
                                             onchange="metaMensalController.findMetasMensaisForIndicador()">
@@ -173,7 +173,7 @@
                                 <label class="plr-bold" for="tipoMedicaoMensal" title="Tipo de Medição">Medição: </label>
                                 <input type="text" id="tipoMedicaoMensal" maxlength="32" class="form-control" placeholder="Tipo" readonly/>
                             </div>
-                            <div class="form-group col-md-2">
+                            <div class="form-group col-md-1">
                                 <label class="plr-bold" for="formulaIndicadorMensal" title="Fórmula">Fórmula: </label>
                                 <input type="text" id="formulaIndicadorMensal" maxlength="32" class="form-control" placeholder="Formula" readonly/>
                             </div>
@@ -384,14 +384,14 @@
             </div>
             <hr>
             <div class="row">
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-2">
                     <label for="cadastroTipoMeta" class="plr-bold" title="Tipo de Meta">Tipo: </label>
                     <select id="cadastroTipoMeta" class="form-control" style="font-size: 14px;" onchange="cardapioMetasController.avaliarMetaProjeto()">                      
                     </select>
                 </div>
-                <div class="form-group col-md-2" hidden>
+                <div id="aprovadorRow" class="form-group col-md-4" hidden>
                     <label for="aprovadorMeta" class="plr-bold" title="Aprovador da Meta">Aprovador: </label>
-                    <select id="aprovadorMeta" class="form-control" style="font-size: 14px;" >                      
+                    <select id="aprovadorMeta" class="form-control" style="font-size: 14px;" data-live-search="true">                      
                     </select>
                 </div>
                 <div id="prazoRow" class="form-group col-md-2" hidden>
@@ -427,12 +427,12 @@
                 </div>
                 <div id="cadastroNumeradorMetaArea" class="form-group col-md-4" hidden>
                     <label for="cadastroMetaNumerador" class="plr-bold" title="Indicador Numerador">Numerador: </label>
-                    <select id="cadastroMetaNumerador" class="form-control" style="font-size: 14px;">                      
+                    <select id="cadastroMetaNumerador" class="form-control" style="font-size: 14px;" data-live-search="true">                      
                     </select>
                 </div>
                 <div id="cadastroDenominadorMetaArea" class="form-group col-md-4" hidden>
-                    <label for="cadastroMetaDenominador" class="plr-bold" title="Indicador Denominador">Denomidador: </label>
-                    <select id="cadastroMetaDenominador" class="form-control" style="font-size: 14px;">                      
+                    <label for="cadastroMetaDenominador" class="plr-bold" title="Indicador Denominador" data-live-search="true">Denomidador: </label>
+                    <select id="cadastroMetaDenominador" class="form-control" style="font-size: 14px;" data-live-search="true">                      
                     </select>
                 </div>
             </div>

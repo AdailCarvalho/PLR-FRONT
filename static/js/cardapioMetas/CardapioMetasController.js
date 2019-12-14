@@ -52,6 +52,7 @@ class CardapioMetasController extends PLRController {
 		this._fieldCodigoMeta = $("#cadastroIdMeta");
 		
 		this._prazoRowArea = $("#prazoRow");
+		this._aprovadorRowArea = $("#aprovadorRow");
 
 		this._fieldNumeradorMetaArea = $("#cadastroNumeradorMetaArea");
 		this._fieldDenominadorMetaArea = $("#cadastroDenominadorMetaArea");
@@ -68,9 +69,13 @@ class CardapioMetasController extends PLRController {
 
 		this._modalCadastroCardapioMeta = $("#modalCadastroMetas");
 
+		this._fieldAprovador.selectpicker();
+		this._fieldNumeradorMeta.selectpicker();
+		this._fieldDenominadorMeta.selectpicker();
+
 		this._fieldPrazo.datepicker({
 			numberOfMonths: 3,
-			minDate : 0,
+			minDate : new Date(getPeriodoPLR(), 0, 1) ,
 			maxDate : new Date(getPeriodoPLR(), 11, 31),
 			dateFormat: 'dd/mm/yy',
 			dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'],
@@ -246,9 +251,9 @@ class CardapioMetasController extends PLRController {
 			self._fieldFormula.val(4); //ENTREGA
 			self._fieldFrequenciaMedicao.val(3); //DATA
 			self.showHiddenElement(self._prazoRowArea);
-			self.showHiddenElement(self._fieldAprovador);
+			self.showHiddenElement(self._aprovadorRowArea);
 		} else {
-			self.hideElements([self._prazoRowArea, self._fieldAprovador]);
+			self.hideElements([self._prazoRowArea, self._aprovadorRowArea]);
 		}
 	}
 
@@ -339,7 +344,7 @@ class CardapioMetasController extends PLRController {
 				{name : "id", title : "Código", type : "number", align : "center", width : 70, editing : false},
 				{name : "descricao", title : "Meta", type : "text", align : "left", width : 200, editing : false},
                 {name : "tipoMeta.descricao", title : "Tipo de Meta", type : "text", align : "center", width : 100, editing: false},
-                {name : "frequenciaMedicao.descricao", title : "Frequência", type : "text", align : "center", width : 50, editing: false},
+                {name : "frequenciaMedicao.descricao", title : "Pontuação", type : "text", align : "center", width : 70, editing: false},
 				{name : "tipoMedicao.descricao", title: "Tipo de Medição", type : "text", align : "center", width : 120, editing: false},
 				{name : "formula.nome", title : "Fórmula", type : "text", align : "center", width : 50},
 				{name : "situacao", title : "Status", type : "select", items : [{id : "A", nome : "Ativo"}, {id : "I", nome : "Inativo"}],
@@ -363,7 +368,7 @@ class CardapioMetasController extends PLRController {
 			formula : {id : this._fieldFormula.val()},
 			metaNumerador : {id : this._fieldNumeradorMeta.val() ? this._fieldNumeradorMeta.val() : -1},
 			metaDenominador : {id : this._fieldDenominadorMeta.val() ? this._fieldDenominadorMeta.val() : -1},
-			aprovador : {matricula : this._fieldAprovador.val() ? this._fieldAprovador.val() : "000000"},
+			aprovador : {matricula : this._fieldAprovador.val() ? this._fieldAprovador.val() : "999"},
 			isNewMeta : this._isNewMeta,
 			isQuantitativa : this._fieldQualidade.val()
 		}
@@ -417,7 +422,7 @@ class CardapioMetasController extends PLRController {
 					[Validation.types.NOT_EMPTY]));
 			
 		validationFieldsArray.push(this.getFieldValidation(
-					this._fieldFrequenciaMedicao.val(), 'Frequência de Medição', 
+					this._fieldFrequenciaMedicao.val(), 'Pontuação', 
 					[Validation.types.NOT_EMPTY]));
 
 		validationFieldsArray.push(this.getFieldValidation(

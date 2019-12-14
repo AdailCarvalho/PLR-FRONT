@@ -239,7 +239,7 @@ class ItemMetasController extends PLRController {
 			return;
 		}
 
-		if(new Validation().validateFields(self._validateCadastro())) {
+		if(new Validation().validateFields(self._validateCadastro()) && self._validateVigencias()) {
 			$.when(self._business.salvarItemMeta(novaFolhaMeta))
 			.done(function (serverData) {
 				if (novaFolhaMeta.id) {
@@ -647,6 +647,41 @@ class ItemMetasController extends PLRController {
 					[Validation.types.NOT_EMPTY]));
 							
 		return validationFieldsArray;
+	}
+
+	_validateVigencias() {
+		let self = this;
+		if (!self._fieldInicioVigenciaItemCadastro.val()) {
+			return false;
+		} else if (!self._fieldFimVigenciaItemCadastro.val()) {
+			return false;
+		}
+
+		let inicioVigenciaTxt = self._fieldInicioVigenciaItemCadastro.val().substring(3,5) + '/' + self._fieldInicioVigenciaItemCadastro.val().substring(0,2) + '/'
+							  + self._fieldInicioVigenciaItemCadastro.val().substring(6,10);
+		let fimVigenciaTxt = self._fieldFimVigenciaItemCadastro.val().substring(3,5) + '/' + self._fieldFimVigenciaItemCadastro.val().substring(0,2) + '/'
+							  + self._fieldFimVigenciaItemCadastro.val().substring(6,10);							  
+
+		let inicioVigencia = new Date(inicioVigenciaTxt);
+		let fimVigencia = new Date(fimVigenciaTxt);
+		if (inicioVigencia > fimVigencia) {
+			MessageView.showWarningMessage("O Fim de Vigência não pode ser menor que o Início da Vigência!");
+			return false;
+		}
+
+		let periodoVigenteIni = new Date('01/01/' + getPeriodoPLR());
+		let periodoVigenteFim = new Date('12/31/' + getPeriodoPLR());
+		if (inicioVigencia < periodoVigenteIni || inicioVigencia > periodoVigenteFim) {
+			MessageView.showWarningMessage("Início da Vigência informada está fora do período.\nPor favor, escolha uma data dentro do período ativo.");
+			return false;
+		}
+
+		if (fimVigencia < periodoVigenteIni || fimVigencia > periodoVigenteFim) {
+			MessageView.showWarningMessage("Fim da Vigência informada está fora do período.\nPor favor, escolha uma data dentro do período ativo.");
+			return false;
+		}
+
+		return true;
 	}
 
 	_validatePesquisa() {

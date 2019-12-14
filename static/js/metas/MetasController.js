@@ -76,9 +76,7 @@ class MetasController extends PLRController {
 		let self = this;
 		self._findMetasCadastradasUsuarioLogado();
 		self._findMetasPendentesUsuarioLogado();
-		if (self._perfilController.isEditable()) {
-			self._findMetasPertencentesUsuarioLogado();
-		}
+		self._findMetasPertencentesUsuarioLogado();
 	}
 
 	/** Todas as situações */
