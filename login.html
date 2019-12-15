@@ -36,7 +36,7 @@
 						<form>
                             <!-- Dados Gerais do Colaborador -->
                             <div class="form-row">
-                                    <div class="form-group" style="width : 100%;">
+                                    <div class="form-group col-md-12">
                                         <label class="plr-bold" for="periodoPLR" title="Período PLR">Período PLR: </label>
                                         <select id="periodoPLR" class="form-control">
                                         <option value=""></option>							  
@@ -44,19 +44,24 @@
                                     </div>
                             </div>
 							<div class="form-row">
-								<div class="form-group">
+								<div class="form-group col-md-12">
 									<label class="plr-bold" for="matricula" title="matricula">Matrícula: </label>
 									<input type="text" id="matricula" maxlength="12" class="form-control" placeholder="Matrícula" />							  
 								</div>
                             </div>
                             <div class="form-row">
-                               <div class="form-group">
+                               <div class="form-group col-md-10">
                                     <label class="plr-bold" for="password" title="Password">Senha: </label>
                                     <input type="password" id="password" maxlength="6" class="form-control" placeholder="Password" />                             
                                 </div>
+                                <div class="form-group col-md-2">
+                                    <a type="button" id="seePassword" class="btn btn-sm  btn-sm" title="Ver/Esconder Senha" onclick="authController.showHidePassword('password')">
+                                        <i id="seePasswordIcon" style="margin-top : 30px; margin-left : -4px;" class="far fa-eye fa-lg"></i>
+                                    </a>                     
+                                </div>
                           </div>
                           <div class="form-row">
-                            <div class="form-group">
+                            <div class="form-group col-md-12">
                                 <button id="btnLogin" type="button" 
                                         class="btn btn-success btn-sm" 
                                         onclick="authController.login()">Entrar</button>

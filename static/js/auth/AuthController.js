@@ -71,13 +71,13 @@ class AuthController extends PLRController {
                 self._hash = userDTO.hash;
                 setLoggedUser(userDTO);
                 setPeriodoPLR(self._periodoPLR.val());
-                //if (userDTO.inPrimeiroAcesso == 'S') {
-                 //   self.redirectToHome();
-                //} else {
-                    //if(self._validateAuth()) {
-                self.redirectToHome();
-                    //}
-                //}
+                if (userDTO.inPrimeiroAcesso == 'S') {
+                    self.redirectToHome();
+                } else {
+                    if(self._validateAuth()) {
+                        self.redirectToHome();
+                    }
+                }
             })
             .fail(function(xhr, textStatus, errorThrown) {
                     MessageView.showSimpleErrorMessage('Login inválido! Erro: ' + xhr.responseJSON.message);
@@ -127,6 +127,20 @@ class AuthController extends PLRController {
                 MessageView.showSimpleErrorMessage("Erro ao atualizar informações do usuário.");
                 self.logout();
              });
+        }
+    }
+
+    showHidePassword(idPassword) {
+        let password = document.getElementById(idPassword);
+        let iconSeePassword = $("#seePasswordIcon");
+        if (password.type == "password") {
+            password.type = "text";
+            iconSeePassword.removeClass("far fa-eye fa-lg");
+            iconSeePassword.addClass("far fa-eye-slash fa-lg");
+        } else {
+            password.type = "password";
+            iconSeePassword.removeClass("far fa-eye-slash fa-lg");
+            iconSeePassword.addClass("far fa-eye fa-lg");
         }
     }
 

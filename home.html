@@ -161,9 +161,8 @@
         if (authController.checkActiveSession()) {
             authController.redirectToLogin();
         } else {
-        //  authController.openDialogPrimeiroAcesso();
+            authController.openDialogPrimeiroAcesso();
         }
-
                 
         function initJSContext () {
             metasController = new MetasController();
@@ -193,12 +192,6 @@
                 }, 120000); 
             }
         );
-
-        /*
-        $(body).on("change", function () {
-
-        });*/
-        
     </script>
 </body>
 </html>
