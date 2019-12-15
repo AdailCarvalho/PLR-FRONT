@@ -97,9 +97,9 @@ class CardapioMetasController extends PLRController {
 		this._modalCadastroCardapioMeta.dialog({
 			autoOpen: false,
 			resizable: false,
-			draggable : false,
+			draggable : true,
 			width: 1400,
-			minHeight : 800, 
+			minHeight : 600, 
 			show: {effect: "fade", duration: 200},
 			hide: {effect: "explode", duration: 200},
 			position: {my: "center", at: "center", of: window}

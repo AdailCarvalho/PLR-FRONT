@@ -107,6 +107,7 @@ class AuthController extends PLRController {
 
     redefineSenha() {
         let self = this;
+        let isPasswordOK = true;  
         if (self._validateFormRedefinicaoPassword()) {
             let user = self._userData;
             user.login = getLoggedUser(); 
@@ -127,12 +128,16 @@ class AuthController extends PLRController {
                 MessageView.showSimpleErrorMessage("Erro ao atualizar informações do usuário.");
                 self.logout();
              });
+        } else {
+            isPasswordOK = false;
         }
+
+        return isPasswordOK;
     }
 
-    showHidePassword(idPassword) {
+    showHidePassword(idPassword, idIcon) {
         let password = document.getElementById(idPassword);
-        let iconSeePassword = $("#seePasswordIcon");
+        let iconSeePassword = $('#' + idIcon);
         if (password.type == "password") {
             password.type = "text";
             iconSeePassword.removeClass("far fa-eye fa-lg");

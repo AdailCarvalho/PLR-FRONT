@@ -213,6 +213,7 @@ class ColaboradorController extends PLRController {
 			self._preencheFormCadastroColaborador(colaboradorItem);
 			self._isNewColaborador = false;
 		} else {
+			self._fieldMatricula.prop('disabled', false);
 			self._isNewColaborador = true;
 		}
 	}
@@ -222,6 +223,7 @@ class ColaboradorController extends PLRController {
 	}
 
 	_preencheFormCadastroColaborador(colaboradorItem) {
+		this._fieldMatricula.prop('disabled', true);
 		this._fieldMatricula.val(colaboradorItem.matricula);
 		this._fieldNome.val(colaboradorItem.nome);
 		this._fieldCargo.val(colaboradorItem.cargo.id);
