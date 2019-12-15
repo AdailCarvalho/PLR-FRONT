@@ -23,6 +23,8 @@ class MetasController extends PLRController {
 	
 	_initFields() {
 		//Info geral
+		let self = this;
+
 		this._numFolha = $('#numeroFolha')
 		this._status = $('#status');
 		this._matricula = $('#matriculaMeta');
@@ -39,15 +41,17 @@ class MetasController extends PLRController {
 		this._gridMetasPendentes = $('#jsGridMetasPendentes');
 
 		//Buttons
-		this._btnCriarVersao = $('#btnCriarVersao');
-		this._btnLabelAnexo = $('#idLabelAnexo');
-
-		this._idsButtons = [{id : '#btnEditar'}, {id : '#btnCancel'},{id : "#btnExport"},{id : "#btnCriarVersao"}, {id : "#btnAnexarFoto"}];
+		this._btnSalvarItemMeta = $("#salvarCadastroItemMeta");
 
 		//Select grids
 		this._selectSituacao = [{},{situacao : "A", descSituacao : "ATIVO"}, {situacao : "I", descSituacao : "INATIVO"}, {situacao : "P", descSituacao : "PENDENTE"}];
 
 		this._loadGridFolhaMetas(this._folhaMetasData);
+
+		this._btnSalvarItemMeta.click(function () 
+		{
+			self._findMetas();
+		});
 	}
 
 	getColaborador(idFolhaMeta, status, matricula) {

@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="../planometas/static/css/all.css" />       
     <title>Login</title>
 </head>
-<body>
+<body id="loginArea">
 	<!-- HEADER -->
      <nav id="idHeader" class="navbar navbar-ligth plr-nav d-inline-block align-top">               
             <a class="navbar-brand plr-logo" href="login.html">
@@ -92,6 +92,10 @@
 
     <script type="text/javascript">
         var authController = new AuthController();
+        
+        var key = document.getElementById("loginArea");
+        key.addEventListener("keydown", e => {if (e.keyCode === 13) authController.login();});
+        
         if(!authController.checkActiveSession()) {
             authController.redirectToHome();
         }

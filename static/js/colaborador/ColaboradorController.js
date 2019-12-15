@@ -27,7 +27,7 @@ class ColaboradorController extends PLRController {
 
 	_initFieldsPesquisa() {
 		var key = document.getElementById("cadastroColaborador");
-		key.addEventListener("keydown", e => {if (e.keyCode === 13) this.pesquisarMeta();});
+		key.addEventListener("keydown", e => {if (e.keyCode === 13) this.pesquisarColaborador();});
 
 		this._matricula = $("#matriculaPesquisa");
 		this._colaborador = $("#colaboradorPesquisa");

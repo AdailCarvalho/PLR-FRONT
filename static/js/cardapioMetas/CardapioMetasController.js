@@ -249,12 +249,16 @@ class CardapioMetasController extends PLRController {
 		let self = this;
 		if (self._fieldTipoMeta.children('option:selected').text() == "PROJETOS") {
 			self._fieldFormula.val(4); //ENTREGA
-			self._fieldFrequenciaMedicao.val(3); //DATA
+			self._fieldFrequenciaMedicao.val(9); //DATA
 			self.showHiddenElement(self._prazoRowArea);
 			self.showHiddenElement(self._aprovadorRowArea);
 		} else {
+			self._fieldFormula.val("");
+			self._fieldFrequenciaMedicao.val("");
 			self.hideElements([self._prazoRowArea, self._aprovadorRowArea]);
 		}
+
+		self.hideElements([self._fieldDenominadorMetaArea, self._fieldNumeradorMetaArea]);
 	}
 
 	cadastrarMeta(metaItem) {
@@ -277,7 +281,7 @@ class CardapioMetasController extends PLRController {
 	salvarMeta() {
 		let self = this;
 		let novaMeta = this._metaDataCadastro;
-		if(new Validation().validateFields(self._validateCadastro())) {
+		if(new Validation().validateFields(self._validateCadastro()) && self._validatePrazo()) {
 			$.when(self._business.salvarMeta(novaMeta))
 			.done(function (serverData) {
 				MessageView.showSuccessMessage('Dados da Meta salvos com sucesso!');
@@ -449,5 +453,30 @@ class CardapioMetasController extends PLRController {
 					[Validation.types.NOT_EMPTY]));
 		
 		return validationFieldsArray;
+	}
+
+	_validatePrazo() {
+		let self = this;
+		if (!self._fieldTipoMeta.children("option:selected").text() == "PROJETOS") {
+			return true;
+		}
+
+		if (!self._fieldPrazo.val()) {
+			return false;
+		} 
+
+		let prazoTxt = self._fieldPrazo.val().substring(3,5) + '/' + self._fieldPrazo.val().substring(0,2) + '/'
+							  + self._fieldPrazo.val().substring(6,10);
+
+		let prazoProjeto = new Date(prazoTxt);
+	
+		let periodoVigenteIni = new Date('01/01/' + getPeriodoPLR());
+		let periodoVigenteFim = new Date('12/31/' + getPeriodoPLR());
+		if (prazoProjeto < periodoVigenteIni || prazoProjeto > periodoVigenteFim) {
+			MessageView.showWarningMessage("O prazo informado está fora do período.\nPor favor, escolha uma data dentro do período ativo.");
+			return false;
+		}
+
+		return true;
 	}
 }

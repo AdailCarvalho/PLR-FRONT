@@ -28,8 +28,8 @@ class ItemMetasController extends PLRController {
     }
 
     _initFieldsPesquisa() {
-		var key = document.getElementById("cadastroItemMeta");
-		key.addEventListener("keydown", e => {if (e.keyCode === 13) this.pesquisarItemMeta();});
+		var keyItem = document.getElementById("cadastroItemMeta");
+		keyItem.addEventListener("keydown", e => {if (e.keyCode === 13) this.pesquisarItemMeta();});
 
         this._matriculaItemPesquisa = $("#matriculaItemPesquisa");
         this._colaboradorItemPesquisa = $("#colaboradorItemPesquisa");
@@ -88,7 +88,9 @@ class ItemMetasController extends PLRController {
 
 		self._fieldsCadastroItemMetasList = [self._fieldMatriculaItemCadastro, self._fieldColaboradorItemCadastro, 
 											self._fieldInicioVigenciaItemCadastro, self._fieldFimVigenciaItemCadastro, 
-											self._fieldResponsavelItemCadastro, self._fieldSomatorioPeso];
+											self._fieldResponsavelItemCadastro, self._fieldSomatorioPeso, self._fieldNumeroFolhaMeta, 
+											self._fieldCargoItemCadastro, self._fieldDiretoriaItemCadastro, self._fieldTimeItemCadastro, 
+											self._fieldFimVigenciaItemCadastro];
 		self._listaMetas = [];
 		self._idItemMeta = null;
 		self._isNewItemMeta = true;
@@ -211,6 +213,7 @@ class ItemMetasController extends PLRController {
 			
 		} else {
 			self.showHiddenElement(self._areaPesquisaSimplesColaborador);
+			self.showHiddenElement($("#salvarCadastroItemMeta"));
 
 			self._idItemMeta = null;
 			self._isNewItemMeta = true;
@@ -337,7 +340,7 @@ class ItemMetasController extends PLRController {
                 {name : "inicioVigencia", title : "Início Vigência", type : "text", align : "center", width : 100, editing: false},
                 {name : "fimVigencia", title : "Fim Vigência", type : "text", align : "center", width : 100, editing: false},
 				{name : "responsavel.nome", title: "Responsável", type : "text", align : "center", width : 200, editing: false},
-				{name : "situacao", title : "Status", type : "select", items : [{id : "A", nome : "Ativo"}, {id : "I", nome : "Inativo"}, [{id : "P", nome : "Pendente"}]],
+				{name : "situacao", title : "Status", type : "select", items : [{id : "A", nome : "Ativo"}, {id : "I", nome : "Inativo"}, {id : "P", nome : "Pendente"}],
 				 valueField : "id", textField : "nome", align : "center", width : 50, editing: false}
 			]
 		});
