@@ -574,7 +574,7 @@ class ItemMetasController extends PLRController {
 				 validate : 
 					{
 						validator : function (value) {
-							return !Number.isNaN(value);
+							return !Number.isNaN(value) && parseFloat(formatDecimalToBigDecimal(value)) > 0;
 						},
 						message : "Informe o Peso"
 					}

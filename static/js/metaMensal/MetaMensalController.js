@@ -163,14 +163,17 @@ class MetaMensalController extends PLRController {
             itensMetasMensais.push(itemUnificado);
         }
 
-        $.when(self._business.saveMetasMensais(itensMetasMensais))
+        $.when(self._business.saveMetasMensais(self._indicadorMensal.val(), itensMetasMensais))
         .done(function (serverData) {
             MessageView.showSuccessMessage("Metas mensais salvas!");
+            self.findMetasMensaisForIndicador();
         }).fail((xhr, textStatus, errorThrown) =>
             MessageView.showSimpleErrorMessage(("Erro ao salvar os itens de Meta Mensal! Erro : " + xhr.responseText)));
     }
 
     salvarCopiaMetasMentais() {
+        this._hasEditedGridMetas= true;
+
         this._loadGridMetasMensais(this._dataMetaMensalArray);
         this._calcularAcumuladosViaCopia();
         MessageView.showSuccessMessage('Valores copiados!');
@@ -201,6 +204,7 @@ class MetaMensalController extends PLRController {
 
     salvarCopiaMetasMensaisReal() {
         let capturedValuesReal = this._copiaMetaMensalReal.val().split("\t");
+
         if (capturedValuesReal && capturedValuesReal.length > 12) {
             MessageView.showWarningMessage("Valores informados para Metas Mentais Planejado são inválidos!\n Informe no máximo 12 valores");
             this._copiaMetaMensalReal.focus();

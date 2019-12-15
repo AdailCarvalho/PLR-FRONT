@@ -12,9 +12,9 @@ class MetaMensalBusiness extends PLRBusiness {
         });
     }
 
-    saveMetasMensais(itemsMetasMentais) {
+    saveMetasMensais(idMeta, itemsMetasMentais) {
         return $.ajax({
-            url : this._API_BASE_URI + '/folhasmensais',
+            url : this._API_BASE_URI + '/folhasmensais/' + idMeta,
             dataType : "json",
             data : JSON.stringify(itemsMetasMentais), 
             type : "POST",
