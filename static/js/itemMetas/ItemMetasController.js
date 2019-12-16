@@ -78,12 +78,20 @@ class ItemMetasController extends PLRController {
 		self._fieldFimVigenciaItemCadastro = $("#fimVigenciaItemCadastro");
 		self._fieldResponsavelItemCadastro = $("#responsavelItemCadastro");
 		self._fieldNumeroFolhaMeta = $("#numeroFolhaMeta");
-		self._fieldSomatorioPeso = $('#somatorioPeso');
 		self._fieldCargoItemCadastro = $("#cargoItemCadastro");
 		self._fieldDiretoriaItemCadastro = $("#diretoriaItemCadastro");
 		self._fieldTimeItemCadastro = $("#timeItemCadastro");
 		self._fieldFilialItemCadastro = $("#filialItemCadastro");
+		
+		self._fieldSomatorioPeso = $('#somatorioPeso');
+		self._fieldSomatorioGatilho = $('#somatorioGatilho');
+		self._fieldSomatorioTime = $('#somatorioTime');
+		self._fieldSomatorioCorporativo = $('#somatorioCorporativo');
+		self._fieldSomatorioExtra = $('#somatorioExtra');
+		self._fieldSomatorioQuantitativa = $('#somatorioQuantitativa');
+
 		self._gridCadastroItensMeta = $("#jsGridCadastroItensMeta");
+		
 	
 
 		self._fieldsCadastroItemMetasList = [self._fieldMatriculaItemCadastro, self._fieldColaboradorItemCadastro, 
@@ -131,7 +139,7 @@ class ItemMetasController extends PLRController {
 			autoOpen: false,
 			draggable : false,
 			resizable: false,
-			minHeight : self._minHeightCadastro ? self._minHeightCadastro : 850,
+			minHeight : self._minHeightCadastro ? self._minHeightCadastro : 600,
 			width: self._widthCadastro ? self._widthCadastro : 1650,
 			show: {effect: "fade", duration: 200},
 			hide: {effect: "explode", duration: 200},
@@ -335,6 +343,7 @@ class ItemMetasController extends PLRController {
 				return false;
 			},
 			fields : [
+				{name : "id", title : "N. Folha", width : 50, align : "center", editing : false},
 				{name : "colaborador.matricula", title : "Matrícula", type : "text", align : "center", width : 50, editing : false},
 				{name : "colaborador.nome", title : "Colaborador", type : "text", align : "left", width : 200, editing : false},
                 {name : "inicioVigencia", title : "Início Vigência", type : "text", align : "center", width : 100, editing: false},
@@ -388,8 +397,16 @@ class ItemMetasController extends PLRController {
 		itemsMetas.forEach(item => {
 			somaPeso += item.peso;
 		});
-
+		
+		/*
+		itemsMetas.filter(item => item.meta.tipoMeta.descricao == 'GATILHO')
+				  .forEach(item => {
+					somaGatilho += item.peso;	
+				  });
+		
+		self._fieldSomatorioGatilho.val(somaGatilho);*/
 		self._configFieldSomatorioPeso(somaPeso);		
+
 		self._gridCadastroItensMeta.jsGrid({
 			width: "100%",
 			height: "auto",
@@ -416,7 +433,7 @@ class ItemMetasController extends PLRController {
 			},
 			onItemInserting : function (args) {
 				let dados = self._gridCadastroItensMeta.jsGrid("option","data");
-				let valorInserido = self._gridCadastroItensMeta.jsGrid("option", "fields")[4].insertControl.val();
+				let valorInserido = args.item.peso;
 
 				args.item.tipoSugerida = 'N';
 
@@ -428,27 +445,36 @@ class ItemMetasController extends PLRController {
 
 				somaPeso += parseFloat(formatDecimalToBigDecimal(valorInserido));
 				if (somaPeso > 100) {
-					MessageView.showWarningMessage('Somatória de Peso não pode exceder 100!');
+					MessageView.showWarningMessage('A somatória de Peso não pode exceder a 100!');
 					args.cancel = true;
 					somaPeso = previousSomaPeso;
 					return;
 				}
 
-				if (lastDeletedSequence > 0) {
-					args.item.sequencia = lastDeletedSequence;
-				} else {
-					args.item.sequencia = dados.length + 1;
+				let maxSequence = 0;
+				let arraySequence = [];
+				for (var i = 0; i < dados.length; i ++) {
+					arraySequence.push(dados[i].sequencia);
+					if (dados[i].sequencia > maxSequence) {
+						maxSequence = dados[i].sequencia;
+					}
 				}
 
+				if (lastDeletedSequence == -1) {
+					args.item.sequencia = maxSequence + 1;
+				} else if (arraySequence.length > 0 && arraySequence.includes(lastDeletedSequence)){
+					args.item.sequencia = maxSequence + 1;
+				} else {
+					args.item.sequencia = lastDeletedSequence;
+				}
 
 				args.item.folhaMeta = {id : self._idItemMeta};
 				self._configFieldSomatorioPeso(somaPeso)
 			},
 			onItemUpdating : function (args) {
 				let dados = self._gridCadastroItensMeta.jsGrid("option","data");
-				let idAtualizado = args.item.id;
 				let sequenciaAtualizada = self._gridCadastroItensMeta.jsGrid("option", "fields")[1].editControl.val();
-				let valorAtualizado = self._gridCadastroItensMeta.jsGrid("option", "fields")[4].editControl.val();
+				let valorAtualizado = self._gridCadastroItensMeta.jsGrid("option", "fields")[5].editControl.val();
 
 				if (args.item.tipoSugerida == 'S') {
 					MessageView.showWarningMessage("Essa meta é sugerida e não pode ser editada!");
@@ -459,21 +485,15 @@ class ItemMetasController extends PLRController {
 				let previousSomaPeso = somaPeso;
 				somaPeso = 0;
 				for (var i = 0; i < dados.length; i ++) {
-					if (dados[i].tipoSugerida == 'N' && dados[i].id == idAtualizado) {
+					if (dados[i].tipoSugerida == 'N' && dados[i].sequencia == sequenciaAtualizada) {
 						somaPeso += parseFloat(formatDecimalToBigDecimal(valorAtualizado));
 					} else {
 						somaPeso += dados[i].peso;
 					}
 
-					if ((dados[i].sequencia == sequenciaAtualizada) && dados[i].id != idAtualizado) {
-						MessageView.showWarningMessage('Somatória de Peso não pode exceder 100!');
-						args.cancel = true;
-						somaPeso = previousSomaPeso;
-						return;
-					}
 
 					if (somaPeso > 100) {
-						MessageView.showWarningMessage('Somatória de Peso não pode exceder 100!');
+						MessageView.showWarningMessage('A somatória de Peso não pode exceder a 100!');
 						args.cancel = true;
 						somaPeso = previousSomaPeso;
 						return;
@@ -534,49 +554,90 @@ class ItemMetasController extends PLRController {
 						return $fieldCodigo;
 					 },
 				},
-				{name : "meta.id", type : "select", title : "Indicador", items : self._listaMetas, valueField : "id", textField : "descricao", width : 350, align : "left", //[3]
+				{name : "meta.tipoMeta.descricao", title : "Tipo", type : "text", width : 100, readOnly : true, //[3]
+					insertTemplate : function () {
+						var grid = this._grid;
+						var $fieldTipoMeta = jsGrid.fields.text.prototype.insertTemplate.call(this, arguments);
+
+						$fieldTipoMeta.css("background-color", "#d4d6d9");
+
+						return $fieldTipoMeta;
+				 	},
+
+				 	editTemplate : function (value, editItem) {
+						var grid = this._grid;
+						var $fieldTipoMeta = jsGrid.fields.text.prototype.editTemplate.apply(this, arguments);
+
+						$fieldTipoMeta.css("background-color", "#d4d6d9");
+
+						return $fieldTipoMeta;
+				 	},
+				},
+				{name : "meta.id", type : "select", title : "Indicador", items : self._listaMetas, valueField : "id", textField : "descricao", width : 300, align : "left", //[4]
 					validate : {
 						validator : "required",
 						message : "Informe o Indicador"
 					},
 					insertTemplate: function(value, item) {
-						   var $select = jsGrid.fields.select.prototype.insertTemplate.call(this);
-						   $select.addClass('selectpicker form-control');
-						   $select.attr("data-live-search", "true");
-			   			   $select.attr("data-container", "body");
-						   
-						   setTimeout(function() {
-							   $select.selectpicker({
-								   liveSearch: true
-							   });		             		
-							   $select.selectpicker('refresh');
-							   $select.selectpicker('render');
-						   });
-						   return $select;
-					},
-					editTemplate : function (value, editItem) {
-						var $select = jsGrid.fields.select.prototype.editTemplate.apply(this, arguments);
-						$select.addClass('selectpicker form-control');
-						$select.attr("data-live-search", "true");
-						   $select.attr("data-container", "body");
+						var grid = this._grid;
+						var $selectIndicador = jsGrid.fields.select.prototype.insertTemplate.call(this);
+						$selectIndicador.addClass('selectpicker form-control');
+						$selectIndicador.attr("data-live-search", "true");
+			   			$selectIndicador.attr("data-container", "body");
 						
+						$selectIndicador.on("change", function () {
+							let selectedIndicador = $selectIndicador.val();
+							$.each(self._listaMetas, function (_, item) {
+								if (item.id == selectedIndicador) {
+									grid.option("fields")[3].insertControl.val(item.tipoMeta.descricao);
+									return;
+								}
+							});
+						});
+
 						setTimeout(function() {
-							$select.selectpicker({
+							$selectIndicador.selectpicker({
 								liveSearch: true
 							});		             		
-							$select.selectpicker('refresh');
-							$select.selectpicker('render');
+							$selectIndicador.selectpicker('refresh');
+							$selectIndicador.selectpicker('render');
+						   });
+						   return $selectIndicador;
+					},
+					editTemplate : function (value, editItem) {
+						var grid = this._grid;
+						var $selectIndicador = jsGrid.fields.select.prototype.editTemplate.apply(this, arguments);
+						$selectIndicador.addClass('selectpicker form-control');
+						$selectIndicador.attr("data-live-search", "true");
+						$selectIndicador.attr("data-container", "body");
+						
+						$selectIndicador.on("change", function () {
+							let selectedIndicador = $selectIndicador.val();
+							$.each(self._listaMetas, function (_, item) {
+								if (item.id == selectedIndicador) {
+									grid.option("fields")[3].editControl.val(item.tipoMeta.descricao);
+									return;
+								}
+							});
+					   });
+
+						setTimeout(function() {
+							$selectIndicador.selectpicker({
+								liveSearch: true
+							});		             		
+							$selectIndicador.selectpicker('refresh');
+							$selectIndicador.selectpicker('render');
 						});
-						return $select;
+						return $selectIndicador;
 					}
 				},
-				{name : "peso", type : "floatNumber", title : "Peso", width : 100, align : "center", //[4]
+				{name : "peso", type : "floatNumber", title : "Peso", width : 100, align : "center", //[5]
 				 validate : 
 					{
 						validator : function (value) {
 							return !Number.isNaN(value) && parseFloat(formatDecimalToBigDecimal(value)) > 0;
 						},
-						message : "Informe o Peso"
+						message : "Informe um valor de Peso > 0"
 					}
 				}
 			]
