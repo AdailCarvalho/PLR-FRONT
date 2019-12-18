@@ -256,9 +256,19 @@ class MetaMensalController extends PLRController {
         if (this._formulaIndicadorMensal.val() == "SOMA") {
             self._acumuladoMetaPlan.val(accounting.formatMoney(aggMetaPlan, "", 4, ".", ","));
             self._acumuladoMetaReal.val(accounting.formatMoney(aggMetaReal, "", 4, ".", ","));    
-        } else {
+        } else if (this._formulaIndicadorMensal.val() == "MEDIA") {
             self._acumuladoMetaPlan.val(accounting.formatMoney((aggMetaPlan / denominadorMediaPlan), "", 4, ".", ","));
             self._acumuladoMetaReal.val(accounting.formatMoney((aggMetaReal / denominadorMediaReal), "", 4, ".", ","));    
+        } else {
+            let sumPlan = accounting.formatMoney(aggMetaPlan, "", 4, ".", ",");
+            let sumReal = accounting.formatMoney(aggMetaReal, "", 4, ".", ",")
+            
+            let avgPlan = accounting.formatMoney((aggMetaPlan / denominadorMediaPlan), "", 4, ".", ",");
+            let avgReal = accounting.formatMoney((aggMetaReal / denominadorMediaReal), "", 4, ".", ",");
+            
+            
+            this._acumuladoMetaPlan.val(sumPlan + ' (SUM) - ' + avgPlan + ' (AVG)');
+            this._acumuladoMetaReal.val(sumReal + ' (SUM) - ' + avgReal + ' (AVG)'); 
         }
     }
 
@@ -282,14 +292,22 @@ class MetaMensalController extends PLRController {
         if (tipoMeta == "META") {
             if (this._formulaIndicadorMensal.val() == "SOMA") {
                 this._acumuladoMetaPlan.val(accounting.formatMoney(valMeta, "", 4, ".", ","));
-            } else {
+            } else if (this._formulaIndicadorMensal.val() == "MEDIA") {
                 this._acumuladoMetaPlan.val(accounting.formatMoney((valMeta / denominadorMedia), "", 4, ".", ","));                
+            } else {
+                let sum = accounting.formatMoney(valMeta, "", 4, ".", ",");
+                let avg = accounting.formatMoney((valMeta / denominadorMedia), "", 4, ".", ",");
+                this._acumuladoMetaPlan.val(sum + ' (SUM) - ' + avg + ' (AVG)');
             }
         } else {
             if (this._formulaIndicadorMensal.val() == "SOMA") {
                 this._acumuladoMetaReal.val(accounting.formatMoney(valMeta, "", 4, ".", ","));
-            } else {
+            } else if (this._formulaIndicadorMensal.val() == "MEDIA") {
                 this._acumuladoMetaReal.val(accounting.formatMoney((valMeta / denominadorMedia), "", 4, ".", ","));
+            } else {
+                let sum = accounting.formatMoney(valMeta, "", 4, ".", ",");
+                let avg = accounting.formatMoney((valMeta / denominadorMedia), "", 4, ".", ",");
+                this._acumuladoMetaReal.val(sum + ' (SUM) - ' + avg + ' (AVG)');
             }
         }
     }

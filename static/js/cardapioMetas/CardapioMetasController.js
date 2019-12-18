@@ -249,12 +249,10 @@ class CardapioMetasController extends PLRController {
 		let self = this;
 		if (self._fieldTipoMeta.children('option:selected').text() == "PROJETOS") {
 			self._fieldFormula.val(4); //ENTREGA
-			self._fieldFrequenciaMedicao.val(9); //DATA
+			self._fieldFrequenciaMedicao.val(3); //DATA
 			self.showHiddenElement(self._prazoRowArea);
 			self.showHiddenElement(self._aprovadorRowArea);
 		} else {
-			self._fieldFormula.val("");
-			self._fieldFrequenciaMedicao.val("");
 			self.hideElements([self._prazoRowArea, self._aprovadorRowArea]);
 		}
 
@@ -269,6 +267,9 @@ class CardapioMetasController extends PLRController {
 			self._isNewMeta = false;
 		} else {
 			self._fieldCodigoMeta.val(null);
+			self._fieldNumeradorMeta.val("");
+			self._fieldDenominadorMeta.val("");
+			self._fieldAprovador.val("");
 			self._idMeta = null;
 			self._isNewMeta = true;
 		}
@@ -313,9 +314,13 @@ class CardapioMetasController extends PLRController {
 		this._fieldFormula.val(metaItem.formula.id);
 		this._fieldQualidade.val(metaItem.isQuantitativa);
 		this._fieldPrazo.val(metaItem.prazo);
-		this._fieldAprovador.val(metaItem.aprovador.matricula);
 		this._fieldSituacaoMeta.val(metaItem.situacao);
 		this._fieldObservacaoMeta.val(metaItem.observacao);
+		if (metaItem.aprovador) {
+			this._fieldAprovador.val(metaItem.aprovador.matricula);
+		} else {
+			this._fieldAprovador.val("");
+		}
 
 		this.avaliarMetaPonderada();
 		this.avaliarMetaProjeto();
@@ -457,7 +462,8 @@ class CardapioMetasController extends PLRController {
 
 	_validatePrazo() {
 		let self = this;
-		if (!self._fieldTipoMeta.children("option:selected").text() == "PROJETOS") {
+		let tipoMetaSelecionada = self._fieldTipoMeta.children("option:selected").text(); 
+		if (tipoMetaSelecionada != 'PROJETOS') {
 			return true;
 		}
 

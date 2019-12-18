@@ -125,3 +125,18 @@ body.loading .modalLoading {
     margin-left: -700px !important;
     margin-top: -300px !important;*/
 }
+
+.plr-see-password {
+    position : absolute; 
+    float : right; 
+    margin-left : -35px; margin-top : 35px; 
+    z-index : 2;
+}
+
+.plr-see-password-reset {
+    position : absolute; 
+    float : right; 
+    margin-left : -20px; margin-top : 40px; 
+    z-index : 2;
+}
+   

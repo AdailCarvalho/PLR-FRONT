@@ -91,38 +91,41 @@
     <div id="dialogPrimeiroAcesso" title="Redefinir Senha Inicial">
         <form>
             <div class="row">
-                <div class="col-md-10 mt-2">
+                <div class="col-md-11">
                     <label for="newPassword">Nova senha:</label>
                     <div class="input-group">
-                        <input type="password" placeholder = "Digite a nova senha" id="idNewPassword" class="form-control" maxlength="6" />
+                        <input type="password" tabindex="-1" placeholder = "Digite a nova senha" id="idNewPassword" class="form-control" maxlength="6" />
                     </div>
                 </div>
-                <div class="col-md-2">
-                    <a type="button" id="seePasswordNew" class="btn btn-sm  btn-sm" title="Ver/Esconder Senha" 
+                <div class="col-md-1">
+                    <a id="seePasswordNew" title="Ver/Esconder Senha" class="plr-see-password-reset"
                         onclick="authController.showHidePassword('idNewPassword', 'seePasswordNewIcon')">
-                        <i id="seePasswordNewIcon" style="margin-top : 40px; margin-left : -8px;" class="far fa-eye fa-lg"></i>
+                        <i id="seePasswordNewIcon" class="far fa-eye fa-lg" style="color: grey;"></i>
                     </a>                     
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-10 mt-2">
+                <div class="col-md-11">
                     <label for="confirmPassword">Confirmar nova senha:</label>
                     <div class="input-group">
-                        <input type="password" id="idConfirmNewPassword" placeholder = "Confirme a nova senha"  class="form-control" maxlength="6" />
+                        <input type="password" tabindex="-1" id="idConfirmNewPassword" placeholder = "Confirme a nova senha"  class="form-control" maxlength="6" />
                     </div>
                 </div>
-                <div class="col-md-2">
-                    <a type="button" id="seePasswordConfirm" class="btn btn-sm  btn-sm" title="Ver/Esconder Senha" 
+                <div class="col-md-1">
+                    <a id="seePasswordConfirm" class="plr-see-password-reset" title="Ver/Esconder Senha" 
                        onclick="authController.showHidePassword('idConfirmNewPassword', 'seePasswordConfirmIcon')">
-                        <i id="seePasswordConfirmIcon" style="margin-top : 40px; margin-left : -8px;" class="far fa-eye fa-lg"></i>
+                        <i id="seePasswordConfirmIcon" class="far fa-eye fa-lg" style="color : grey;"></i>
                     </a>                     
                 </div>
             </div>
             <br />
             <div class="modal-footer">
-                <div class="col-md-auto mt-2">
+                <div class="col-md-2">
                     <button id="btnResetPassword" class="btn btn-success btn-sm" onclick="authController.redefineSenha()">Salvar
-            </div>
+                </div>
+                <div class="col-md-2" style="margin-left : -8px;">
+                    <button id="btnVoltarResetPassword" class="btn btn-info btn-sm" onclick="authController.logout()">Voltar
+                </div>
         </form>
     </div>
 
