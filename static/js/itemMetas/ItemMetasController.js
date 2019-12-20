@@ -84,10 +84,12 @@ class ItemMetasController extends PLRController {
 		self._fieldFilialItemCadastro = $("#filialItemCadastro");
 		
 		self._fieldSomatorioPeso = $('#somatorioPeso');
+		self._fieldSomatorioAvaliacao = $('#somatorioAvaliacao');
+		self._fieldSomatorioProjeto = $('#somatorioProjetos');
 		self._fieldSomatorioGatilho = $('#somatorioGatilho');
 		self._fieldSomatorioTime = $('#somatorioTime');
-		self._fieldSomatorioCorporativo = $('#somatorioCorporativo');
-		self._fieldSomatorioExtra = $('#somatorioExtra');
+		self._fieldSomatorioCorporativo = $('#somatorioCorporativa');
+		self._fieldSomatorioExtra = $('#somatorioExtras');
 		self._fieldSomatorioQuantitativa = $('#somatorioQuantitativa');
 
 		self._gridCadastroItensMeta = $("#jsGridCadastroItensMeta");
@@ -99,6 +101,16 @@ class ItemMetasController extends PLRController {
 											self._fieldResponsavelItemCadastro, self._fieldSomatorioPeso, self._fieldNumeroFolhaMeta, 
 											self._fieldCargoItemCadastro, self._fieldDiretoriaItemCadastro, self._fieldTimeItemCadastro, 
 											self._fieldFimVigenciaItemCadastro];
+
+		self._fieldsCadastroSomatoriosAgrupamento = 
+						[{field : self._fieldSomatorioAvaliacao, descricao : "Avaliação"}, 
+						 {field : self._fieldSomatorioProjeto, descricao : "Projetos"}, 
+						 {field : self._fieldSomatorioGatilho, descricao : "Gatilho"},
+						 {field : self._fieldSomatorioTime, descricao : "Time"},
+						 {field : self._fieldSomatorioCorporativo, descricao : "Corporativa"},
+						 {field : self._fieldSomatorioExtra, descricao : "Extras"},
+						 {field : self._fieldSomatorioQuantitativa, descricao : "Quantitativa"}]; 
+													
 		self._listaMetas = [];
 		self._idItemMeta = null;
 		self._isNewItemMeta = true;
@@ -137,10 +149,9 @@ class ItemMetasController extends PLRController {
 
 		self._modalCadastroItemMetas.dialog({
 			autoOpen: false,
-			draggable : false,
 			resizable: false,
 			minHeight : self._minHeightCadastro ? self._minHeightCadastro : 600,
-			width: self._widthCadastro ? self._widthCadastro : 1650,
+			width: self._widthCadastro ? self._widthCadastro : 1700,
 			show: {effect: "fade", duration: 200},
 			hide: {effect: "explode", duration: 200},
 			position: {my: "center", at: "center", of: window}
@@ -148,14 +159,15 @@ class ItemMetasController extends PLRController {
 	}
 	
 	/** Carregar Dados */
-
 	
 	_carregarListaMetas() {
 		let self = this;
 		
 		$.when(self._business.getLista("/metas/quantitativas/" + getPeriodoPLR()))
 		.done(function (serverData) {
+			let firstElement = [{}];
 			self._listaMetas = serverData;
+			self._listaMetas.push.apply(firstElement, self._listaMetas);
 		}).fail((xhr, textStatus, errorThrown) =>
 			MessageView.showSimpleErrorMessage(("Erro ao pesquisar lista de Metas! Erro : " + xhr.responseText)));
 	}
@@ -268,6 +280,18 @@ class ItemMetasController extends PLRController {
 				MessageView.showSimpleErrorMessage(("Erro ao salvar os dados da Folha da Meta! Erro : " + xhr.responseText)));
 		}
 	}
+
+	_calculaSomatorios(itemsMeta) {
+		let self = this;
+		self._fieldsCadastroSomatoriosAgrupamento.forEach(fieldSum => {
+			let filterItemsMeta = itemsMeta.filter(item => item.meta.tipoMeta.descricao.toUpperCase() == fieldSum.descricao.toUpperCase());
+			if (filterItemsMeta && filterItemsMeta.length > 0) {
+				fieldSum.field.val(filterItemsMeta.reduce((agg, currValue) => agg + currValue.peso, 0));	
+			} else {
+				fieldSum.field.val("-");
+			}
+		});
+	}
 	
 	_fechaCadastroItemMeta() {
 		this._limpaCamposCadastroItemMeta();
@@ -286,6 +310,7 @@ class ItemMetasController extends PLRController {
 
 	_limpaCamposCadastroItemMeta() {
 		this._fieldsCadastroItemMetasList.forEach(field => field.val(""));
+		this._fieldsCadastroSomatoriosAgrupamento.forEach(fieldSum => fieldSum.field.val(""));
 		this._loadGridCadastroItemMetas([]);
 	}
 
@@ -398,14 +423,9 @@ class ItemMetasController extends PLRController {
 			somaPeso += item.peso;
 		});
 		
-		/*
-		itemsMetas.filter(item => item.meta.tipoMeta.descricao == 'GATILHO')
-				  .forEach(item => {
-					somaGatilho += item.peso;	
-				  });
-		
-		self._fieldSomatorioGatilho.val(somaGatilho);*/
+
 		self._configFieldSomatorioPeso(somaPeso);		
+		self._calculaSomatorios(itemsMetas);
 
 		self._gridCadastroItensMeta.jsGrid({
 			width: "100%",
@@ -471,6 +491,10 @@ class ItemMetasController extends PLRController {
 				args.item.folhaMeta = {id : self._idItemMeta};
 				self._configFieldSomatorioPeso(somaPeso)
 			},
+
+			onItemInserted : function (args) {
+				self._calculaSomatorios(self._gridCadastroItensMeta.jsGrid("option","data"));
+			},
 			onItemUpdating : function (args) {
 				let dados = self._gridCadastroItensMeta.jsGrid("option","data");
 				let sequenciaAtualizada = self._gridCadastroItensMeta.jsGrid("option", "fields")[1].editControl.val();
@@ -502,6 +526,10 @@ class ItemMetasController extends PLRController {
 
 				self._configFieldSomatorioPeso(somaPeso)
 			},
+			
+			onItemUpdated : function (args) {
+				self._calculaSomatorios(self._gridCadastroItensMeta.jsGrid("option","data"));
+			},
 			onItemDeleting : function (args) {
 				if (args.item.tipoSugerida == 'S') {
 					MessageView.showWarningMessage("Essa meta é sugerida e não pode ser editada!");
@@ -513,8 +541,11 @@ class ItemMetasController extends PLRController {
 				somaPeso = somaPeso - parseFloat(formatDecimalToBigDecimal(args.item.peso));
 				self._configFieldSomatorioPeso(somaPeso);
 			},
+			onItemDeleted : function (args) {
+				self._calculaSomatorios(self._gridCadastroItensMeta.jsGrid("option","data"));
+			},
 			fields : [
-				{type : "control", width : 40, deleteButton : self._isFolhaEditavel, editButton : self._isFolhaEditavel}, //[0]
+				{type : "control", width : 40, deleteButton : self._isFolhaEditavel, editButton : self._isFolhaEditavel, visible : self._isFolhaEditavel}, //[0]
 				{name : "sequencia", type : "number", title : "Sequência", width : 100, align : "center", readOnly : true, //[1]
 				 insertTemplate : function () {
 					var grid = this._grid;

@@ -4,8 +4,9 @@ class MetasController extends PLRController {
 		super();
 
 		this._metasBusiness = new MetasBusiness();
-		this._perfilController = new PerfilController();
 		this._colaboradorBusiness = new ColaboradorBusiness();
+		this._perfilController = new PerfilController();
+		this._itemMetaController = new ItemMetasController(1600, 600);
 		
 		this.applyConstraintsOnFields(['#meusCadastrosTab'], [], this._perfilController.hasPermissionToArea(2));
 		this.applyConstraintsOnFields(['#metasPendentesTab'], [], this._perfilController.hasPermissionToArea(3));
@@ -173,15 +174,13 @@ class MetasController extends PLRController {
 							var $viewItems = $("<a style='color: #003cbe'><i class='fas fa-eye fa-lg' " +
 							" title='Visualizar Folha de Meta' style='margin-left: 7px;'></i></a>")
 										   .click(function() {
-												let itemMetaController = new ItemMetasController(1400, 600);
-												itemMetaController.cadastrarItemMeta(item);
+												self._itemMetaController.cadastrarItemMeta(item);
 										   });
 							
 							var $editItems = $("<a style='color : #003cbe'><i class='fas fa-edit fa-lg' "+ 
 							" title='Editar Folha de Meta' style='margin-left : 7px;'></i></a>")
 										   	.click(function() {
-												let itemMetaController = new ItemMetasController(1400, 600);
-												itemMetaController.cadastrarItemMeta(item);
+												self._itemMetaController.cadastrarItemMeta(item);
 											});
 							
 							if (item.situacao == 'P') {
