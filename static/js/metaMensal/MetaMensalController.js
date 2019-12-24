@@ -62,7 +62,7 @@ class MetaMensalController extends PLRController {
 
     carregarListaMetas() {
 		let self = this;
-		$.when(self._business.getLista("/metas/quantitativas/" + getPeriodoPLR()))
+		$.when(self._business.getLista("/metas/" + getPeriodoPLR()))
 		.done(function (serverData) {
             let listaIndicadoresFiltered = serverData;
 			listaIndicadoresFiltered.forEach(item => {

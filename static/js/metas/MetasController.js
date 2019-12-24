@@ -43,14 +43,18 @@ class MetasController extends PLRController {
 
 		//Buttons
 		this._btnSalvarItemMeta = $("#salvarCadastroItemMeta");
+		this._btnAprovarItemMeta = $("#aprovarCadastroItemMeta");
 
 		//Select grids
 		this._selectSituacao = [{},{situacao : "A", descSituacao : "ATIVO"}, {situacao : "I", descSituacao : "INATIVO"}, {situacao : "P", descSituacao : "PENDENTE"}];
 
 		this._loadGridFolhaMetas(this._folhaMetasData);
 
-		this._btnSalvarItemMeta.click(function () 
-		{
+		this._btnSalvarItemMeta.click(function () {
+			self._findMetas();
+		});
+
+		this._btnAprovarItemMeta.click(function (){
 			self._findMetas();
 		});
 	}

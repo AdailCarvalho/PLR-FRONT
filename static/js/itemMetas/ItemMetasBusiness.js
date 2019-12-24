@@ -4,6 +4,14 @@ class ItemMetasBusiness extends PLRBusiness {
         super();
     }
 
+    aprovarFolhaMeta(id) {
+        return $.ajax({
+            url : this._API_BASE_URI + '/folhametas/aprovacao/' + id,
+            type : "PUT",
+            async : false            
+        });
+    }
+
     findColaboradorByFilter(matricula, nome) {
         return $.ajax({
             url : this._API_BASE_URI + '/colaboradores/filter?matricula=' + matricula + '&nome=' + nome,

@@ -17,6 +17,7 @@ class ItemMetasController extends PLRController {
 		this.applyConstraintsOnFields(['#itemMetasTab'], [],  this._perfilController.hasPermissionToArea(7));
 		this.applyConstraintsOnFields(['#idPesquisaItemMetaCompleta'], [],  this._perfilController.hasPermissionToArea(10));
 		this.applyConstraintsOnFields(['#idPesquisaItemMetaBasica'], [],  this._perfilController.hasPermissionToArea(11));
+		this.applyConstraintsOnFields(['#aprovarCadastroItemMetaArea'], [], this._perfilController.hasPermissionToArea(12));
 
 		this.initFields();
 
@@ -92,9 +93,7 @@ class ItemMetasController extends PLRController {
 		self._fieldSomatorioExtra = $('#somatorioExtras');
 		self._fieldSomatorioQuantitativa = $('#somatorioQuantitativa');
 
-		self._gridCadastroItensMeta = $("#jsGridCadastroItensMeta");
-		
-	
+		self._gridCadastroItensMeta = $("#jsGridCadastroItensMeta");		
 
 		self._fieldsCadastroItemMetasList = [self._fieldMatriculaItemCadastro, self._fieldColaboradorItemCadastro, 
 											self._fieldInicioVigenciaItemCadastro, self._fieldFimVigenciaItemCadastro, 
@@ -141,7 +140,7 @@ class ItemMetasController extends PLRController {
 		});
 		
 		self._modalCadastroItemMetas = $("#modalCadastroItemMetas");
-		
+		self._modalConfirmacaoAprovacaoFolhaMeta = $("#modalConfirmacaoAprovacaoFolhaMeta");	
 
 		self._carregarListaMetas();
 		self._loadGridCadastroItemMetas([]);
@@ -156,6 +155,25 @@ class ItemMetasController extends PLRController {
 			hide: {effect: "explode", duration: 200},
 			position: {my: "center", at: "center", of: window}
 		});
+
+		self._modalConfirmacaoAprovacaoFolhaMeta.dialog({
+			autoOpen: false,
+			resizable: false,
+			height : 250,
+			width: 350,
+			show: {effect: "fade", duration: 200},
+			hide: {effect: "explode", duration: 200},
+			position: {my: "center", at: "center", of: window},
+			buttons: {
+				"Sim": function() {
+					self.aprovarItemMeta();
+					$(this).dialog("close");
+				},
+				"Não": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
 	}
 	
 	/** Carregar Dados */
@@ -163,7 +181,7 @@ class ItemMetasController extends PLRController {
 	_carregarListaMetas() {
 		let self = this;
 		
-		$.when(self._business.getLista("/metas/quantitativas/" + getPeriodoPLR()))
+		$.when(self._business.getLista("/metas/" + getPeriodoPLR()))
 		.done(function (serverData) {
 			let firstElement = [{}];
 			self._listaMetas = serverData;
@@ -227,10 +245,9 @@ class ItemMetasController extends PLRController {
 			self._fieldMatriculaItemCadastro.prop('disabled', true)
 			self._fieldColaboradorItemCadastro.prop('disabled', true);
 
-			self.applyConstraintsOnFields(['#salvarCadastroItemMeta'],	
+			self.applyConstraintsOnFields(['#salvarCadastroItemMeta'],
 				[self._fieldInicioVigenciaItemCadastro, self._fieldFimVigenciaItemCadastro, self._fieldMatriculaItemCadastro, self._fieldColaboradorItemCadastro], 
-				self._isFolhaEditavel);
-			
+				self._isFolhaEditavel);			
 		} else {
 			self.showHiddenElement(self._areaPesquisaSimplesColaborador);
 			self.showHiddenElement($("#salvarCadastroItemMeta"));
@@ -246,11 +263,44 @@ class ItemMetasController extends PLRController {
 			self._loadGridPesquisaColaboradorSimples([]);
 			self._loadGridCadastroItemMetas([]);
 		}
+
+		self.applyConstraintsOnFields(['#aprovarCadastroItemMetaArea'], [], self._isFolhaEditavel && self._perfilController.hasPermissionToArea(12));
+	}
+	
+	aprovarItemMetaDialog() {
+		this._modalConfirmacaoAprovacaoFolhaMeta.dialog('open');
+	}
+
+	aprovarItemMeta() {
+		let self = this;
+		if (!confirm('Deseja realmente aprovar a Folha de Meta?')) {
+			return;
+		}
+
+		if (!self._fieldNumeroFolhaMeta) {
+			MessageView.showWarningMessage("Salve a folha de meta primeiro, para prosseguir para aprovação.");
+			return;
+		}
+
+		if (self._fieldSomatorioPeso.val() != 100) {
+			MessageView.showWarningMessage("Itens de folha não cadastrados ou inválidos!\nConfira se os itens foram informados" 
+			+ " e se o somatório de pesos atingiu o valor = 100, para que seja possível concluir o cadastro da Folha. ");
+			return;
+		}
+
+		if(new Validation().validateFields(self._validateCadastro()) && self._validateVigencias()) {
+			$.when(self._business.aprovarFolhaMeta(self._fieldNumeroFolhaMeta.val()))
+			.done(function (serverData) {
+				MessageView.showSuccessMessage('Folha de Metas aprovada!');
+			}).fail((xhr, textStatus, errorThrown) =>
+				MessageView.showSimpleErrorMessage(("Erro ao aprovar a Folha da Meta! Erro : " + xhr.responseText)));
+		}
 	}
 
 	cancelarCadastroItemMeta() {
 		this._fechaCadastroItemMeta();
 	}
+	
 
 	salvarItemMeta() {
 		let self = this;
