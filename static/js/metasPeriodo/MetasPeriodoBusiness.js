@@ -24,7 +24,7 @@ class MetasPeriodoBusiness extends PLRBusiness {
     }
 
     deleteItem(item) {
-        $.ajax({
+        return $.ajax({
             url : this._API_BASE_URI + '/metasperiodo/meta/' + item.meta.id + '/periodoplr/' + item.tempo.id,
             data : item, 
             type : "DELETE", 

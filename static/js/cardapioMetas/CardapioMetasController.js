@@ -4,6 +4,7 @@ class CardapioMetasController extends PLRController {
         super();
         
 		this._business = new CardapioMetasBusiness();
+		this._metasPeriodoBusiness = new MetasPeriodoBusiness();
 		this._perfilController = new PerfilController();
 
 		let $body = $("body");
@@ -15,6 +16,8 @@ class CardapioMetasController extends PLRController {
 		this.applyConstraintsOnFields(['#metasTab'], [],  this._perfilController.hasPermissionToArea(4));
 		this.initFields();        
     }
+
+	/** INICIALIZAÇÃO */
 
     initFields() {
 	   this._initFieldsPesquisa();
@@ -59,13 +62,17 @@ class CardapioMetasController extends PLRController {
 		this._fieldNumeradorMeta = $("#cadastroMetaNumerador");
 		this._fieldDenominadorMeta = $("#cadastroMetaDenominador");
 		this._fieldAprovador = $("#aprovadorMeta");
-
+		this._checkBoxAssociaMetaPeriodo = $("#checkboxAtivaPeriodo");
 
 		this._idMeta = null;
 		this._isNewMeta = true;
+		this._checkBoxAvaliacaoChanged = false;
 
 		this._fieldsCadastroMetasList = [this._fieldNomeMeta, this._fieldTipoMeta, this._fieldFrequenciaMedicao, this._fieldTipoMedicao, this._fieldFormula, this._fieldQualidade, 
 				this._fieldSituacaoMeta, this._fieldObservacaoMeta, this._fieldAprovador];
+
+		this._listaFormulas = [];
+		this._listaPontuacao = [];
 
 		this._modalCadastroCardapioMeta = $("#modalCadastroMetas");
 
@@ -108,22 +115,6 @@ class CardapioMetasController extends PLRController {
 
 	/** Carregar Dados */
 
-	carregarListaFrequenciaMedicao() {
-		let self = this;
-		$.when(self._business.getLista("/frequenciasmedicao"))
-		.done(function (serverData) {
-			serverData.forEach(item => {
-				item.value = item.id;
-				item.text = item.descricao;
-			});
-
-			serverData.unshift({});
-			self.buildSelectOptions(self._frequenciaMedicao, serverData);
-			self.buildSelectOptions(self._fieldFrequenciaMedicao, serverData);
-		}).fail((xhr, textStatus, errorThrown) =>
-			MessageView.showSimpleErrorMessage(("Erro ao pesquisar lista de Fórmulas! Erro : " + xhr.responseText)));
-	}
-
 	carrregarListaColaboradores() {
 		let self = this;
 		$.when(self._business.getLista("/colaboradores/filter?situacao=A"))
@@ -149,8 +140,26 @@ class CardapioMetasController extends PLRController {
 			});
 
 			serverData.unshift({});
+			self._listaFormulas = serverData;
 			self.buildSelectOptions(self._formulaMeta, serverData);
 			self.buildSelectOptions(self._fieldFormula, serverData);
+		}).fail((xhr, textStatus, errorThrown) =>
+			MessageView.showSimpleErrorMessage(("Erro ao pesquisar lista de Fórmulas! Erro : " + xhr.responseText)));
+	}
+
+	carregarListaFrequenciaMedicao() {
+		let self = this;
+		$.when(self._business.getLista("/frequenciasmedicao"))
+		.done(function (serverData) {
+			serverData.forEach(item => {
+				item.value = item.id;
+				item.text = item.descricao;
+			});
+
+			serverData.unshift({});
+			self._listaPontuacao = serverData;
+			self.buildSelectOptions(self._frequenciaMedicao, serverData);
+			self.buildSelectOptions(self._fieldFrequenciaMedicao, serverData);
 		}).fail((xhr, textStatus, errorThrown) =>
 			MessageView.showSimpleErrorMessage(("Erro ao pesquisar lista de Fórmulas! Erro : " + xhr.responseText)));
 	}
@@ -234,6 +243,23 @@ class CardapioMetasController extends PLRController {
 	}
 
 	/** CADASTRO */
+	
+	associarMetaPeriodo(idMeta) {
+		let itemPeriodoMeta = {meta : {id : idMeta}, tempo : {id : getPeriodoPLR() + '0101'}, situacao : 'A'};
+		let self = this;
+		if (self._checkBoxAvaliacaoChanged) {
+			if (self._checkBoxAssociaMetaPeriodo.prop('checked')) {
+				self._insereItemPeriodoMeta(itemPeriodoMeta);
+			} else {
+				self._deletaItemPeriodoMeta(itemPeriodoMeta);
+			}
+			self._checkBoxAvaliacaoChanged = false;
+		}
+	}
+
+	avaliarAssociarMetaPeriodo() {
+		this._checkBoxAvaliacaoChanged = true;
+	}
 
 	avaliarMetaPonderada() {
 		let self = this;
@@ -248,8 +274,12 @@ class CardapioMetasController extends PLRController {
 	avaliarMetaProjeto() {
 		let self = this;
 		if (self._fieldTipoMeta.children('option:selected').text() == "PROJETOS") {
-			self._fieldFormula.val(4); //ENTREGA
-			self._fieldFrequenciaMedicao.val(3); //DATA
+			let formulaEntrega = self._listaFormulas.filter(formula => formula.nome == 'ENTREGA');
+			let pontuacao = self._listaPontuacao.filter(ponto => ponto.descricao == 'DATA');
+			
+			self._fieldFormula.val(formulaEntrega[0].id); 
+			self._fieldFrequenciaMedicao.val(pontuacao[0].id);
+			
 			self.showHiddenElement(self._prazoRowArea);
 			self.showHiddenElement(self._aprovadorRowArea);
 		} else {
@@ -278,14 +308,16 @@ class CardapioMetasController extends PLRController {
 	cancelarCadastroMeta() {
 		this._fechaCadastroMeta();
 	}
-	
+
 	salvarMeta() {
 		let self = this;
 		let novaMeta = this._metaDataCadastro;
 		if(new Validation().validateFields(self._validateCadastro()) && self._validatePrazo()) {
 			$.when(self._business.salvarMeta(novaMeta))
 			.done(function (serverData) {
-				MessageView.showSuccessMessage('Dados da Meta salvos com sucesso!');
+				MessageView.showSuccessMessage('Dados do Indicador salvos com sucesso!');
+			
+				self.associarMetaPeriodo(serverData.id);
 				self._idMeta = serverData.id;
 				self._nomeMeta.val(serverData.descricao);
 				self._fechaCadastroMeta();
@@ -295,9 +327,27 @@ class CardapioMetasController extends PLRController {
 		}
 	}
 
+	_deletaItemPeriodoMeta(periodoMeta) {
+		$.when(this._metasPeriodoBusiness.deleteItem(periodoMeta))
+		.done(function (serverData) {
+		
+		})
+		.fail((xhr, textStatus, errorThrown) =>
+			MessageView.showWarningMessage((xhr.responseJSON.message)));
+
+	}
+
 	_fechaCadastroMeta() {
 		this._limpaCamposCadastroMeta();
 		this._modalCadastroCardapioMeta.dialog('close');
+	}
+
+	_insereItemPeriodoMeta(periodoMeta) {
+		$.when(this._metasPeriodoBusiness.insertItem(periodoMeta))
+		.done(function (serverData) {
+			MessageView.showSuccessMessage('Indicador associado ao período!');
+		}).fail((xhr, textStatus, errorThrown) =>
+			MessageView.showSimpleErrorMessage(("Erro ao associar o Indicador cadastrado ao período vigente! Erro : " + xhr.responseText)));
 	}
 
 	_limpaCamposCadastroMeta() {
@@ -316,8 +366,10 @@ class CardapioMetasController extends PLRController {
 		this._fieldPrazo.val(metaItem.prazo);
 		this._fieldSituacaoMeta.val(metaItem.situacao);
 		this._fieldObservacaoMeta.val(metaItem.observacao);
+		this._checkBoxAssociaMetaPeriodo.prop('checked', metaItem.ativaForPeriodo);		
 		if (metaItem.aprovador) {
 			this._fieldAprovador.val(metaItem.aprovador.matricula);
+			this._fieldAprovador.selectpicker('refresh');
 		} else {
 			this._fieldAprovador.val("");
 		}
@@ -405,16 +457,6 @@ class CardapioMetasController extends PLRController {
     
     /** Validacoes */
 
-	_validatePesquisa() {
-		if (!this._nomeMeta.val() && !this._tipoMeta.val() && !this._frequenciaMedicao.val() && !this._tipoMedicao.val() 
-			&& !this._formulaMeta.val() && !this._situacaoMeta.val() && !this._codigoMeta.val()) {
-			MessageView.showWarningMessage("Por favor, informe ao menos um filtro de pesquisa");
-			return false;
-		}
-
-		return true;
-	}
-
 	_validateCadastro() {
 		let validationFieldsArray = [];
 		
@@ -458,6 +500,16 @@ class CardapioMetasController extends PLRController {
 					[Validation.types.NOT_EMPTY]));
 		
 		return validationFieldsArray;
+	}
+
+	_validatePesquisa() {
+		if (!this._nomeMeta.val() && !this._tipoMeta.val() && !this._frequenciaMedicao.val() && !this._tipoMedicao.val() 
+			&& !this._formulaMeta.val() && !this._situacaoMeta.val() && !this._codigoMeta.val()) {
+			MessageView.showWarningMessage("Por favor, informe ao menos um filtro de pesquisa");
+			return false;
+		}
+
+		return true;
 	}
 
 	_validatePrazo() {

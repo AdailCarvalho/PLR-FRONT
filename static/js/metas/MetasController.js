@@ -202,7 +202,8 @@ class MetasController extends PLRController {
 						 textField : "descSituacao", align : "center", width : 50, editing: false},
 				{name : "inicioVigencia", title : "Início Vigência", type : "text", align : "center", width : 100, editing: false},
 				{name : "fimVigencia", title : "Fim Vigência", type : "text", align : "center", width : 100},
-				{name : "responsavel.nome", title : "Responsável", type : "text", align : "center", width : 225, editing: false}
+				{name : "responsavel.nome", title : "Responsável", type : "text", align : "center", width : 225, editing: false},
+				{name : "dataCadastro", title : "Criada Em", type : "text", align : "center", width : 100, editing : false}
 			],
 
 			controller: {

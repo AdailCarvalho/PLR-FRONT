@@ -6,7 +6,7 @@ class CardapioMetasBusiness extends PLRBusiness {
 
     findByFilter(idMeta, meta, situacao, tipoMedicao, tipoMeta, formula, frequenciaMedicao) {
         return $.ajax({
-            url : this._API_BASE_URI + '/metas/filter?meta=' + meta + '&idMeta=' + idMeta + '&tipoMedicao=' + tipoMedicao + '&tipoMeta=' + tipoMeta + 
+            url : this._API_BASE_URI + '/metas/filter/' + getPeriodoPLR() + '?meta=' + meta + '&idMeta=' + idMeta + '&tipoMedicao=' + tipoMedicao + '&tipoMeta=' + tipoMeta + 
                  '&formula=' + formula + '&frequenciaMedicao=' + frequenciaMedicao + '&situacao=' + situacao,
             type : "GET",
             async : false
