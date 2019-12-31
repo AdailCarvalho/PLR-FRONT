@@ -29,6 +29,16 @@ class AuthBusiness extends PLRBusiness {
 		window.location.href = this._APP_BASE_URI
 	}
 
+	redefinePrimeiroAcesso(user) {
+		return $.ajax({
+			url : this._API_BASE_URI + '/usuarios/resetpass/' + getLoggedUser(),
+			data : JSON.stringify(user),
+			contentType : "application/json; charset=utf-8",
+			type : "PUT",
+			async : false 
+		});
+	}
+
 	updateUserInfo(user) {
 		return $.ajax({
 			url : this._API_BASE_URI + '/usuarios/',

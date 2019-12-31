@@ -13,7 +13,18 @@ class PerfilController {
         .done(function (serverData) {
             self._perfil = serverData;
         }).fail( function (xhr, textStatus, errorThrown) {
-            alert('Não foi possível recuperar as informações de acesso. ');
+            MessageView.showWarningMessage('Não foi possível recuperar as informações de acesso. ');
+        });
+    }
+
+    associaPerfilUsuario(perfilUsuario) {
+        let self = this;
+        $.when(self._business.associaPerfilUsuario(perfilUsuario))
+        .done(function (serverData) {
+            //MessageView.showSuccessMessage('Usuário associado ao perfil com sucesso. ');
+        })
+        .fail( function (xhr, textStatus, errorThrown) {
+            MessageView.showWarningMessage('Não foi possível associar o usuário ao perfil informado. ');
         });
     }
 

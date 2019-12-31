@@ -291,77 +291,114 @@
     <!-- Cadastro Colaborador -->
     <div id="modalCadastroColaborador"  title="Cadastro de Colaboradores"> 
         <div class="container-fluid" style="margin-top: 0">
-            <div class="row" style="margin-top: 5px;">
-                <div class="form-group col-md-2">
-                    <label for="cadastoMatricula" class="plr-bold" title="Matrícula">Matrícula:</label>
-                    <input type="text" id="cadastroMatricula" maxlength="32" class="form-control" style="font-size: 14px;"/>
-                </div>
-                <div class="form-group col-md-5">
-                    <label for="cadastroNome" class="plr-bold" title="Nome do Colaborador">Nome:
-                    </label>
-                    <input type="text" id="cadastroNome" class="form-control"
-                           maxlength="128" style="font-size: 14px;"/>
-                </div>
-                <div class="form-group col-md-3">
-                        <label for="cadastroElegivel" class="plr-bold" title="Elegível">Elegível Individual:</label>
-                        <select id="cadastroElegivel" class="form-control" style="font-size: 14px;">
-                            <option value=""></option>
-                            <option value="1">Sim</option>
-                            <option value="0">Não</option>
-                        </select>
-                </div>
-                <div class="form-group col-md-2">
-                    <label for="cadastroSituacao" class="plr-bold">Status: </label>
-                    <select id="cadastroSituacao" class="form-control" style="font-size: 14px;">
-                        <option value="A">Ativo</option>
-                        <option value="I">Inativo</option>
-                    </select>
+            <div class="col-md-auto mt-2">
+                <div class="nav nav-tabs plr-navside mb-2" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                    <a class="nav-link active" id="colaboradorDetalhesTab" data-toggle="tab" href="#dadosColaborador" role="tab" aria-controls="dadosColaborador" aria-selected="true">Dados do Colaborador</a>
+                    <a class="nav-link" id="authColaboradorTab" data-toggle="tab" href="#dadosAuthColaborador" role="tab" aria-controls="dadosAuthColaborador" aria-selected="false">Informações de Acesso</a>
                 </div>
             </div>
-            <hr>
-            <div class="row">
-                <div class="form-group col-md-6">
-                    <label for="cadastroCargo" class="plr-bold">Cargo: </label>
-                    <select id="cadastroCargo" class="form-control" style="font-size: 14px;" onchange="colaboradorController.avaliarEquivalenciaCargo()">                      
-                    </select>
-                    <label id="captionEquivalenciaCargo" class="plr-bold" style="font-size : 12px; font-style: italic;"></label>
-                </div>
-                <div class="form-group col-md-3">
-                    <label for="cadastroDiretoria" class="plr-bold">Diretoria: </label>
-                    <select id="cadastroDiretoria" class="form-control" style="font-size: 14px;">
-                    </select>
-                </div>
-                <div class="form-group col-md-3">
-                    <label for="cadastroTime" class="plr-bold">Time: </label>
-                    <select id="cadastroTime" class="form-control" style="font-size: 14px;">
-                    </select>
-                </div>
-            </div>
-            <hr>
-            <div class="row">
-                <div class="form-group col-md-6">
-                    <label for="cadastroFilial" class="plr-bold">Filial: </label>
-                    <select id="cadastroFilial" class="form-control" style="font-size: 14px;">
-                    </select>
-                </div>
-                <div class="form-group col-md-3">
-                    <label for="cadastroAdmissao" class="plr-bold" title="Data de Admissão">Admissão:</label>
-                    <input type="text" id="cadastroDtAdmissao" pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="dd/mm/yyyy"  maxlength="32" class="form-control"/>
-                </div>
-                <div class="form-group col-md-3">
-                    <label for="cadastroDemissao" class="plr-bold" title="Data de Demissão">Demissão:</label>
-                    <input type="text" id="cadastroDtDemissao" pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="dd/mm/yyyy"  maxlength="32" class="form-control"/>
+
+            <div class="col-md-12">
+                <div class="tab-content" id="v-pills-tabContent">
+                    <div class="tab-pane fade show active" id="dadosColaborador" role="tabpanel" aria-labelledby="colaboradorDetalhesTab">                    
+                        <div class="row" style="margin-top: 5px;">
+                            <div class="form-group col-md-2">
+                                <label for="cadastoMatricula" class="plr-bold" title="Matrícula">Matrícula:</label>
+                                <input type="text" id="cadastroMatricula" maxlength="32" class="form-control" style="font-size: 14px;"/>
+                            </div>
+                            <div class="form-group col-md-5">
+                                <label for="cadastroNome" class="plr-bold" title="Nome do Colaborador">Nome:
+                                </label>
+                                <input type="text" id="cadastroNome" class="form-control"
+                                       maxlength="128" style="font-size: 14px;"/>
+                            </div>
+                            <div class="form-group col-md-3">
+                                    <label for="cadastroElegivel" class="plr-bold" title="Elegível">Elegível Individual:</label>
+                                    <select id="cadastroElegivel" class="form-control" style="font-size: 14px;">
+                                        <option value=""></option>
+                                        <option value="1">Sim</option>
+                                        <option value="0">Não</option>
+                                    </select>
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label for="cadastroSituacao" class="plr-bold">Status: </label>
+                                <select id="cadastroSituacao" class="form-control" style="font-size: 14px;">
+                                    <option value="A">Ativo</option>
+                                    <option value="I">Inativo</option>
+                                </select>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="cadastroCargo" class="plr-bold">Cargo: </label>
+                                <select id="cadastroCargo" class="form-control" style="font-size: 14px;" onchange="colaboradorController.avaliarEquivalenciaCargo()">                      
+                                </select>
+                                <label id="captionEquivalenciaCargo" class="plr-bold" style="font-size : 12px; font-style: italic;"></label>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="cadastroDiretoria" class="plr-bold">Diretoria: </label>
+                                <select id="cadastroDiretoria" class="form-control" style="font-size: 14px;">
+                                </select>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="cadastroTime" class="plr-bold">Time: </label>
+                                <select id="cadastroTime" class="form-control" style="font-size: 14px;">
+                                </select>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="cadastroFilial" class="plr-bold">Filial: </label>
+                                <select id="cadastroFilial" class="form-control" style="font-size: 14px;">
+                                </select>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="cadastroAdmissao" class="plr-bold" title="Data de Admissão">Admissão:</label>
+                                <input type="text" id="cadastroDtAdmissao" pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="dd/mm/yyyy"  maxlength="32" class="form-control"/>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="cadastroDemissao" class="plr-bold" title="Data de Demissão">Demissão:</label>
+                                <input type="text" id="cadastroDtDemissao" pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="dd/mm/yyyy"  maxlength="32" class="form-control"/>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-pane fade" id="dadosAuthColaborador" role="tabpanel" aria-labelledby="authColaboradorTab">
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label for="cadastroColabPerfil" class="plr-bold">Perfil: </label>
+                                <select id="cadastroColabPerfil" class="form-control" style="font-size: 14px;">
+                                </select>
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label for="cadastroColabPerfilSituacao" class="plr-bold">Situação: </label>
+                                <select id="cadastroColabPerfilSituacao" class="form-control" style="font-size: 14px;">
+                                    <option value="A">ATIVA</option>
+                                    <option value="I">INATIVA</option>
+                                </select>
+                            </div>
+                            <div id="checkboxResetSenhaArea" class="form-group checkbox-control custom-checkbox col-md-2" 
+                                 style="font-weight: bold; margin-top : 40px; margin-left : 12px;" hidden>
+                                <input  id="checkboxResetSenha" type="checkbox" class="custom-control-input">
+                                <label class="custom-control-label" for="checkboxResetSenha">Resetar Senha?</label>
+                            </div>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
         </div>
+        
         <div class="modal-footer">
-                <div class="form-group col-md-auto">
-                    <input type="button" value="Salvar" id="salvarCadastro" title="Salvar"  class="btn btn-sm btn-success" onclick="colaboradorController.salvarColaborador()" />
-                </div>
-                <div class="form-group col-md-auto">
-                    <input type="button" value="Voltar" id="cancelarCadastro" title="Voltar" class="btn btn-sm btn-info" style="margin-left : -18px;" onclick="colaboradorController.cancelarCadastroColaborador()" />
-                </div>
+            <div class="form-group col-md-auto">
+                <input type="button" value="Salvar" id="salvarCadastro" title="Salvar"  class="btn btn-sm btn-success" onclick="colaboradorController.salvarColaborador()" />
             </div>
+            <div class="form-group col-md-auto">
+                <input type="button" value="Voltar" id="cancelarCadastro" title="Voltar" class="btn btn-sm btn-info" style="margin-left : -18px;" onclick="colaboradorController.cancelarCadastroColaborador()" />
+            </div>
+        </div>
     </div> <!--Cadastro Colaborador -->
     
     <!-- Cadastro Metas -->

@@ -5,6 +5,7 @@ class ColaboradorController extends PLRController {
     constructor() {
 		super();
 		this._business = new ColaboradorBusiness();
+		this._authBusiness = new AuthBusiness();
 		this._perfilController = new PerfilController();
 
 		let $body = $("body");
@@ -52,12 +53,15 @@ class ColaboradorController extends PLRController {
 		this._fieldDataAdmissao = $("#cadastroDtAdmissao");
 		this._fieldDataDemissao = $("#cadastroDtDemissao");
 		this._fieldElegivel = $("#cadastroElegivel");
+		this._fieldPerfil = $("#cadastroColabPerfil");
+		this._fieldSituacaoPerfil = $("#cadastroColabPerfilSituacao");
+		this._checkBoxResetSenha = $("#checkboxResetSenha");
+		this._checkBoxResetSenhaArea = $('#checkboxResetSenhaArea');
 		this._isNewColaborador = true;
-
 
 		
 		this._fieldsCadastroList = [this._fieldMatricula, this._fieldNome, this._fieldCargo, this._fieldDiretoria, this._fieldTime, this._fieldFilial, 
-			this._fieldSituacao, this._fieldDataAdmissao, this._fieldDataDemissao, this._fieldElegivel];
+			this._fieldSituacao, this._fieldDataAdmissao, this._fieldDataDemissao, this._fieldElegivel, this._fieldPerfil];
 
 		this._labelCaptionEquivalenciaCargo = $("#captionEquivalenciaCargo");
 		this._listaCargos = [];
@@ -89,6 +93,7 @@ class ColaboradorController extends PLRController {
 		});
 
 		if (this._perfilController.hasPermissionToArea(4)) {
+			this.carregarListaPerfis();
 			this.carregarListaCargos();
 			this.carregarListaDiretoria();
 			this.carregarListaFiliais();
@@ -154,6 +159,21 @@ class ColaboradorController extends PLRController {
 			MessageView.showSimpleErrorMessage(("Erro ao pesquisar lista de Filiais! Erro : "  + xhr.responseText)));
 	}
 
+	carregarListaPerfis() {
+		let self = this;
+		$.when(self._business.getLista("/perfis"))
+		.done(function (serverData) {
+			serverData.forEach(item => {
+				item.value = item.id;
+				item.text = item.nome.toUpperCase();
+			});
+
+			serverData.unshift({});
+			self.buildSelectOptions(self._fieldPerfil, serverData);
+		}).fail((xhr, textStatus, errorThrown) =>
+		MessageView.showSimpleErrorMessage(("Erro ao pesquisar lista de Perfis! Erro : "  + xhr.responseText)));
+	}
+
 	carregarListaTimes() {
 		let self = this;
 		$.when(self._business.getLista("/times"))
@@ -206,6 +226,10 @@ class ColaboradorController extends PLRController {
 
 	/** Cadastro */
 
+	associarColaboradorPerfil() {
+		this._perfilController.associaPerfilUsuario(this._colaboradorPerfilDataCadastro);
+	}
+
 	cadastrarColaborador(colaboradorItem) {
 		let self = this;
 		self._modalCadastroColaboradores.dialog('open');
@@ -215,11 +239,47 @@ class ColaboradorController extends PLRController {
 		} else {
 			self._fieldMatricula.prop('disabled', false);
 			self._isNewColaborador = true;
+
+			self.hideElements(['#' + self._checkBoxResetSenhaArea.attr('id')]);
 		}
 	}
 
 	cancelarCadastroColaborador() {
 		this._fechaCadastroColaborador();
+	}
+
+	resetarSenhaColaborador() {
+		let self = this;
+		if (self._checkBoxResetSenha.prop('checked')) {
+			self._authBusiness.redefinePrimeiroAcesso({ login : self._fieldMatricula.val()});
+		}
+	}
+
+	salvarColaborador() {
+		let self = this;
+		let novoColaborador = this._colaboradorDataCadastro;
+		if(new Validation().validateFields(self._validateCadastro())) {
+			$.when(self._business.salvarColaborador(novoColaborador))
+			.done(function (serverData) {
+				self._matricula.val(serverData.matricula);
+				self.associarColaboradorPerfil();
+				self.resetarSenhaColaborador();
+				self.pesquisarColaborador();
+				
+				MessageView.showSuccessMessage('Dados do Colaborador salvos com sucesso!');
+			}).fail((xhr, textStatus, errorThrown) =>
+				MessageView.showSimpleErrorMessage(("Erro ao salvar os dados do Colaborador! Erro : " + xhr.responseText)));
+		} 
+	}
+
+	_fechaCadastroColaborador() {
+		this._limpaCamposCadastroColaborador();
+		this._modalCadastroColaboradores.dialog('close');
+	}
+
+	_limpaCamposCadastroColaborador() {
+		this._fieldsCadastroList.forEach(field => field.val(""));
+		this._checkBoxResetSenha.prop('checked', false);
 	}
 
 	_preencheFormCadastroColaborador(colaboradorItem) {
@@ -234,31 +294,15 @@ class ColaboradorController extends PLRController {
 		this._fieldDataAdmissao.val(colaboradorItem.dataAdmissao);
 		this._fieldDataDemissao.val(colaboradorItem.dataDemissao);
 		this._fieldElegivel.val(colaboradorItem.elegivel);
+		if (colaboradorItem.usuario) {
+			let perfilUsuario = colaboradorItem.usuario.perfilUsuario;
+			this._fieldPerfil.val(perfilUsuario.perfil.id);
+			this._fieldSituacaoPerfil.val(perfilUsuario.situacao);	
+		}
+
+		this.showHiddenElement(this._checkBoxResetSenhaArea);
+
 		this._labelCaptionEquivalenciaCargo.text("Equiv.: " + colaboradorItem.cargo.equivalencia.descricao);
-	}
-
-	salvarColaborador() {
-		let self = this;
-		let novoColaborador = this._colaboradorDataCadastro;
-		if(new Validation().validateFields(self._validateCadastro())) {
-			$.when(self._business.salvarColaborador(novoColaborador))
-			.done(function (serverData) {
-				MessageView.showSuccessMessage('Dados do Colaborador salvos com sucesso!');
-				self._matricula.val(serverData.matricula);
-				self._fechaCadastroColaborador();
-				self.pesquisarColaborador();
-			}).fail((xhr, textStatus, errorThrown) =>
-				MessageView.showSimpleErrorMessage(("Erro ao salvar os dados do Colaborador! Erro : " + xhr.responseText)));
-		} 
-	}
-
-	_fechaCadastroColaborador() {
-		this._limpaCamposCadastroColaborador();
-		this._modalCadastroColaboradores.dialog('close');
-	}
-
-	_limpaCamposCadastroColaborador() {
-		this._fieldsCadastroList.forEach(field => field.val(""));
 	}
 
 	/** Grids */
@@ -299,6 +343,7 @@ class ColaboradorController extends PLRController {
 	}
 
 	/** Objetos */
+	
 	get _colaboradorDataPesquisa() {
 		return {
 			matricula : this._matricula.val(),
@@ -329,6 +374,18 @@ class ColaboradorController extends PLRController {
 			dataDemissao : this._fieldDataDemissao.val(),
 			elegivel : this._fieldElegivel.val(),
 			isNewColaborador : this._isNewColaborador
+		}
+	}
+
+	get _colaboradorPerfilDataCadastro() {
+		return {
+			situacao : this._fieldSituacaoPerfil.val(),
+			perfil : {
+				id : this._fieldPerfil.val(),
+			},
+			usuario : {
+				login : this._fieldMatricula.val()
+			}
 		}
 	}
 
@@ -377,7 +434,15 @@ class ColaboradorController extends PLRController {
 		validationFieldsArray.push(this.getFieldValidation(
 				   this._fieldDataAdmissao.val(), 'Data de Admissão', 
 						[Validation.types.NOT_EMPTY]));
-		
+
+		validationFieldsArray.push(this.getFieldValidation(
+					this._fieldPerfil.val(), 'Perfil', 
+						[Validation.types.NOT_EMPTY]));	
+						
+		validationFieldsArray.push(this.getFieldValidation(
+					this._fieldSituacaoPerfil.val(), 'Situação do Perfil', 
+						[Validation.types.NOT_EMPTY]));	
+																
 		return validationFieldsArray;
 	}
 }
