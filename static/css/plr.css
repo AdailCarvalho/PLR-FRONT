@@ -140,3 +140,7 @@ body.loading .modalLoading {
     z-index : 2;
 }
    
+.plr-jsgrid-delete-btn {
+    margin-left: 7px;
+    color : blue;
+}

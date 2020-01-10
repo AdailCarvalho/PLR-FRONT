@@ -162,7 +162,7 @@ class MetasController extends PLRController {
 			pageFirstText: 'Primeira',
 			pageLastText: 'Última', 
 			filterButtonTooltip: "Filtrar nos resultados",
-
+			deleteButtonTooltip : "Excluir Folha de Meta",
 			rowClick : function(args) {
 				return false;
 			},
@@ -176,20 +176,37 @@ class MetasController extends PLRController {
 						itemTemplate: function(value, item) {
 							var $result = this.__proto__.itemTemplate.call(this, value, item);
 							var $viewItems = $("<a style='color: #003cbe'><i class='fas fa-eye fa-lg' " +
-							" title='Visualizar Folha de Meta' style='margin-left: 7px;'></i></a>")
-										   .click(function() {
+											   " title='Visualizar Folha de Meta' style='margin-left: 7px;'></i></a>")
+										   	 .click(function() {
 												self._itemMetaController.cadastrarItemMeta(item);
-										   });
+										   	 });
 							
-							var $editItems = $("<a style='color : #003cbe'><i class='fas fa-edit fa-lg' "+ 
-							" title='Editar Folha de Meta' style='margin-left : 7px;'></i></a>")
+							var $editItems = $("<a style='color : #003cbe'><i class='fas fa-edit fa-lg' " + 
+											   " title='Editar Folha de Meta' style='margin-left : 7px;'></i></a>")
 										   	.click(function() {
 												self._itemMetaController.cadastrarItemMeta(item);
 											});
 							
+							var $deleteItems = $("<a style='color : #ff4d4d'><i class='fas fa-trash-alt fa-lg' " + 
+											   " title='Deletar Folha de Meta' style='margin-left : 7px;'></i></a>")
+											 .click(function() {
+												 if (confirm('Deseja realmente excluir a Folha de Meta Selecionada? A Folha será deletada e seus itens relacionados serão excluídos.')) {
+													self._itemMetaController.deleteFolhaMeta(item.id);
+													self._findMetas();
+												 }
+											  });
+							
+							var $downloadItems = $("<a style='color : cornflowerblue'><i class='fas fa-download fa-lg' " + 
+												   " title='Baixar Folha de Meta' style='margin-left : 7px;'></i></a>")
+						  							.click(function() {
+														self._itemMetaController.exportFolhaMeta(item.colaborador.matricula, item.id);
+													  });
+
 							if (item.situacao == 'P') {
 								$result = $result.add($editItems);
+								$result = $result.add($deleteItems);
 							} else {
+								$result = $result.add($downloadItems);
 								$result = $result.add($viewItems);
 							}
 
@@ -217,6 +234,10 @@ class MetasController extends PLRController {
 							 && (!filter.responsavel || item.responsavel.nome.toUpperCase().indexOf(filter.responsavel.nome.toUpperCase()) > -1) 
 					});
 				 } 
+			},
+
+			onItemDeleting : function (args) {
+				self._itemMetaController.deleteFolhaMeta(args.item.id);
 			}
 		});
 

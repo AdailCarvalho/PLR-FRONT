@@ -272,7 +272,7 @@ var readOnlyJsGridFieldsColor = "#d4d6d9";
 
 //Properties
 app_properties = {
-  profile : 'standalone'
+  profile : 'tomcat'
 }
 
 app_standalone_properties = {

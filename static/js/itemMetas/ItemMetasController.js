@@ -248,6 +248,8 @@ class ItemMetasController extends PLRController {
 			self.applyConstraintsOnFields(['#salvarCadastroItemMeta'],
 				[self._fieldInicioVigenciaItemCadastro, self._fieldFimVigenciaItemCadastro, self._fieldMatriculaItemCadastro, self._fieldColaboradorItemCadastro], 
 				self._isFolhaEditavel);			
+
+			self.applyConstraintsOnFields(['#baixarFolhaMetaArea'], [], !self._isFolhaEditavel);
 		} else {
 			self.showHiddenElement(self._areaPesquisaSimplesColaborador);
 			self.showHiddenElement($("#salvarCadastroItemMeta"));
@@ -301,6 +303,15 @@ class ItemMetasController extends PLRController {
 		this._fechaCadastroItemMeta();
 	}
 	
+	deleteFolhaMeta(id) {
+		this._business.deleteFolhaMeta(id);
+	}
+
+	exportFolhaMeta(matricula, idFolhaMeta) {
+		let paramMatricula = matricula ? matricula : this._fieldMatriculaItemCadastro.val(); 
+		let paramIdFolhaMeta = idFolhaMeta ? idFolhaMeta : this._fieldNumeroFolhaMeta.val();
+		this._business.exportFolhaMeta(paramMatricula, paramIdFolhaMeta);	
+	}
 
 	salvarItemMeta() {
 		let self = this;

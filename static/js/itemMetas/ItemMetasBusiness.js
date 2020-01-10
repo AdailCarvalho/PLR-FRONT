@@ -12,6 +12,19 @@ class ItemMetasBusiness extends PLRBusiness {
         });
     }
 
+    deleteFolhaMeta(id) {
+        $.ajax({
+            url : this._API_BASE_URI + '/folhametas/' + id,
+            type : "DELETE",
+            async : false
+        });
+    }
+
+    exportFolhaMeta(matricula, idFolhaMeta) {
+    	let uriExport = this._API_BASE_URI + '/folhametas/export?matricula=' + matricula + '&idFolhaMeta=' + idFolhaMeta;
+		window.open(uriExport, '_blank');
+    }
+
     findColaboradorByFilter(matricula, nome) {
         return $.ajax({
             url : this._API_BASE_URI + '/colaboradores/filter?matricula=' + matricula + '&nome=' + nome,
