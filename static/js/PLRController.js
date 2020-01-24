@@ -28,7 +28,7 @@ class PLRController {
     hideElements(fields) {
         fields.forEach(field => $(field).hide());
     }
-    
+
     setFieldValue(field, value) {
 	    $('#' + field).val(value);
     }
@@ -39,6 +39,7 @@ class PLRController {
             field.show();       
         } 
     }
+
     setInputFilter(textbox, inputFilter) {
         ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(event) {
           textbox.addEventListener(event, function() {
@@ -55,7 +56,7 @@ class PLRController {
           });
         });
     }
-  
+    
     writeSessionMessage() {
         let nomeUsuarioLogado = getLoggedName();
         let periodoPLRAtivo = getPeriodoPLR();

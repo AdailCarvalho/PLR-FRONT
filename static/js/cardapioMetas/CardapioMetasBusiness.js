@@ -4,6 +4,11 @@ class CardapioMetasBusiness extends PLRBusiness {
         super();
     }
 
+    exportIndicadores(periodo) {
+        let uriExport = this._API_BASE_URI + '/metas/export/' + periodo;
+		window.open(uriExport, '_blank');
+    }
+
     findByFilter(idMeta, meta, situacao, tipoMedicao, tipoMeta, formula, frequenciaMedicao) {
         return $.ajax({
             url : this._API_BASE_URI + '/metas/filter/' + getPeriodoPLR() + '?meta=' + meta + '&idMeta=' + idMeta + '&tipoMedicao=' + tipoMedicao + '&tipoMeta=' + tipoMeta + 

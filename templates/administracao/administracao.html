@@ -77,6 +77,19 @@
                             </div>
                     </div>
                 </div>
+
+                <section id="idExportColaboradores">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <input type="button" id="btnExportColaboradores" class="btn btn-sm btn-info" title="Exportar Colaboradores" value="Exportar"
+                                           onclick="colaboradorController.exportColaboradores()" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div> <!--Fecha Tab.Pane Colabo -->
 
             <div class="tab-pane fade" id="cadastroMeta" role="tabpanel" aria-labelledby="metasTab">
@@ -143,6 +156,18 @@
                         </div>
                 </div>
 
+                <section id="idExportIndicadores">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <input type="button" id="btnExportIndicadores" class="btn btn-sm btn-info" title="Exportar Indicadores do Período" value="Exportar"
+                                           onclick="cardapioMetasController.exportIndicadores()" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
 
             <div class="tab-pane fade" id="cadastroMetaMensal" role="tabpanel" aria-labelledby="metasMensaisTab">
@@ -501,6 +526,7 @@
                     <div class="nav nav-tabs plr-navside mb-2" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                         <a class="nav-link active" id="folhaMetaTab" data-toggle="tab" href="#dadosFolhaMeta" role="tab" aria-controls="dadosFolhaMeta" aria-selected="true">Dados da Folha</a>
                         <a class="nav-link" id="folhaMetaItemTab" data-toggle="tab" href="#dadosFolhaMetaItem" role="tab" aria-controls="dadosFolhaMetaItem" aria-selected="false">Itens da Folha</a>
+                        <a class="nav-link" id="metaMensalDetalheTab" data-toggle="tab" href="#dadosMetaMensalDetalhes" role="tab" aria-controls = "dadosMetaMensalDetalhes" aria-selected="false">Indicadores dos Itens</a>
                     </div>
                 </div>
 
@@ -641,6 +667,17 @@
 
                             </div>
                         </div>
+
+                        <div class="tab-pane fade" id="dadosMetaMensalDetalhes" role="tabpanel" aria-labelledby="metaMensalDetalheTab">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label class="plr-bold" for="jsGridCadastroItensMeta" title="Itens">Acompanhamento Mensal: </label>
+                                    <div style="overflow : auto;">
+                                        <div id="jsGridMetaMensalDetalhes" style="zoom : 85% !important;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>   
                 </div>
         </div>
@@ -654,7 +691,7 @@
             </div>
             <div id="baixarFolhaMetaArea" class="form-group col-md-auto">
                 <input type="button" value="Baixar" id="baixarFolhaMetaBtn" 
-                       title="Baixar Folha de Meta"  class="btn btn-sm" style="margin-left : -18px; background-color : #565756;" 
+                       title="Baixar Folha de Meta"  class="btn btn-sm btn-info" style="margin-left : -18px; background-color : #565756;" 
                        onclick="itemMetasController.exportFolhaMeta()" />
             </div>
             <div class="form-group col-md-auto">

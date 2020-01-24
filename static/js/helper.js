@@ -270,6 +270,17 @@ var maxTimeMessage = 15000;
 
 var readOnlyJsGridFieldsColor = "#d4d6d9";
 
+/** Refresh de Grids Home */
+var gridsHomeSync = true;
+
+function isGridsHomeSync() {
+  return gridsHomeSync;
+}
+
+function syncGridsHome() {
+  gridsHomeSync = !gridsHomeSync;
+}
+
 //Properties
 app_properties = {
   profile : 'tomcat'

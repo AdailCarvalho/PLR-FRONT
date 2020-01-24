@@ -197,6 +197,10 @@ class ColaboradorController extends PLRController {
 		}
 	}
 
+	exportColaboradores() {
+		this._business.exportColaboradores();
+	}
+
 	limparPesquisaColaborador() {
 		this._matricula.val("");
 		this._colaborador.val("");

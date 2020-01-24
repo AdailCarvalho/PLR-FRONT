@@ -3,8 +3,8 @@ class ColaboradorBusiness extends PLRBusiness  {
         super();
     }
 
-    exportXls(matricula) {
-    	let uriExport = this._API_BASE_URI + '/colaboradores/' + matricula + '/export';
+    exportColaboradores() {
+        let uriExport = this._API_BASE_URI + '/colaboradores/export';
 		window.open(uriExport, '_blank');
     }
 

@@ -18,6 +18,7 @@ class ItemMetasController extends PLRController {
 		this.applyConstraintsOnFields(['#idPesquisaItemMetaCompleta'], [],  this._perfilController.hasPermissionToArea(10));
 		this.applyConstraintsOnFields(['#idPesquisaItemMetaBasica'], [],  this._perfilController.hasPermissionToArea(11));
 		this.applyConstraintsOnFields(['#aprovarCadastroItemMetaArea'], [], this._perfilController.hasPermissionToArea(12));
+		this.applyConstraintsOnFields(['#metaMensalDetalheTab'], [], this._perfilController.hasPermissionToArea(13));
 
 		this.initFields();
 
@@ -94,6 +95,7 @@ class ItemMetasController extends PLRController {
 		self._fieldSomatorioQuantitativa = $('#somatorioQuantitativa');
 
 		self._gridCadastroItensMeta = $("#jsGridCadastroItensMeta");		
+		self._gridMetaMensalDetalhe = $("#jsGridMetaMensalDetalhes");
 
 		self._fieldsCadastroItemMetasList = [self._fieldMatriculaItemCadastro, self._fieldColaboradorItemCadastro, 
 											self._fieldInicioVigenciaItemCadastro, self._fieldFimVigenciaItemCadastro, 
@@ -145,6 +147,7 @@ class ItemMetasController extends PLRController {
 		self._carregarListaMetas();
 		self._loadGridCadastroItemMetas([]);
 		self._loadGridPesquisaColaboradorSimples([]);
+		self._loadGridMetasMensais([]);
 
 		self._modalCadastroItemMetas.dialog({
 			autoOpen: false,
@@ -249,13 +252,13 @@ class ItemMetasController extends PLRController {
 				[self._fieldInicioVigenciaItemCadastro, self._fieldFimVigenciaItemCadastro, self._fieldMatriculaItemCadastro, self._fieldColaboradorItemCadastro], 
 				self._isFolhaEditavel);			
 
-			self.applyConstraintsOnFields(['#baixarFolhaMetaArea'], [], !self._isFolhaEditavel);
 		} else {
 			self.showHiddenElement(self._areaPesquisaSimplesColaborador);
 			self.showHiddenElement($("#salvarCadastroItemMeta"));
 
 			self._idItemMeta = null;
 			self._isNewItemMeta = true;
+			self._isFolhaEditavel = true;
 			self._fieldMatriculaItemCadastro.val("");
 			self._fieldColaboradorItemCadastro.val("");
 			self._fieldMatriculaItemCadastro.removeAttr('disabled');
@@ -267,6 +270,7 @@ class ItemMetasController extends PLRController {
 		}
 
 		self.applyConstraintsOnFields(['#aprovarCadastroItemMetaArea'], [], self._isFolhaEditavel && self._perfilController.hasPermissionToArea(12));
+		self.applyConstraintsOnFields(['#baixarFolhaMetaArea'], [], !self._isFolhaEditavel);
 	}
 	
 	aprovarItemMetaDialog() {
@@ -294,6 +298,7 @@ class ItemMetasController extends PLRController {
 			$.when(self._business.aprovarFolhaMeta(self._fieldNumeroFolhaMeta.val()))
 			.done(function (serverData) {
 				MessageView.showSuccessMessage('Folha de Metas aprovada!');
+				syncGridsHome();
 			}).fail((xhr, textStatus, errorThrown) =>
 				MessageView.showSimpleErrorMessage(("Erro ao aprovar a Folha da Meta! Erro : " + xhr.responseText)));
 		}
@@ -337,6 +342,9 @@ class ItemMetasController extends PLRController {
 				$('.nav a[href="#' + 'dadosFolhaMeta' + '"]').tab('show');
 				self._fieldNumeroFolhaMeta.val(serverData.id);
 				self._fieldNumeroFolhaMeta.focus();
+				self._loadGridMetasMensais(serverData.folhaMetasMensais);
+				
+				syncGridsHome();
 			}).fail((xhr, textStatus, errorThrown) =>
 				MessageView.showSimpleErrorMessage(("Erro ao salvar os dados da Folha da Meta! Erro : " + xhr.responseText)));
 		}
@@ -373,6 +381,7 @@ class ItemMetasController extends PLRController {
 		this._fieldsCadastroItemMetasList.forEach(field => field.val(""));
 		this._fieldsCadastroSomatoriosAgrupamento.forEach(fieldSum => fieldSum.field.val(""));
 		this._loadGridCadastroItemMetas([]);
+		this._loadGridMetasMensais([]);
 	}
 
 	_preencheFormCadastroItemMeta(metaItem) {
@@ -390,6 +399,7 @@ class ItemMetasController extends PLRController {
 		this._fieldFimVigenciaItemCadastro.val(metaItem.fimVigencia);
 		this._fieldResponsavelItemCadastro.val(metaItem.responsavel.nome);		
 		this._loadGridCadastroItemMetas(metaItem.folhasMetaItem);
+		this._loadGridMetasMensais(metaItem.folhaMetasMensais);
 	}
 
 	_preencheFormDadosColaboradorSimples(itemColaborador) {
@@ -735,6 +745,43 @@ class ItemMetasController extends PLRController {
 			]
 		});
 	}
+
+	_loadGridMetasMensais(metasMensaisData) {
+        let self = this;
+        self._gridMetaMensalDetalhe.jsGrid({
+            width: "2320px",
+            height: "auto",
+            inserting: false,
+            deleting : false,
+            editing: false,
+            sorting: false,
+            paging: true,
+            pageSize: 5,
+            pagerFormat: 'Páginas: {first} {prev} {pages} {next} {last} &nbsp;&nbsp; {pageIndex} de {pageCount}',
+            pageNextText: 'Próxima',
+            pagePrevText: 'Anterior',
+            pageFirstText: 'Primeira',
+            pageLastText: 'Última', 
+            deleteConfirm : "Deseja realmente excluir o item selecionado?",
+            data: metasMensaisData,
+            fields : [
+				{name : "meta.descricao", title : "Indicador", type : "text", align : "center", width : 200},
+				{name : "aprovador.nome", title : "Aprovador", type : "text", align : "center", width : 200 },
+                {name : "valJan",  title : "Jan", type : "decimal", align : "center", width : 150}, //[1]
+                {name : "valFev", title : "Fev", type : "decimal", align : "center", width : 150}, //[2]
+                {name : "valMar",  title : "Mar", type : "decimal", align : "center", width : 150}, //[3]
+                {name : "valAbr",  title : "Abr", type : "decimal", align : "center", width : 150},//[4]
+                {name : "valMai",  title : "Mai", type : "decimal", align : "center", width : 150},//[5]
+                {name : "valJun", title : "Jun", type : "decimal", align : "center", width : 150},//[6]
+                {name : "valJul",  title : "Jul", type : "decimal", align : "center", width : 150},//[7]
+                {name : "valAgo", title : "Ago", type : "decimal", align : "center", width : 150},//[8]
+                {name : "valSet",  title : "Set", type : "decimal", align : "center", width : 150},//[9]
+                {name : "valOut",  title : "Out", type : "decimal", align : "center", width : 150},//[10]
+                {name : "valNov",  title : "Nov", type : "decimal", align : "center", width : 150},//[11]
+                {name : "valDez", title : "Dez",  type : "decimal", align : "center", width : 150}//[12]
+            ]
+        });
+    }
 
 	_configFieldSomatorioPeso(value) {
 		this._fieldSomatorioPeso.val(value);

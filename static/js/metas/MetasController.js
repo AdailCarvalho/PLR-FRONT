@@ -51,11 +51,17 @@ class MetasController extends PLRController {
 		this._loadGridFolhaMetas(this._folhaMetasData);
 
 		this._btnSalvarItemMeta.click(function () {
-			self._findMetas();
+			if(!isGridsHomeSync()) {
+				self._findMetas();
+				syncGridsHome();
+			}
 		});
 
 		this._btnAprovarItemMeta.click(function (){
-			self._findMetas();
+			if(!isGridsHomeSync()) {
+				self._findMetas();
+				syncGridsHome();
+			}
 		});
 	}
 

@@ -13,7 +13,7 @@ class CardapioMetasController extends PLRController {
             ajaxStop: function() { $body.removeClass("loading"); }
         });
 
-		this.applyConstraintsOnFields(['#metasTab'], [],  this._perfilController.hasPermissionToArea(4));
+		this.applyConstraintsOnFields(['#metasTab'], [],  this._perfilController.hasPermissionToArea(5));
 		this.initFields();        
     }
 
@@ -214,6 +214,10 @@ class CardapioMetasController extends PLRController {
 	}
 
 	/** PESQUISA */
+
+	exportIndicadores() {
+		this._business.exportIndicadores(getPeriodoPLR());
+	}
 
 	limparPesquisaMeta() {
 		this._codigoMeta.val("");
