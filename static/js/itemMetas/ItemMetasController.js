@@ -151,7 +151,7 @@ class ItemMetasController extends PLRController {
 
 		self._modalCadastroItemMetas.dialog({
 			autoOpen: false,
-			resizable: false,
+			resizable: true,
 			minHeight : self._minHeightCadastro ? self._minHeightCadastro : 600,
 			width: self._widthCadastro ? self._widthCadastro : 1700,
 			show: {effect: "fade", duration: 200},
@@ -749,14 +749,14 @@ class ItemMetasController extends PLRController {
 	_loadGridMetasMensais(metasMensaisData) {
         let self = this;
         self._gridMetaMensalDetalhe.jsGrid({
-            width: "2320px",
+            width: "2880px",
             height: "auto",
             inserting: false,
             deleting : false,
             editing: false,
             sorting: false,
             paging: true,
-            pageSize: 5,
+            pageSize: 10,
             pagerFormat: 'Páginas: {first} {prev} {pages} {next} {last} &nbsp;&nbsp; {pageIndex} de {pageCount}',
             pageNextText: 'Próxima',
             pagePrevText: 'Anterior',
@@ -765,7 +765,7 @@ class ItemMetasController extends PLRController {
             deleteConfirm : "Deseja realmente excluir o item selecionado?",
             data: metasMensaisData,
             fields : [
-				{name : "meta.descricao", title : "Indicador", type : "text", align : "center", width : 200},
+				{name : "meta.descricao", title : "Indicador", type : "text", align : "center", width : 800},
 				{name : "aprovador.nome", title : "Aprovador", type : "text", align : "center", width : 200 },
                 {name : "valJan",  title : "Jan", type : "decimal", align : "center", width : 150}, //[1]
                 {name : "valFev", title : "Fev", type : "decimal", align : "center", width : 150}, //[2]

@@ -433,7 +433,7 @@ class CardapioMetasController extends PLRController {
 			formula : {id : this._fieldFormula.val()},
 			metaNumerador : {id : this._fieldNumeradorMeta.val() ? this._fieldNumeradorMeta.val() : -1},
 			metaDenominador : {id : this._fieldDenominadorMeta.val() ? this._fieldDenominadorMeta.val() : -1},
-			aprovador : {matricula : this._fieldAprovador.val() ? this._fieldAprovador.val() : "999"},
+			aprovador : {matricula : this._fieldAprovador.val() ? this._fieldAprovador.val() : ""},
 			isNewMeta : this._isNewMeta,
 			isQuantitativa : this._fieldQualidade.val()
 		}
