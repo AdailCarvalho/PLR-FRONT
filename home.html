@@ -84,7 +84,7 @@
     <!--FOOTER-->
     <div class="row">
         <div class="col-md-12 plr-footer">
-            <p>© Copyright : Focus Quality|v2.4.0|2019-2020</p>
+            <p>© Copyright : Focus Quality|v2.4.1|2019-2020</p>
         </div>
     </div>
 
@@ -213,6 +213,13 @@
                 }, 120000); 
             }
         );
+
+        /*
+            Inicializar itens de cada área.
+        */
+        $('#cadastros-tab').click(function() {
+            colaboradorController.initFields();
+        });
     </script>
 </body>
 </html>

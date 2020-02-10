@@ -8,8 +8,7 @@ class PLRBusiness {
     getLista(urlDestino) {
         return $.ajax({
             url : this._API_BASE_URI + urlDestino,
-            type : "GET",
-            async: false
+            type : "GET"
         });
     }
 }

@@ -14,15 +14,20 @@ class CardapioMetasController extends PLRController {
         });
 
 		this.applyConstraintsOnFields(['#metasTab'], [],  this._perfilController.hasPermissionToArea(5));
-		this.initFields();        
+
+		this.initFields();
     }
 
 	/** INICIALIZAÇÃO */
 
     initFields() {
-	   this._initFieldsPesquisa();
-	   this._initFieldsCadastro();
-
+		if (!this._hasStartedCardapioMetas) {
+			
+			this._initFieldsPesquisa();
+			this._initFieldsCadastro();
+			
+			this._hasStartedCardapioMetas = true;
+		}
     }
 
     _initFieldsPesquisa() {

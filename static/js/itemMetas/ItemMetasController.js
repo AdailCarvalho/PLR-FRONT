@@ -21,12 +21,15 @@ class ItemMetasController extends PLRController {
 		this.applyConstraintsOnFields(['#metaMensalDetalheTab'], [], this._perfilController.hasPermissionToArea(13));
 
 		this.initFields();
-
     }
 
     initFields() {
-		this._initFieldsPesquisa();
-		this._initFieldsCadastro();
+		if (!this._hasStartedItemMetas) {
+			this._initFieldsPesquisa();
+			this._initFieldsCadastro();
+			
+			this._hasStartedItemMetas = true;
+		}
     }
 
     _initFieldsPesquisa() {
@@ -749,7 +752,7 @@ class ItemMetasController extends PLRController {
 	_loadGridMetasMensais(metasMensaisData) {
         let self = this;
         self._gridMetaMensalDetalhe.jsGrid({
-            width: "2880px",
+            width: "2980px",
             height: "auto",
             inserting: false,
             deleting : false,
@@ -767,6 +770,7 @@ class ItemMetasController extends PLRController {
             fields : [
 				{name : "meta.descricao", title : "Indicador", type : "text", align : "center", width : 800},
 				{name : "aprovador.nome", title : "Aprovador", type : "text", align : "center", width : 200 },
+				{name : "prazo.descricao", title : "Entrega", type : "text", align : "center", width : 100},
                 {name : "valJan",  title : "Jan", type : "decimal", align : "center", width : 150}, //[1]
                 {name : "valFev", title : "Fev", type : "decimal", align : "center", width : 150}, //[2]
                 {name : "valMar",  title : "Mar", type : "decimal", align : "center", width : 150}, //[3]

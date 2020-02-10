@@ -7,6 +7,7 @@ class MetasController extends PLRController {
 		this._colaboradorBusiness = new ColaboradorBusiness();
 		this._perfilController = new PerfilController();
 		this._itemMetaController = new ItemMetasController(1600, 600);
+		this._itemMetaController.initFields();
 		
 		this.applyConstraintsOnFields(['#meusCadastrosTab'], [], this._perfilController.hasPermissionToArea(2));
 		this.applyConstraintsOnFields(['#metasPendentesTab'], [], this._perfilController.hasPermissionToArea(3));
@@ -17,7 +18,7 @@ class MetasController extends PLRController {
 
 		let $body = $("body");
 		$(document).on({
-			ajaxStart: function() { $body.addClass("loading");    },
+			ajaxStart: function() { $body.addClass("loading");  },
 			ajaxStop: function() { $body.removeClass("loading"); }
 		});
 	}

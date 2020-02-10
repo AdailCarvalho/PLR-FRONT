@@ -15,13 +15,15 @@ class ColaboradorController extends PLRController {
         });
 
 		this.applyConstraintsOnFields(['#colaboradoresTab', '#cadastroColaborador'], [], this._perfilController.hasPermissionToArea(4));
-		this.initFields();
     }
 
     initFields() {
-	   this._initFieldsPesquisa();
-	   this._initFieldsCadastro();
+		if (!this._hasStartedColaborador) {
+			this._initFieldsPesquisa();
+			this._initFieldsCadastro();
 
+			this._hasStartedColaborador = true;
+		} 
 	}
 
 	/** Inicializar */
