@@ -11,4 +11,12 @@ class PLRBusiness {
             type : "GET"
         });
     }
+
+    getListaSync(urlDestino) {
+        return $.ajax({
+            url : this._API_BASE_URI + urlDestino,
+            type : "GET",
+            async : false
+        });
+    }
 }

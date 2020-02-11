@@ -17,57 +17,54 @@ class MetaMensalController extends PLRController {
     }
 
     initFields() {
-        if (!this._hasStartedMetasMensais) {
-            this._codigoMetaMensal  = $("#codigoMetaMensal");
-            this._indicadorMensal = $("#selectIndicadorMensal");
-            this._tipoIndicadorMensal = $("#tipoIndicadorMensal");
-            this._pontuacaoMensal = $("#pontuacaoMensal");
-            this._tipoMedicaoMensal= $("#tipoMedicaoMensal");
-            this._formulaIndicadorMensal = $("#formulaIndicadorMensal");
-            this._situacaoMetaMensal = $("#situacaoMetaMensal");
-            this._copiaMetaMensalPlan = $("#copiaMetaMensalPlan");
-            this._copiaMetaMensalReal = $("#copiaMetaMensalReal");
-            this._acumuladoMetaPlan = $("#acumuladoMetaPlan");
-            this._acumuladoMetaReal = $("#acumuladoMetaReal");
-            
-            this._gridCadastroMetasMensais = $("#jsGridCadastroMetasMensais");
-            this._modalCopiaMetasMensais = $("#modalCopiaMetasMensais");
-    
-            this._indicadorMensal.selectpicker();
-    
-            this._hasEditedGridMetas = false;
-    
-            this._listaIndicadores = [];
-            this._listaCamposMes = ['valJan', 'valFev', 'valMar', 'valAbr', 'valMai', 'valJun', 'valJul', 'valAgo', 'valSet', 'valOut', 'valNov', 'valDez'];
-            this._listaCamposMesNum = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
-            this._listaCamposIdMes = ['idJan', 'idFev', 'idMar', 'idAbr', 'idMai', 'idJun', 'idJul', 'idAgo', 'idSet', 'idOut', 'idNov', 'idDez'];
-            this._dataMetaMensalArray = [{tipoMeta : "META"},{tipoMeta : "REAL"}];
-    
-            this._modalCopiaMetasMensais.dialog({
-                autoOpen: false,
-                resizable: false,
-                width: 1400,
-                show: {effect: "fade", duration: 200},
-                hide: {effect: "explode", duration: 200},
-                position: {my: "center", at: "center", of: window}
-            });
-            
-            this.setInputFilter(document.getElementById("copiaMetaMensalPlan"), function(value) {
-                return /[-\d,.\t]*$/.test(value); });
-    
-            this.setInputFilter(document.getElementById("copiaMetaMensalReal"), function(value) {
-                    return /[-\d,.\t]*$/.test(value); });
-    
-            this.carregarListaMetas();
-            this._loadGridMetasMensais([]);
+        this._codigoMetaMensal  = $("#codigoMetaMensal");
+        this._indicadorMensal = $("#selectIndicadorMensal");
+        this._tipoIndicadorMensal = $("#tipoIndicadorMensal");
+        this._pontuacaoMensal = $("#pontuacaoMensal");
+        this._tipoMedicaoMensal= $("#tipoMedicaoMensal");
+        this._formulaIndicadorMensal = $("#formulaIndicadorMensal");
+        this._situacaoMetaMensal = $("#situacaoMetaMensal");
+        this._copiaMetaMensalPlan = $("#copiaMetaMensalPlan");
+        this._copiaMetaMensalReal = $("#copiaMetaMensalReal");
+        this._acumuladoMetaPlan = $("#acumuladoMetaPlan");
+        this._acumuladoMetaReal = $("#acumuladoMetaReal");
+        
+        this._gridCadastroMetasMensais = $("#jsGridCadastroMetasMensais");
+        this._modalCopiaMetasMensais = $("#modalCopiaMetasMensais");
 
-            this._hasStartedMetasMensais = true;
-        }
+        this._indicadorMensal.selectpicker();
+
+        this._hasEditedGridMetas = false;
+
+        this._listaIndicadores = [];
+        this._listaCamposMes = ['valJan', 'valFev', 'valMar', 'valAbr', 'valMai', 'valJun', 'valJul', 'valAgo', 'valSet', 'valOut', 'valNov', 'valDez'];
+        this._listaCamposMesNum = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+        this._listaCamposIdMes = ['idJan', 'idFev', 'idMar', 'idAbr', 'idMai', 'idJun', 'idJul', 'idAgo', 'idSet', 'idOut', 'idNov', 'idDez'];
+        this._dataMetaMensalArray = [{tipoMeta : "META"},{tipoMeta : "REAL"}];
+
+        this._modalCopiaMetasMensais.dialog({
+            autoOpen: false,
+            resizable: false,
+            width: 1400,
+            show: {effect: "fade", duration: 200},
+            hide: {effect: "explode", duration: 200},
+            position: {my: "center", at: "center", of: window}
+        });
+        
+        this.setInputFilter(document.getElementById("copiaMetaMensalPlan"), function(value) {
+            return /[-\d,.\t]*$/.test(value); });
+
+        this.setInputFilter(document.getElementById("copiaMetaMensalReal"), function(value) {
+                return /[-\d,.\t]*$/.test(value); });
+
+        this.carregarListaMetas();
+        this._loadGridMetasMensais([]);
+  
 	}
 
     carregarListaMetas() {
 		let self = this;
-		$.when(self._business.getLista("/metas/" + getPeriodoPLR()))
+		$.when(self._business.getListaSync("/metas/" + getPeriodoPLR()))
 		.done(function (serverData) {
             let listaIndicadoresFiltered = serverData;
 			listaIndicadoresFiltered.forEach(item => {

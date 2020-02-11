@@ -32,7 +32,7 @@ class MetasPeriodoController extends PLRController {
     
 	_carregarListaMetas() {
 		let self = this;
-		$.when(self._business.getLista("/metas"))
+		$.when(self._business.getListaSync("/metas"))
 		.done(function (serverData) {
 			self._listaMetas = serverData;
 		}).fail((xhr, textStatus, errorThrown) =>
